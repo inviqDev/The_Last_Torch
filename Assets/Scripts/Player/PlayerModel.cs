@@ -1,17 +1,17 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerModel : Singleton<PlayerModel>
+public class PlayerModel : MonoBehaviour
 {
-    [SerializeField] private Movement movementComponent;
+    [SerializeField] private PlayerMovement movementComponent;
     [SerializeField] private Dash dashComponent;
 
     [Header("Movement current stats")]
-    [field: SerializeField] public float MoveSpeed;
+    [SerializeField] private float MoveSpeed;
     
     [Header("Dash current stats")]
-    [field: SerializeField] public float DashSpeed;
-    [field: SerializeField] public float DashDuration;
+    [SerializeField] private float DashSpeed;
+    [SerializeField] private float DashDuration;
 
     private void Start()
     {

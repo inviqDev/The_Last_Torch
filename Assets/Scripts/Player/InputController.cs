@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour
 {
-    [SerializeField] private Movement movementComponent;
+    [SerializeField] private PlayerMovement movementComponent;
     [SerializeField] private Dash dashComponent;
     
     private InputActions _inputActions;
@@ -36,7 +36,7 @@ public class InputController : MonoBehaviour
 
     private void ChangeModifiers(InputAction.CallbackContext ctx)
     {
-        PlayerModel.Instance?.ChangeAllModifiers();
+        PlayerManager.Instance.CurrentPlayer.ChangeAllModifiers();
     }
     
     private void MoveIsStarted(InputAction.CallbackContext ctx)
