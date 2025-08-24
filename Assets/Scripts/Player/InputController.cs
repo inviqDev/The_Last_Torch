@@ -26,7 +26,15 @@ public class InputController : MonoBehaviour
         _inputActions.Gameplay.Level_Up.started += IncreasePlayerLevel;
         _inputActions.Gameplay.ChangeModifiers.started += ChangeModifiers;
         
+        _inputActions.Gameplay.SpawnWave.started += SpawnWave;
+        
         _inputActions.Gameplay.Enable();
+    }
+
+    private void SpawnWave(InputAction.CallbackContext ctx)
+    {
+        Debug.Assert(EnemySpawner.Instance, "Spawner is not found");
+        // EnemySpawner.Instance?.SpawnWave();
     }
 
     private void IncreasePlayerLevel(InputAction.CallbackContext ctx)

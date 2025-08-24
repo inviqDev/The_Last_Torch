@@ -127,6 +127,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SpawnWave"",
+                    ""type"": ""Button"",
+                    ""id"": ""fd6a935e-5b37-4c05-b300-59012f7bca93"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -217,6 +226,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ChangeModifiers"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""327051ba-2ba4-454e-98f8-3ef7dc3a4398"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpawnWave"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +249,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Gameplay_Dash = m_Gameplay.FindAction("Dash", throwIfNotFound: true);
         m_Gameplay_Level_Up = m_Gameplay.FindAction("Level_Up", throwIfNotFound: true);
         m_Gameplay_ChangeModifiers = m_Gameplay.FindAction("ChangeModifiers", throwIfNotFound: true);
+        m_Gameplay_SpawnWave = m_Gameplay.FindAction("SpawnWave", throwIfNotFound: true);
     }
 
     ~@InputActions()
@@ -313,6 +334,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_Dash;
     private readonly InputAction m_Gameplay_Level_Up;
     private readonly InputAction m_Gameplay_ChangeModifiers;
+    private readonly InputAction m_Gameplay_SpawnWave;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -340,6 +362,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/ChangeModifiers".
         /// </summary>
         public InputAction @ChangeModifiers => m_Wrapper.m_Gameplay_ChangeModifiers;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/SpawnWave".
+        /// </summary>
+        public InputAction @SpawnWave => m_Wrapper.m_Gameplay_SpawnWave;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -378,6 +404,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ChangeModifiers.started += instance.OnChangeModifiers;
             @ChangeModifiers.performed += instance.OnChangeModifiers;
             @ChangeModifiers.canceled += instance.OnChangeModifiers;
+            @SpawnWave.started += instance.OnSpawnWave;
+            @SpawnWave.performed += instance.OnSpawnWave;
+            @SpawnWave.canceled += instance.OnSpawnWave;
         }
 
         /// <summary>
@@ -401,6 +430,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ChangeModifiers.started -= instance.OnChangeModifiers;
             @ChangeModifiers.performed -= instance.OnChangeModifiers;
             @ChangeModifiers.canceled -= instance.OnChangeModifiers;
+            @SpawnWave.started -= instance.OnSpawnWave;
+            @SpawnWave.performed -= instance.OnSpawnWave;
+            @SpawnWave.canceled -= instance.OnSpawnWave;
         }
 
         /// <summary>
@@ -469,5 +501,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnChangeModifiers(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SpawnWave" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpawnWave(InputAction.CallbackContext context);
     }
 }

@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 2751558705514429675}
   - component: {fileID: 4644094173624287900}
   - component: {fileID: 8692925599707244381}
-  m_Layer: 0
-  m_Name: enemy_basic_lvl_1
+  m_Layer: 8
+  m_Name: enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,9 +72,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7724e6d4b421cd148a0cdb1f0b715c68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyModel
+  meshFilter: {fileID: 1816019248338632387}
   movementComponent: {fileID: 8692925599707244381}
-  health: 10
-  moveSpeed: 3
+  enemyMesh: {fileID: 0}
+  maxHealth: 0
+  currentHealth: 0
+  moveSpeed: 0
+  needToMove: 0
+  damage: 0
 --- !u!114 &8692925599707244381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,7 +104,7 @@ GameObject:
   - component: {fileID: 1816019248338632387}
   - component: {fileID: 535704433151859898}
   - component: {fileID: 9076429800120288587}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +197,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

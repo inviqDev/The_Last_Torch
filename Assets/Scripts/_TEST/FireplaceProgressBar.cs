@@ -26,7 +26,7 @@ public class FireplaceProgressBar : ProgressBar
         _timer ??= new Timer(this);
         _currentActivationTime = 0.0f;
         
-        _timer.OnValueChanged += OnTimerValueChanged;
+        _timer.OnAnyValueChanged += OnAnyTimerValueChanged;
         _timer.TimerIsOver += OnActivationIsComplete;
     }
 
@@ -37,7 +37,7 @@ public class FireplaceProgressBar : ProgressBar
             _timer ??= new Timer(this);
             _currentActivationTime = 0.0f;
             
-            _timer.OnValueChanged += OnTimerValueChanged;
+            _timer.OnAnyValueChanged += OnAnyTimerValueChanged;
             _timer.TimerIsOver += OnActivationIsComplete;
         }
     }
@@ -60,7 +60,7 @@ public class FireplaceProgressBar : ProgressBar
         }
     }
 
-    private void OnTimerValueChanged(float currentTimerValue)
+    private void OnAnyTimerValueChanged(float currentTimerValue)
     {
         _currentActivationTime = currentTimerValue;
         FillProgressBar(_currentActivationTime / totalActivationTime);
@@ -93,7 +93,7 @@ public class FireplaceProgressBar : ProgressBar
         while (_currentActivationTime > 0.0f)
         {
             _currentActivationTime -= Time.deltaTime;
-            OnTimerValueChanged(_currentActivationTime);
+            OnAnyTimerValueChanged(_currentActivationTime);
             yield return null;
         }
 
@@ -105,7 +105,7 @@ public class FireplaceProgressBar : ProgressBar
     {
         if (_timer != null)
         {
-            _timer.OnValueChanged -= OnTimerValueChanged;
+            _timer.OnAnyValueChanged -= OnAnyTimerValueChanged;
             _timer.TimerIsOver -= OnActivationIsComplete;
         }
     }

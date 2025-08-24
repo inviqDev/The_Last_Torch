@@ -16,6 +16,4 @@ MonoBehaviour:
   moveSpeed: 5
   dashSpeed: 12
   dashDuration: 0.25
-  isAliveStatus: 0
-  ableToMove: 0
-  ableToAttack: 0
+  damage: 20
