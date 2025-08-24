@@ -15,7 +15,8 @@ public class Timer
     private float _totalTime;
     private float _currentTime;
 
-    public event Action<float> OnValueChanged;
+    public event Action<float> OnAnyValueChanged;
+    public event Action<int> OnTicked;
     public event Action TimerIsOver;
 
     public Timer(MonoBehaviour timerActivator) => _timerActivator = timerActivator;
@@ -38,7 +39,7 @@ public class Timer
         while (from <= to)
         {
             from += Time.deltaTime;
-            OnValueChanged?.Invoke(from);
+            OnAnyValueChanged?.Invoke(from);
             yield return null;
         }
         
@@ -50,8 +51,30 @@ public class Timer
         while (from >= to)
         {
             from -= Time.deltaTime;
-            OnValueChanged?.Invoke(from);
+            OnAnyValueChanged?.Invoke(from);
             yield return null;
+        }
+        
+        TimerIsOver?.Invoke();
+    }
+
+    public void StartTimerTicker(float intervalInSeconds, int repeatsAmount)
+    {
+        StopTimer();
+        _timerRoutine = TimerTickerRoutine(intervalInSeconds, repeatsAmount);
+        _timerActivator.StartCoroutine(_timerRoutine);
+    }
+    
+    private IEnumerator TimerTickerRoutine(float interval, int repeats)
+    {
+        var wait = new WaitForSeconds(interval);
+        var counter = repeats;
+
+        while (counter > 0)
+        {
+            yield return wait;
+            OnTicked?.Invoke(counter);
+            counter--;
         }
         
         TimerIsOver?.Invoke();

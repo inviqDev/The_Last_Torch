@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Scriptable Objects/PlayerConfig")]
 public class PlayerConfig : ScriptableObject
 {
-    [Header("Health settings")]
+    [Header("MaxHealth settings")]
     [SerializeField] private float health;
     public float Health => health;
     
@@ -16,4 +16,8 @@ public class PlayerConfig : ScriptableObject
     public float DashSpeed => dashSpeed;
     [SerializeField] private float dashDuration;
     public float DashDuration => dashDuration;
+    
+    [Header("Attack settings")]
+    [SerializeField] private float damage;
+    public float Damage => damage;
 }

@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour
 {
-    [SerializeField] private Movement movementComponent;
+    [SerializeField] private PlayerMovement movementComponent;
     [SerializeField] private Dash dashComponent;
     
     private InputActions _inputActions;
@@ -26,7 +26,15 @@ public class InputController : MonoBehaviour
         _inputActions.Gameplay.Level_Up.started += IncreasePlayerLevel;
         _inputActions.Gameplay.ChangeModifiers.started += ChangeModifiers;
         
+        _inputActions.Gameplay.SpawnWave.started += SpawnWave;
+        
         _inputActions.Gameplay.Enable();
+    }
+
+    private void SpawnWave(InputAction.CallbackContext ctx)
+    {
+        Debug.Assert(EnemySpawner.Instance, "Spawner is not found");
+        // EnemySpawner.Instance?.SpawnWave();
     }
 
     private void IncreasePlayerLevel(InputAction.CallbackContext ctx)
@@ -36,7 +44,7 @@ public class InputController : MonoBehaviour
 
     private void ChangeModifiers(InputAction.CallbackContext ctx)
     {
-        PlayerModel.Instance?.ChangeAllModifiers();
+        PlayerManager.Instance.CurrentPlayer.ChangeAllModifiers();
     }
     
     private void MoveIsStarted(InputAction.CallbackContext ctx)

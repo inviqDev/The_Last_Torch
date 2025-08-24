@@ -16,3 +16,4 @@ MonoBehaviour:
   moveSpeed: 15
   dashSpeed: 40
   dashDuration: 2
+  damage: 20

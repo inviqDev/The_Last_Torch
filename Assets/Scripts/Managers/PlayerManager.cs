@@ -14,7 +14,6 @@ public class PlayerManager : Singleton<PlayerManager>
     [SerializeField] private Transform _spawnPoint;
     private PlayerModel _currentPlayer;
     public PlayerModel CurrentPlayer => _currentPlayer;
-    
 
     protected override void Awake()
     {

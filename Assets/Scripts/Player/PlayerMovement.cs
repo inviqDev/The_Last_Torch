@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // ask for sealed recommendation
-public sealed class Movement : MonoBehaviour
+public sealed class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
 
