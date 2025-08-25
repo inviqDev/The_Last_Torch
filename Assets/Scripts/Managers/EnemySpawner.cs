@@ -35,7 +35,7 @@ public class EnemySpawner : Singleton<EnemySpawner>
         _timer.OnTicked += SpawnEnemy;
         _timer.TimerIsOver += zaglyshka;
         
-        _timer.StartTimerTicker(0.5f, _waveEnemiesAmount);
+        _timer.StartTimerTicker(1.25f, _waveEnemiesAmount);
     }
 
     private void zaglyshka()

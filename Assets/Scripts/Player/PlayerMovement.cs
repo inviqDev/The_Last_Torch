@@ -25,18 +25,11 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         _moveSpeed = config.MoveSpeed * _moveSpeedModifier;
     }
-
-    // method for "increase stats" pickupable card
+    
     public void IncreaseMoveSpeedModifier()
     {
-        print($"move speed modifier BEFORE : {_moveSpeedModifier}");
-        print($"move speed BEFORE: {_moveSpeed}");
         _moveSpeed *= _moveSpeedModifier;
         _moveSpeedModifier += 0.2f;
-        
-        print($"move speed modifier AFTER : {_moveSpeedModifier}");
-        print($"move speed AFTER: {_moveSpeed}");
-        
     }
 
     public void StartMovement(Vector3 direction)

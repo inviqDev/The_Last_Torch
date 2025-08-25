@@ -4,13 +4,17 @@ using UnityEngine.InputSystem;
 public class InputController : MonoBehaviour
 {
     [SerializeField] private PlayerMovement movementComponent;
+    [SerializeField] private Rotation lookComponent;
     [SerializeField] private Dash dashComponent;
     
     private InputActions _inputActions;
 
+    private Vector3 _lastMoveDirection;
+    
     private void Awake()
     {
         _inputActions = new InputActions();
+        _lastMoveDirection = Vector2.zero;
     }
 
     private void OnEnable()
@@ -61,12 +65,18 @@ public class InputController : MonoBehaviour
         var input = ctx.ReadValue<Vector2>();
         if (input == Vector2.zero) return;
         
-        var direction = new Vector3(input.x, 0, input.y);
-        movementComponent.MoveInDirection(direction);
+        var currentDirection = new Vector3(input.x, 0, input.y);
+        movementComponent.MoveInDirection(currentDirection);
+        
+        if (_lastMoveDirection == currentDirection) return;
+        
+        _lastMoveDirection = currentDirection;
+        lookComponent.FaceDirection(_lastMoveDirection);
     }
 
     private void MoveIsCanceled(InputAction.CallbackContext ctx)
     {
+        _lastMoveDirection = Vector2.zero;
         movementComponent.StopMovement();
     }
 
