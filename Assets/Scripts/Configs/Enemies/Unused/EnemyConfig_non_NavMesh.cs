@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyConfig", menuName = "Scriptable Objects/EnemyConfig")]
-public class EnemyConfig : ScriptableObject
+[CreateAssetMenu(fileName = "EnemyConfig_non_NavMesh", menuName = "Scriptable Objects/EnemyConfig_non_NavMesh")]
+public class EnemyConfig_non_NavMesh : ScriptableObject
 {
     [SerializeField] private Mesh enemyMesh;
     public Mesh EnemyMesh => enemyMesh;
@@ -17,7 +17,7 @@ public class EnemyConfig : ScriptableObject
     [Header("Movement settings")]
     [SerializeField] private float moveSpeed;
     public float MoveSpeed => moveSpeed;
-    
+
     [SerializeField] private bool needToMove;
     public bool NeedToMove => needToMove;
     
