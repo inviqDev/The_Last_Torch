@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyConfig
   enemyMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   maxHealth: 10
-  moveSpeed: 3
+  moveSpeed: 5
   needToMove: 1
   damage: 0

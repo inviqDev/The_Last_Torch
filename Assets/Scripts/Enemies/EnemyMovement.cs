@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private Rotation rotationComponent;
+    
     private PlayerModel _player;
     private float _moveSpeed;
 

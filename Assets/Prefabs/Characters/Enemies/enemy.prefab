@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2751558705514429675}
   - component: {fileID: 4644094173624287900}
   - component: {fileID: 8692925599707244381}
+  - component: {fileID: 4029274680169171494}
   m_Layer: 8
   m_Name: enemy
   m_TagString: Untagged
@@ -74,7 +75,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyModel
   meshFilter: {fileID: 1816019248338632387}
   movementComponent: {fileID: 8692925599707244381}
-  enemyMesh: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   moveSpeed: 0
@@ -92,6 +92,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4be36f0ecf4d1da6e00888e679670f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  controller: {fileID: 2751558705514429675}
+  rotationComponent: {fileID: 4029274680169171494}
+--- !u!114 &4029274680169171494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7882916538433953225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6d1d7f1d7761a0439478ff87ea9a704, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rotation
+  rotateTarget: {fileID: 3164749444688043708}
+  useSmoothDamp: 1
+  turnSpeedDegPerSec: 720
+  smoothTime: 0.08
+  deadZoneDeg: 0.25
+  upAxis: {x: 0, y: 1, z: 0}
 --- !u!1 &8461540215610863759
 GameObject:
   m_ObjectHideFlags: 0
