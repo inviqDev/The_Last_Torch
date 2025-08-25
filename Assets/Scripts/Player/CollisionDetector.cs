@@ -9,7 +9,7 @@ public class CollisionDetector : MonoBehaviour
     {
         if ((enemyLayerMask.value & 1 << other.gameObject.layer) == 0) return;
         
-        var player = PlayerManager.Instance.CurrentPlayer;
-        other.gameObject.GetComponent<EnemyModel>().TakeDamage(player.Damage);
+        var playerDamage = PlayerManager.Instance.CurrentPlayer.Damage;
+        other.gameObject.GetComponentInParent<EnemyModel_NavMesh>().TakeDamage(playerDamage);
     }
 }

@@ -2,12 +2,12 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class EnemyModel : MonoBehaviour
+public class EnemyModel_NON_navMesh : MonoBehaviour
 {
-    public event Action<EnemyModel> OnEnemyDeath;
+    public event Action<EnemyModel_NON_navMesh> OnEnemyDeath;
 
     [SerializeField] private MeshFilter meshFilter;
-    [SerializeField] private EnemyMovement movementComponent;
+    [SerializeField] private EnemyMovement_NON_NavMesh movementNonNavMeshComponent;
     
     
     #region REMOVE SERIALIZE FIELDS => MAKE IT PRIVATE
@@ -30,7 +30,7 @@ public class EnemyModel : MonoBehaviour
         Debug.Assert(PlayerManager.Instance, "PlayerManager has not been found");
     }
 
-    public void SetCurrentConfig(EnemyConfig config)
+    public void SetCurrentConfig(EnemyConfig_non_NavMesh config)
     {
         if (!PlayerManager.Instance) return;
 
@@ -45,7 +45,7 @@ public class EnemyModel : MonoBehaviour
         damage = config.Damage;
 
         meshFilter.mesh = config.EnemyMesh;
-        movementComponent.SetMovementSettings(_player, moveSpeed, needToMove);
+        movementNonNavMeshComponent.SetMovementSettings(_player, moveSpeed, needToMove);
     }
 
     public void TakeDamage(float incomingDamage)

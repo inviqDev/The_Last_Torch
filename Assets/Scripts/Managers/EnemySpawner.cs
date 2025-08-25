@@ -1,29 +1,32 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [DefaultExecutionOrder(-998)]
 public class EnemySpawner : Singleton<EnemySpawner>
 {
-    [SerializeField] private EnemyConfig[] configs;
-    private EnemyConfig _currentConfig;
+    [SerializeField] private EnemyConfig_NavMesh[] configs;
+    private EnemyConfig_NavMesh _currentConfigNavMesh;
 
-    [SerializeField] private EnemyModel[] enemyPrefabs;
+    [SerializeField] private EnemyModel_NavMesh[] enemyPrefabs;
     [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private float _enemySpawnInterval;
     [SerializeField] private int _waveEnemiesAmount;
 
-    private Stack<EnemyModel> _pool;
-    private List<EnemyModel> _spawnedEnemies;
+    private Stack<EnemyModel_NavMesh> _pool;
     private Timer _timer;
+    
+    // currently unused collection of launched enemies
+    private List<EnemyModel_NavMesh> _spawnedEnemies;
+    
 
     protected override void Awake()
     {
         base.Awake();
 
-        _currentConfig = configs[0];
+        _currentConfigNavMesh = configs[0];
 
-        _pool = new Stack<EnemyModel>();
-        _spawnedEnemies = new List<EnemyModel>();
+        _pool = new Stack<EnemyModel_NavMesh>();
+        _spawnedEnemies = new List<EnemyModel_NavMesh>();
 
         _timer = new Timer(this);
     }
@@ -33,15 +36,14 @@ public class EnemySpawner : Singleton<EnemySpawner>
         _timer.StopTimer();
 
         _timer.OnTicked += SpawnEnemy;
-        _timer.TimerIsOver += zaglyshka;
+        _timer.TimerIsOver += WaveIsFullyReleased;
         
-        _timer.StartTimerTicker(1.25f, _waveEnemiesAmount);
+        _timer.StartTimerTicker(_enemySpawnInterval, _waveEnemiesAmount);
     }
 
-    private void zaglyshka()
+    private void WaveIsFullyReleased()
     {
-        print("zaglyshka");
-        // Debug.Break();
+        print("Current wave is fully released => launch next wave of something ??");
     }
 
     private void SpawnEnemy(int counter)
@@ -49,19 +51,19 @@ public class EnemySpawner : Singleton<EnemySpawner>
         var redImprovedEnemySpawnInterval = 2.5f;
         if (counter % redImprovedEnemySpawnInterval == 0)
         {
-            _currentConfig = configs[1];
+            _currentConfigNavMesh = configs[1];
         }
         else
         {
-            _currentConfig = configs[0];
+            _currentConfigNavMesh = configs[0];
         }
         
-        GetEnemy(_currentConfig);
+        GetEnemy(_currentConfigNavMesh);
     }
 
-    private void GetEnemy(EnemyConfig config)
+    private void GetEnemy(EnemyConfig_NavMesh configNavMesh)
     {
-        EnemyModel enemy = null;
+        EnemyModel_NavMesh enemy = null;
         var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
         switch (_pool.Count)
@@ -77,16 +79,17 @@ public class EnemySpawner : Singleton<EnemySpawner>
 
         Debug.Assert(enemy, "enemy is not spawned");
 
-        enemy.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
+        enemy.NavMeshMover.WarpTo(spawnPoint.position);
+        // enemy.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
         enemy.transform.SetParent(null);
 
-        enemy.SetCurrentConfig(config);
+        enemy.SetCurrentConfig(configNavMesh);
         enemy.OnEnemyDeath += MoveEnemyToPool;
 
         _spawnedEnemies.Add(enemy);
     }
 
-    private void MoveEnemyToPool(EnemyModel enemy)
+    private void MoveEnemyToPool(EnemyModel_NavMesh enemy)
     {
         enemy.OnEnemyDeath -= MoveEnemyToPool;
 

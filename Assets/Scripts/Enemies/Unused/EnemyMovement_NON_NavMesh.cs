@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+public class EnemyMovement_NON_NavMesh : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
     [SerializeField] private Rotation rotationComponent;
