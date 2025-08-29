@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7034329582900553992}
   - component: {fileID: 4479476291269109723}
   - component: {fileID: 1852613517252287293}
+  - component: {fileID: 1895004586295658128}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -94,6 +95,7 @@ MonoBehaviour:
   movementComponent: {fileID: 7034329582900553992}
   lookComponent: {fileID: 1852613517252287293}
   dashComponent: {fileID: 4479476291269109723}
+  cameraMover: {fileID: 1895004586295658128}
 --- !u!114 &7034329582900553992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +140,24 @@ MonoBehaviour:
   smoothTime: 0.08
   deadZoneDeg: 0.25
   upAxis: {x: 0, y: 1, z: 0}
+--- !u!114 &1895004586295658128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432256446531588187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10d96c47d106f25428ca06432a8cf89c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.CameraMover
+  defaultOffsetFromTarget: {x: 0, y: 0.1, z: -0.12}
+  offsetDistance: 20
+  smoothTime: 0.2
+  minDistance: 10
+  maxDistance: 50
+  zoomSensitivity: 1
 --- !u!1 &7365291058574766826
 GameObject:
   m_ObjectHideFlags: 0
