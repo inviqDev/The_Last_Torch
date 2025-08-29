@@ -478,7 +478,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 0.99125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -502,13 +502,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 160948994}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30464083, y: -0.45911503, z: 0.17124812, w: 0.81675047}
-  m_LocalPosition: {x: 76.09682, y: 82.15425, z: -67.61161}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 30, y: -62, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &160948998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3308,6 +3308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1526450143}
+  - component: {fileID: 1526450144}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -3331,6 +3332,18 @@ Transform:
   - {fileID: 3827852861898024795}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1526450144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526450142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fec46b281f582347b583c7b7b90011f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.Level1_ScriptsLoader
 --- !u!1 &1528897790
 GameObject:
   m_ObjectHideFlags: 0
