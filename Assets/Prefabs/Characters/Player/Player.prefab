@@ -32,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 6432256446531588187}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.15, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -189,7 +189,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 0.5, z: 1.5}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4824527143115858894}
@@ -296,8 +296,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.75, y: 0.75, z: 0.75}
-  m_Center: {x: 0, y: 0.25, z: 0}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6838118327591267777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,9 +353,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 83934380488110778}
     m_Modifications:
+    - target: {fileID: 4286288867737199578, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5092293985524252187, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5248456809715085942, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
       propertyPath: m_Name
       value: Torch
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248456809715085942, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5782565592055704318, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -396,6 +408,22 @@ PrefabInstance:
     - target: {fileID: 5782565592055704318, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956790714820009712, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_BoundingSphereOverride.w
+      value: 0.00000016991044
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956790714820009712, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_BoundingSphereOverride.x
+      value: 7.43e-43
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956790714820009712, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_BoundingSphereOverride.y
+      value: -1366.7949
+      objectReference: {fileID: 0}
+    - target: {fileID: 5956790714820009712, guid: af13679f0438fb144a29d9544c6b825d, type: 3}
+      propertyPath: m_BoundingSphereOverride.z
+      value: 7.45e-43
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
