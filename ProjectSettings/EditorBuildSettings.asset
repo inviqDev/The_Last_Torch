@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scripts/Runtime/_my_tests/test_scene/Scenes/Bootstrap.unity
+    guid: 38cb08ea6e6bc1f40a70b4b5bf7bfda5
+  - enabled: 1
+    path: Assets/Scripts/Runtime/_my_tests/test_scene/Scenes/Test_Scene.unity
+    guid: ec054c1c3a63c97429df6bca870695c9
   m_configObjects:
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 72db58bbea071ff4c98978a9f22ad835, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: df3878adb7c626d40a8ea1ddb9c751b5, type: 3}
