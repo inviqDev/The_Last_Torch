@@ -23,7 +23,10 @@ namespace Runtime
             if (currentLevel > configs.Length - 1) return;
         
             _currentConfig = configs[currentLevel - 1];
-            
+        }
+
+        public void SpawnPlayer()
+        {
             _currentPlayer = Instantiate(playerPrefab, _spawnPoint.position, Quaternion.identity, null);
             _currentPlayer.ChangeConfig(_currentConfig);
         }
