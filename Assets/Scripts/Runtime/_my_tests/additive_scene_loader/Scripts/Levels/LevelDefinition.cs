@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Runtime._my_tests.test_scene.Scripts.Levels
+namespace Runtime._my_tests
 {
     [CreateAssetMenu(menuName = "Game/Level Definition", fileName = "LevelDefinition")]
     public sealed class LevelDefinition : ScriptableObject

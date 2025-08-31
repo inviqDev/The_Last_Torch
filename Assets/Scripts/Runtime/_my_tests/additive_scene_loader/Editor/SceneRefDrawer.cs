@@ -1,9 +1,8 @@
 #if UNITY_EDITOR
-using Runtime._my_tests.test_scene.Scripts;
 using UnityEditor;
 using UnityEngine;
 
-namespace Runtime._my_tests.test_scene.Editor
+namespace Runtime._my_tests
 {
     [CustomPropertyDrawer(typeof(SceneRef))]
     public class SceneRefDrawer : PropertyDrawer

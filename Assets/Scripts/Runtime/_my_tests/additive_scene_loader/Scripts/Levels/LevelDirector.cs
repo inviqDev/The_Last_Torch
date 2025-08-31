@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Runtime._my_tests.test_scene.Scripts.Levels
+namespace Runtime._my_tests
 {
     public class LevelDirector : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Runtime._my_tests.test_scene.Scripts
+namespace Runtime._my_tests
 {
     [Serializable]
     public struct SceneRef

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Runtime._Experiments
+namespace Runtime._my_tests
 {
     public enum FireplaceStatus
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Runtime._Experiments
+namespace Runtime._my_tests
 {
     public abstract class ProgressBar : MonoBehaviour
     {

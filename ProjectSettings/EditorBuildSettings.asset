@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scripts/Runtime/_my_tests/test_scene/Scenes/Bootstrap.unity
+    path: Assets/Scripts/Runtime/_my_tests/additive_scene_loader/Scenes/Bootstrap.unity
     guid: 38cb08ea6e6bc1f40a70b4b5bf7bfda5
   - enabled: 1
-    path: Assets/Scripts/Runtime/_my_tests/test_scene/Scenes/Test_Scene.unity
+    path: Assets/Scripts/Runtime/_my_tests/additive_scene_loader/Scenes/Test_Scene.unity
     guid: ec054c1c3a63c97429df6bca870695c9
   m_configObjects:
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 72db58bbea071ff4c98978a9f22ad835, type: 2}
