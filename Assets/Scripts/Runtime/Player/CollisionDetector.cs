@@ -11,7 +11,7 @@ namespace Runtime
         {
             if ((enemyLayerMask.value & 1 << other.gameObject.layer) == 0) return;
         
-            var playerDamage = PlayerManager.Instance.CurrentPlayer.Damage;
+            var playerDamage = PlayerManager.Instance.Player.Damage;
             other.gameObject.GetComponentInParent<EnemyModel_NavMesh>().TakeDamage(playerDamage);
         }
     }

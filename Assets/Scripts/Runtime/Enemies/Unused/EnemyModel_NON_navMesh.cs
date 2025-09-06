@@ -36,7 +36,7 @@ namespace Runtime.Unused
         {
             if (!PlayerManager.Instance) return;
 
-            _player = PlayerManager.Instance.CurrentPlayer;
+            _player = PlayerManager.Instance.Player;
 
             maxHealth = config.MaxHealth;
             currentHealth = config.MaxHealth;

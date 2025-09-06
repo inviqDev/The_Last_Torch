@@ -13,22 +13,15 @@ namespace Runtime
         private PlayerConfig _currentConfig;
     
         [SerializeField] private PlayerModel playerPrefab;
-        [SerializeField] private Transform _spawnPoint;
-        private PlayerModel _currentPlayer;
-        public PlayerModel CurrentPlayer => _currentPlayer;
+        private PlayerModel _player;
+        public PlayerModel Player => _player;
 
-        protected override void Awake()
+        public PlayerModel SpawnPlayer(Vector3 spawnPoint)
         {
-            Debug.Assert(currentLevel < configs.Length - 1, "PLAYER CURRENT LEVEL IS NOT VALID !");
-            if (currentLevel > configs.Length - 1) return;
-        
-            _currentConfig = configs[currentLevel - 1];
-        }
-
-        public void SpawnPlayer()
-        {
-            _currentPlayer = Instantiate(playerPrefab, _spawnPoint.position, Quaternion.identity, null);
-            _currentPlayer.ChangeConfig(_currentConfig);
+            _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
+            _player.ChangeConfig(configs[currentLevel - 1]);
+            
+            return _player;
         }
 
         public void IncreasePlayerLevel()

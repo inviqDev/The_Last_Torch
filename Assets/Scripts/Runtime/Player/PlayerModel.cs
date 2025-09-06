@@ -1,4 +1,9 @@
+#region usings
+
 using UnityEngine;
+using MyAssert = UnityEngine.Assertions.Assert;
+
+#endregion
 
 namespace Runtime
 {
@@ -6,9 +11,11 @@ namespace Runtime
     public class PlayerModel : MonoBehaviour
     {
         [SerializeField] private BoxCollider _collisionDetector;
-    
+
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
+
+        private PlayerManager pm;
 
         private float _moveSpeed;
 
@@ -18,9 +25,13 @@ namespace Runtime
         private float _damage;
         public float Damage => _damage;
 
-        private void Start()
+
+        private void OnEnable()
         {
-            PlayerManager.Instance.OnConfigChanged += ChangeConfig;
+            MyAssert.IsNotNull(PlayerManager.Instance, "PlayerManager is null");
+
+            pm = PlayerManager.Instance;
+            pm.OnConfigChanged += ChangeConfig;
         }
 
         public void ChangeConfig(PlayerConfig config)
@@ -29,10 +40,10 @@ namespace Runtime
             _dashSpeed = config.DashSpeed;
             _dashDuration = config.DashDuration;
             _damage = config.Damage;
-        
+
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
-        
+
             print($"moveSpeed: {_moveSpeed} // _dashSpeed: {_dashSpeed} // _dashDuration: {_dashDuration}");
         }
 
@@ -41,6 +52,13 @@ namespace Runtime
             movementComponent.IncreaseMoveSpeedModifier();
             dashComponent.IncreaseDashSpeedModifier();
             dashComponent.IncreaseDashDurationModifier();
+        }
+
+        private void OnDisable()
+        {
+            if (!pm) return;
+            
+            pm.OnConfigChanged -= ChangeConfig;
         }
     }
 }

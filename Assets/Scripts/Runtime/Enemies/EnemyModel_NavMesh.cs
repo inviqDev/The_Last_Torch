@@ -34,11 +34,9 @@ namespace Runtime
             Debug.Assert(PlayerManager.Instance, "PlayerManager has not been found");
         }
 
-        public void SetCurrentConfig(EnemyConfig_NavMesh configNavMesh)
+        public void SetConfig(EnemyConfig_NavMesh configNavMesh)
         {
-            if (!PlayerManager.Instance) return;
-
-            _player = PlayerManager.Instance.CurrentPlayer;
+            _player = GameManager.Instance.player;                
 
             meshFilter.mesh = configNavMesh.EnemyMesh;
         

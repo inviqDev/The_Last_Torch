@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using MyAsserts = UnityEngine.Assertions.Assert;
 
 namespace Runtime
 {
@@ -7,7 +8,7 @@ namespace Runtime
     public class EnemySpawner : Singleton<EnemySpawner>
     {
         [SerializeField] private EnemyConfig_NavMesh[] configs;
-        private EnemyConfig_NavMesh _currentConfigNavMesh;
+        private EnemyConfig_NavMesh _currentConfig;
 
         [SerializeField] private EnemyModel_NavMesh[] enemyPrefabs;
         [SerializeField] private Transform[] spawnPoints;
@@ -16,16 +17,16 @@ namespace Runtime
 
         private Stack<EnemyModel_NavMesh> _pool;
         private Timer _timer;
-    
+
         // currently unused collection of launched enemies
         private List<EnemyModel_NavMesh> _spawnedEnemies;
-    
+
 
         protected override void Awake()
         {
             base.Awake();
 
-            _currentConfigNavMesh = configs[0];
+            _currentConfig = configs[0];
 
             _pool = new Stack<EnemyModel_NavMesh>();
             _spawnedEnemies = new List<EnemyModel_NavMesh>();
@@ -39,7 +40,7 @@ namespace Runtime
 
             _timer.OnTicked += SpawnEnemy;
             _timer.TimerIsOver += WaveIsFullyReleased;
-        
+
             _timer.StartTimerTicker(_enemySpawnInterval, _waveEnemiesAmount);
         }
 
@@ -50,20 +51,23 @@ namespace Runtime
 
         private void SpawnEnemy(int counter)
         {
+            var enemy = TryGetEnemyFromPool();
+            MyAsserts.IsNotNull(enemy, "enemy is not spawned");
+
             var redImprovedEnemySpawnInterval = 2.5f;
             if (counter % redImprovedEnemySpawnInterval == 0)
             {
-                _currentConfigNavMesh = configs[1];
+                _currentConfig = configs[1];
             }
             else
             {
-                _currentConfigNavMesh = configs[0];
+                _currentConfig = configs[0];
             }
-        
-            GetEnemy(_currentConfigNavMesh);
+            
+            enemy.SetConfig(_currentConfig);
         }
 
-        private void GetEnemy(EnemyConfig_NavMesh configNavMesh)
+        private EnemyModel_NavMesh TryGetEnemyFromPool()
         {
             EnemyModel_NavMesh enemy = null;
             var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
@@ -82,13 +86,12 @@ namespace Runtime
             Debug.Assert(enemy, "enemy is not spawned");
 
             enemy.NavMeshMover.WarpTo(spawnPoint.position);
-            // enemy.transform.SetPositionAndRotation(spawnPoint.position, Quaternion.identity);
             enemy.transform.SetParent(null);
-
-            enemy.SetCurrentConfig(configNavMesh);
             enemy.OnEnemyDeath += MoveEnemyToPool;
 
             _spawnedEnemies.Add(enemy);
+
+            return enemy;
         }
 
         private void MoveEnemyToPool(EnemyModel_NavMesh enemy)
