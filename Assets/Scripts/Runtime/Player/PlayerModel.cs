@@ -1,5 +1,6 @@
 #region usings
 
+using System;
 using UnityEngine;
 using MyAssert = UnityEngine.Assertions.Assert;
 
@@ -10,12 +11,24 @@ namespace Runtime
     [RequireComponent(typeof(CharacterController))]
     public class PlayerModel : MonoBehaviour
     {
+        public Action<float> OnHealthChanged;
+        public Action OnPlayerDeath;
+
+        
+        [SerializeField] private PlayerHealthBar _healthBar;
+
         [SerializeField] private BoxCollider _collisionDetector;
 
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
 
         private PlayerManager pm;
+
+        #region Player_Stats
+
+        private float _health;
+        private float _currentHealth;
+        public float CurrentHealth => _currentHealth;
 
         private float _moveSpeed;
 
@@ -24,6 +37,8 @@ namespace Runtime
 
         private float _damage;
         public float Damage => _damage;
+
+        #endregion
 
 
         private void OnEnable()
@@ -36,6 +51,11 @@ namespace Runtime
 
         public void ChangeConfig(PlayerConfig config)
         {
+            _health = config.Health;
+            _currentHealth = _health;
+
+            _healthBar.Init(this);
+
             _moveSpeed = config.MoveSpeed;
             _dashSpeed = config.DashSpeed;
             _dashDuration = config.DashDuration;
@@ -54,10 +74,23 @@ namespace Runtime
             dashComponent.IncreaseDashDurationModifier();
         }
 
+        public void TakeDamage(float incomingDamage)
+        {
+            _currentHealth -= incomingDamage;
+
+            if (Mathf.Clamp(_currentHealth, 0, 100) <= 0)
+            {
+                OnPlayerDeath?.Invoke();
+                return;
+            }
+
+            OnHealthChanged?.Invoke(_currentHealth);
+        }
+
         private void OnDisable()
         {
             if (!pm) return;
-            
+
             pm.OnConfigChanged -= ChangeConfig;
         }
     }

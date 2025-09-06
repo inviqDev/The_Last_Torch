@@ -5,7 +5,6 @@ using MyAsserts = UnityEngine.Assertions.Assert;
 
 #endregion
 
-
 namespace Runtime
 {
     public class GameManager : Singleton<GameManager>
@@ -13,16 +12,20 @@ namespace Runtime
         [SerializeField] private LevelEnvironment levelEnv;
         [SerializeField] private PlayerManager pm;
 
+        public Camera CameraMain { get; private set; }
+        
         public PlayerModel player { get; private set; }
 
         protected override void Awake()
         {
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
-            player = pm.SpawnPlayer(playerSpawnPoint);
             
+            player = pm.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(player, "player is null");
+            
             /////////////////////////////////////////////////////////////
-            player.GetComponent<CameraMover>().Init(Camera.main, player.transform);
+            CameraMain = Camera.main;
+            player.GetComponent<CameraMover>().Init(CameraMain, player.transform);
         }
     }
 }
