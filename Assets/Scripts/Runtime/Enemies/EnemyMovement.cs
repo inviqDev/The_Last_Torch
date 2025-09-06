@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace Runtime
 {
-    public class EnemyMovement_NavMesh : MonoBehaviour
+    public class EnemyMovement : MonoBehaviour
     {
         [SerializeField] private NavMeshAgent agent;
 

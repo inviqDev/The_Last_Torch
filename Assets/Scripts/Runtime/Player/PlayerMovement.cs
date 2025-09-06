@@ -25,7 +25,7 @@ namespace Runtime
 
         public void SetMoveSettingsFromConfig(PlayerConfig config)
         {
-            _moveSpeed = config.MoveSpeed * _moveSpeedModifier;
+            _moveSpeed = config.moveSpeed * _moveSpeedModifier;
         }
     
         public void IncreaseMoveSpeedModifier()

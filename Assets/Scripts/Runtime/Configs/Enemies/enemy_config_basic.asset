@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb0a43fa11e430a449df9944900bdbd2, type: 3}
-  m_Name: config_enemy_basic
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyConfig
-  enemyMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  maxHealth: 10
-  moveSpeed: 3
+  m_Name: enemy_config_basic
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
+  maxHealth: 20
+  moveSpeed: 4
+  damage: 10
   angularSpeed: 720
   acceleration: 16
-  stoppingDistance: 1.5
-  damage: 10
+  stoppingDistance: 1

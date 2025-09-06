@@ -9,11 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ba854a440c119b4e96732bdcde63c69, type: 3}
-  m_Name: player_config_lvl_1
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerConfig
-  health: 100
+  m_Script: {fileID: 11500000, guid: fb0a43fa11e430a449df9944900bdbd2, type: 3}
+  m_Name: enemy_config_red
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
+  maxHealth: 25
   moveSpeed: 5
-  dashSpeed: 12
-  dashDuration: 0.25
   damage: 20
+  angularSpeed: 720
+  acceleration: 16
+  stoppingDistance: 12

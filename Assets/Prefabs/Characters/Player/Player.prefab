@@ -251,7 +251,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2548408165490082363}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -259,7 +259,7 @@ RectTransform:
   - {fileID: 8638997345501780800}
   - {fileID: 344565159573873495}
   m_Father: {fileID: 4931975718104430681}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -557,11 +557,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10d96c47d106f25428ca06432a8cf89c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.CameraMover
-  defaultOffsetFromTarget: {x: 0, y: 0.1, z: -0.12}
-  offsetDistance: 20
+  defaultOffsetFromTarget: {x: 0, y: 1, z: -1.2}
+  offsetDistance: 15
+  correctionZ: 5
   smoothTime: 0.2
-  minDistance: 10
-  maxDistance: 50
+  minDistance: 15
+  maxDistance: 65
   zoomSensitivity: 1
 --- !u!1 &7365291058574766826
 GameObject:

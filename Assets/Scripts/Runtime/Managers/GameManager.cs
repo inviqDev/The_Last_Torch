@@ -11,21 +11,28 @@ namespace Runtime
     {
         [SerializeField] private LevelEnvironment levelEnv;
         [SerializeField] private PlayerManager pm;
+        // [SerializeField] private 
 
         public Camera CameraMain { get; private set; }
         
-        public PlayerModel player { get; private set; }
+        public PlayerModel Player { get; private set; }
 
         protected override void Awake()
         {
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             
-            player = pm.SpawnPlayer(playerSpawnPoint);
-            MyAsserts.IsNotNull(player, "player is null");
+            Player = pm.SpawnPlayer(playerSpawnPoint);
+            MyAsserts.IsNotNull(Player, "Player is null");
             
             /////////////////////////////////////////////////////////////
             CameraMain = Camera.main;
-            player.GetComponent<CameraMover>().Init(CameraMain, player.transform);
+            Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
+            Player.OnPlayerDeath += OnPlayerDeath;
+        }
+
+        private void OnPlayerDeath()
+        {
+            
         }
     }
 }

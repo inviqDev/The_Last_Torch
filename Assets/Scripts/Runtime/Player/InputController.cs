@@ -59,7 +59,7 @@ namespace Runtime
 
         private void ChangeModifiers(InputAction.CallbackContext ctx)
         {
-            PlayerManager.Instance.Player.ChangeAllModifiers();
+            GameManager.Instance.Player.ChangeAllModifiers();
         }
     
         private void MoveIsStarted(InputAction.CallbackContext ctx)

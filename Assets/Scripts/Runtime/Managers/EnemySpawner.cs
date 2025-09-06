@@ -7,19 +7,19 @@ namespace Runtime
     [DefaultExecutionOrder(-998)]
     public class EnemySpawner : Singleton<EnemySpawner>
     {
-        [SerializeField] private EnemyConfig_NavMesh[] configs;
-        private EnemyConfig_NavMesh _currentConfig;
+        [SerializeField] private EnemyConfig[] configs;
+        private EnemyConfig _currentConfig;
 
-        [SerializeField] private EnemyModel_NavMesh[] enemyPrefabs;
+        [SerializeField] private EnemyModel[] enemyPrefabs;
         [SerializeField] private Transform[] spawnPoints;
         [SerializeField] private float _enemySpawnInterval;
         [SerializeField] private int _waveEnemiesAmount;
 
-        private Stack<EnemyModel_NavMesh> _pool;
+        private Stack<EnemyModel> _pool;
         private Timer _timer;
 
         // currently unused collection of launched enemies
-        private List<EnemyModel_NavMesh> _spawnedEnemies;
+        private List<EnemyModel> _spawnedEnemies;
 
 
         protected override void Awake()
@@ -28,8 +28,8 @@ namespace Runtime
 
             _currentConfig = configs[0];
 
-            _pool = new Stack<EnemyModel_NavMesh>();
-            _spawnedEnemies = new List<EnemyModel_NavMesh>();
+            _pool = new Stack<EnemyModel>();
+            _spawnedEnemies = new List<EnemyModel>();
 
             _timer = new Timer(this);
         }
@@ -67,9 +67,9 @@ namespace Runtime
             enemy.SetConfig(_currentConfig);
         }
 
-        private EnemyModel_NavMesh TryGetEnemyFromPool()
+        private EnemyModel TryGetEnemyFromPool()
         {
-            EnemyModel_NavMesh enemy = null;
+            EnemyModel enemy = null;
             var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
             switch (_pool.Count)
@@ -85,7 +85,7 @@ namespace Runtime
 
             Debug.Assert(enemy, "enemy is not spawned");
 
-            enemy.NavMeshMover.WarpTo(spawnPoint.position);
+            enemy.Mover.WarpTo(spawnPoint.position);
             enemy.transform.SetParent(null);
             enemy.OnEnemyDeath += MoveEnemyToPool;
 
@@ -94,7 +94,7 @@ namespace Runtime
             return enemy;
         }
 
-        private void MoveEnemyToPool(EnemyModel_NavMesh enemy)
+        private void MoveEnemyToPool(EnemyModel enemy)
         {
             enemy.OnEnemyDeath -= MoveEnemyToPool;
 

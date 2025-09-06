@@ -8,6 +8,7 @@ namespace Runtime
         [Tooltip("Offset distance => how far from target camera appears by default")]
         [SerializeField] private Vector3 defaultOffsetFromTarget;
         [SerializeField] private float offsetDistance = 20f;
+        [SerializeField] private float correctionZ;
 
         [Tooltip("Movement smoothing time")]
         [SerializeField] private float smoothTime = 0.2f;
@@ -55,7 +56,9 @@ namespace Runtime
             if (!_target || !_camera) return;
 
             var desiredPos = _target.position - _currentOffset;
+            desiredPos.z += correctionZ;
             var updatedPos = Vector3.SmoothDamp(_camera.transform.position, desiredPos, ref _smoothVel, smoothTime);
+            
             _camera.transform.position = updatedPos;
         }
 

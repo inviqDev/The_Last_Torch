@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ba854a440c119b4e96732bdcde63c69, type: 3}
-  m_Name: player_config_lvl_2
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerConfig
-  health: 120
-  moveSpeed: 10
-  dashSpeed: 20
-  dashDuration: 0.75
-  damage: 20
+  m_Name: player_config_vol_2
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerConfig
+  maxHealth: 100
+  moveSpeed: 5
+  damage: 10
+  dashSpeed: 14
+  dashDuration: 0.35

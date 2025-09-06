@@ -9,11 +9,10 @@ using MyAssert = UnityEngine.Assertions.Assert;
 namespace Runtime
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerModel : MonoBehaviour
+    public class PlayerModel : CharacterBase
     {
         public Action<float> OnHealthChanged;
         public Action OnPlayerDeath;
-
         
         [SerializeField] private PlayerHealthBar _healthBar;
 
@@ -51,15 +50,15 @@ namespace Runtime
 
         public void ChangeConfig(PlayerConfig config)
         {
-            _health = config.Health;
+            _health = config.maxHealth;
             _currentHealth = _health;
 
             _healthBar.Init(this);
 
-            _moveSpeed = config.MoveSpeed;
-            _dashSpeed = config.DashSpeed;
-            _dashDuration = config.DashDuration;
-            _damage = config.Damage;
+            _moveSpeed = config.moveSpeed;
+            _dashSpeed = config.dashSpeed;
+            _dashDuration = config.dashDuration;
+            _damage = config.damage;
 
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
@@ -77,14 +76,12 @@ namespace Runtime
         public void TakeDamage(float incomingDamage)
         {
             _currentHealth -= incomingDamage;
+            OnHealthChanged?.Invoke(_currentHealth);
 
             if (Mathf.Clamp(_currentHealth, 0, 100) <= 0)
             {
                 OnPlayerDeath?.Invoke();
-                return;
             }
-
-            OnHealthChanged?.Invoke(_currentHealth);
         }
 
         private void OnDisable()
