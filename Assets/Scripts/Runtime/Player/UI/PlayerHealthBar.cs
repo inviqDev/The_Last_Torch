@@ -1,6 +1,5 @@
 #region usings
 
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 

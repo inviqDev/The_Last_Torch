@@ -156,6 +156,15 @@ namespace Runtime
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""UseSkill"",
+                    ""type"": ""Button"",
+                    ""id"": ""8c2d2709-7b7f-4a18-a8cf-1bbdf1ade99d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -279,6 +288,61 @@ namespace Runtime
                     ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5e4574d2-3aa7-41d3-b2b2-3969f6483e23"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSkill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ce026857-44a1-4bf3-a3fe-d75bd182c87a"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSkill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f837448a-e8b4-4f44-ae7f-9c5d0eb2a252"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSkill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d3031062-6c6c-4724-9bb8-b4992b9ceba3"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSkill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33888b1a-1a62-4583-90cb-dbd907113164"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSkill"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -294,6 +358,7 @@ namespace Runtime
             m_Gameplay_ChangeModifiers = m_Gameplay.FindAction("ChangeModifiers", throwIfNotFound: true);
             m_Gameplay_SpawnWave = m_Gameplay.FindAction("SpawnWave", throwIfNotFound: true);
             m_Gameplay_Scroll = m_Gameplay.FindAction("Scroll", throwIfNotFound: true);
+            m_Gameplay_UseSkill = m_Gameplay.FindAction("UseSkill", throwIfNotFound: true);
         }
 
         ~@InputActions()
@@ -381,6 +446,7 @@ namespace Runtime
         private readonly InputAction m_Gameplay_ChangeModifiers;
         private readonly InputAction m_Gameplay_SpawnWave;
         private readonly InputAction m_Gameplay_Scroll;
+        private readonly InputAction m_Gameplay_UseSkill;
         /// <summary>
         /// Provides access to input actions defined in input action map "Gameplay".
         /// </summary>
@@ -420,6 +486,10 @@ namespace Runtime
             /// Provides access to the underlying input action "Gameplay/Scroll".
             /// </summary>
             public InputAction @Scroll => m_Wrapper.m_Gameplay_Scroll;
+            /// <summary>
+            /// Provides access to the underlying input action "Gameplay/UseSkill".
+            /// </summary>
+            public InputAction @UseSkill => m_Wrapper.m_Gameplay_UseSkill;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -467,6 +537,9 @@ namespace Runtime
                 @Scroll.started += instance.OnScroll;
                 @Scroll.performed += instance.OnScroll;
                 @Scroll.canceled += instance.OnScroll;
+                @UseSkill.started += instance.OnUseSkill;
+                @UseSkill.performed += instance.OnUseSkill;
+                @UseSkill.canceled += instance.OnUseSkill;
             }
 
             /// <summary>
@@ -499,6 +572,9 @@ namespace Runtime
                 @Scroll.started -= instance.OnScroll;
                 @Scroll.performed -= instance.OnScroll;
                 @Scroll.canceled -= instance.OnScroll;
+                @UseSkill.started -= instance.OnUseSkill;
+                @UseSkill.performed -= instance.OnUseSkill;
+                @UseSkill.canceled -= instance.OnUseSkill;
             }
 
             /// <summary>
@@ -588,6 +664,13 @@ namespace Runtime
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnScroll(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "UseSkill" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnUseSkill(InputAction.CallbackContext context);
         }
     }
 }

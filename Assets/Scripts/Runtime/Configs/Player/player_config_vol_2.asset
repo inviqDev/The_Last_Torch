@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: player_config_vol_2
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerConfig
   maxHealth: 100
-  moveSpeed: 5
+  moveSpeed: 15
   damage: 10
-  dashSpeed: 14
+  dashSpeed: 35
   dashDuration: 0.35
+  abilities:
+  - {fileID: 842794115751221977, guid: e23bca98410a5344e9c93942482226e3, type: 3}
+  - {fileID: 658806194960444512, guid: 39aa6d166c7aead48aba75dd3c6a69f0, type: 3}
+  - {fileID: 8620449695518031870, guid: 86a37031367a59744aa8c94cc7cd4f83, type: 3}

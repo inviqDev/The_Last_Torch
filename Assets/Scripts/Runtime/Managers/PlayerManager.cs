@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Runtime
@@ -19,9 +20,15 @@ namespace Runtime
         public PlayerModel SpawnPlayer(Vector3 spawnPoint)
         {
             _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
-            _player.ChangeConfig(configs[currentLevel - 1]);
+            LoadDefaultConfig();
             
             return _player;
+        }
+
+        public void LoadDefaultConfig()
+        {
+            var defaultConfig = configs[currentLevel - 1];
+            _player?.ChangeConfig(defaultConfig);
         }
 
         public void IncreasePlayerLevel()

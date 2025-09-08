@@ -13,13 +13,12 @@ namespace Runtime
     {
         public Action<float> OnHealthChanged;
         public Action OnPlayerDeath;
-        
+
         [SerializeField] private PlayerHealthBar _healthBar;
-
-        [SerializeField] private BoxCollider _collisionDetector;
-
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
+
+        [SerializeField] private PlayerAttack playerAttack;
 
         private PlayerManager pm;
 
@@ -39,7 +38,6 @@ namespace Runtime
 
         #endregion
 
-
         private void OnEnable()
         {
             MyAssert.IsNotNull(PlayerManager.Instance, "PlayerManager is null");
@@ -53,12 +51,12 @@ namespace Runtime
             _health = config.maxHealth;
             _currentHealth = _health;
 
-            _healthBar.Init(this);
-
             _moveSpeed = config.moveSpeed;
             _dashSpeed = config.dashSpeed;
             _dashDuration = config.dashDuration;
             _damage = config.damage;
+            
+            _healthBar.Init(this);
 
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
@@ -78,7 +76,7 @@ namespace Runtime
             _currentHealth -= incomingDamage;
             OnHealthChanged?.Invoke(_currentHealth);
 
-            if (Mathf.Clamp(_currentHealth, 0, 100) <= 0)
+            if (Mathf.Clamp(_currentHealth, 0, _health) <= 0)
             {
                 OnPlayerDeath?.Invoke();
             }

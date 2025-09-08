@@ -10,8 +10,8 @@ namespace Runtime
     public class GameManager : Singleton<GameManager>
     {
         [SerializeField] private LevelEnvironment levelEnv;
-        [SerializeField] private PlayerManager pm;
-        // [SerializeField] private 
+        [SerializeField] private PlayerManager playerManager;
+        [SerializeField] private UIManager UIManager;
 
         public Camera CameraMain { get; private set; }
         
@@ -21,8 +21,9 @@ namespace Runtime
         {
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             
-            Player = pm.SpawnPlayer(playerSpawnPoint);
+            Player = playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
+            playerManager.LoadDefaultConfig();
             
             /////////////////////////////////////////////////////////////
             CameraMain = Camera.main;
