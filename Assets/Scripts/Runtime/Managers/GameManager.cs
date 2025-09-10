@@ -14,16 +14,18 @@ namespace Runtime
         [SerializeField] private UIManager UIManager;
 
         public Camera CameraMain { get; private set; }
-        
         public PlayerModel Player { get; private set; }
 
         protected override void Awake()
         {
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             
+            
             Player = playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
-            playerManager.LoadDefaultConfig();
+            
+            UIManager.ResetAllAbilitiesUI();
+            playerManager.LoadDefaultConfig(UIManager.GetAbilityUI());
             
             /////////////////////////////////////////////////////////////
             CameraMain = Camera.main;

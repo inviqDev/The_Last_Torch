@@ -3,73 +3,62 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class EnemyModel : MonoBehaviour
+    public class EnemyModel : CharacterBase
     {
         public event Action<EnemyModel> OnEnemyDeath;
 
-        // [SerializeField] private MeshFilter meshFilter;
-
         [SerializeField] private EnemyMovement mover;
+
+        private float _angularSpeed;
+        private float _acceleration;
+        private float _stoppingDistance;
+        protected float damage;
+        
         public EnemyMovement Mover => mover;
-
-        #region REMOVE "FOR TESTING" SERIALIZED FIELDS => MAKE PRIVATE
-
-        [field: SerializeField] public float MaxHealth { get; private set; }
-        [field: SerializeField] public float CurrentHealth { get; private set; }
-
-        [field: SerializeField] public float MoveSpeed { get; private set; }
-        [field: SerializeField] public float AngularSpeed { get; private set; }
-        [field: SerializeField] public float Acceleration { get; private set; }
-        [field: SerializeField] public float StoppingDistance { get; private set; }
-
-
-        [field: SerializeField] public float Damage { get; private set; }
-
-        #endregion
 
         private void Start()
         {
             Debug.Assert(GameManager.Instance, "GameManager has not been found");
         }
-
         public void SetConfig(EnemyConfig config)
         {
             var player = GameManager.Instance.Player;
+            
+            health = config.maxHealth;
+            currentHealth = health;
+            moveSpeed = config.moveSpeed;
+            
+            healthBar.Init(this);
 
-            MaxHealth = config.maxHealth;
-            CurrentHealth = MaxHealth;
+            _angularSpeed = config.angularSpeed;
+            _acceleration = config.acceleration;
+            _stoppingDistance = config.stoppingDistance;
 
-            MoveSpeed = config.moveSpeed;
-            AngularSpeed = config.angularSpeed;
-            Acceleration = config.acceleration;
-            StoppingDistance = config.stoppingDistance;
-
-            Damage = config.damage;
+            damage = config.damage;
 
             mover.ApplyMovementConfig(player,
-                MoveSpeed, AngularSpeed, Acceleration, StoppingDistance);
+                moveSpeed, _angularSpeed, _acceleration, _stoppingDistance);
         }
 
-        public void TakeDamage(float incomingDamage)
+        public override void TakeDamage(float incomingDamage)
         {
-            print($"{transform.root.name} takes {incomingDamage} damage");
-            CurrentHealth = Mathf.Clamp(CurrentHealth - incomingDamage, 0, MaxHealth);
-
-            if (CurrentHealth <= 0)
-            {
-                // Add DROP item logic here
-
-                // Move from here to pool
-                PrepareToPool();
-                print(transform.root.name + " has been destroyed");
-                OnEnemyDeath?.Invoke(this);
-            }
+            base.TakeDamage(incomingDamage);
+            if (!(currentHealth <= 0)) return;
+            
+            LaunchOnEnemyDeathLogic();
         }
 
-        private void PrepareToPool()
+        private void LaunchOnEnemyDeathLogic()
         {
+            var currentPos = transform.position;
             mover.StopAndReset();
-            gameObject.SetActive(false);
+            OnEnemyDeath?.Invoke(this);
+                
+            // Add DROP item logic here
+            var drop = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            drop.transform.position = currentPos;
+            drop.GetComponent<BoxCollider>().isTrigger = true;
+            drop.GetComponent<MeshRenderer>().material.color = Color.red;
         }
 
         protected virtual void PerformAttack(CharacterBase target)

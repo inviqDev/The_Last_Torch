@@ -33,6 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4946985879746856036}
+  - {fileID: 2563095668740014764}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &8011138907982365748
@@ -85,14 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8efd1a269cc4b13b2198c805e911d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.SkeletonEnemy
+  healthBar: {fileID: 3353626554875654610}
   mover: {fileID: 9176691546186717458}
-  <MaxHealth>k__BackingField: 0
-  <CurrentHealth>k__BackingField: 0
-  <MoveSpeed>k__BackingField: 0
-  <AngularSpeed>k__BackingField: 0
-  <Acceleration>k__BackingField: 0
-  <StoppingDistance>k__BackingField: 0
-  <Damage>k__BackingField: 0
   _triggerDetector: {fileID: 5711451419781729639}
 --- !u!1 &8461540215610863759
 GameObject:
@@ -221,3 +216,120 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
+--- !u!1001 &341061594214545421
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3164749444688043708}
+    m_Modifications:
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6734069398027218171, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_Name
+      value: character_UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 7272431371683040727, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+--- !u!224 &2563095668740014764 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2822138866645400225, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+  m_PrefabInstance: {fileID: 341061594214545421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3353626554875654610 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3040431279741962719, guid: 8af6c2118a99cf14e859bdccbb75840d, type: 3}
+  m_PrefabInstance: {fileID: 341061594214545421}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b1c67067a8865e469b4fc52b9790d9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerHealthBar

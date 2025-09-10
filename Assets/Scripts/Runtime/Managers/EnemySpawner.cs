@@ -84,7 +84,7 @@ namespace Runtime
             }
 
             Debug.Assert(enemy, "enemy is not spawned");
-
+            
             enemy.Mover.WarpTo(spawnPoint.position);
             enemy.transform.SetParent(null);
             enemy.OnEnemyDeath += MoveEnemyToPool;

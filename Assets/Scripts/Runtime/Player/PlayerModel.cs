@@ -11,32 +11,23 @@ namespace Runtime
     [RequireComponent(typeof(CharacterController))]
     public class PlayerModel : CharacterBase
     {
-        public Action<float> OnHealthChanged;
         public Action OnPlayerDeath;
 
-        [SerializeField] private PlayerHealthBar _healthBar;
+        // [SerializeField] private HealthBar _healthBar;
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
 
         [SerializeField] private PlayerAttack playerAttack;
+        public PlayerAttack PlayerAttack => playerAttack;
 
         private PlayerManager pm;
 
-        #region Player_Stats
-
-        private float _health;
-        private float _currentHealth;
-        public float CurrentHealth => _currentHealth;
-
-        private float _moveSpeed;
-
+#region Player_Stats
+        
         private float _dashSpeed;
         private float _dashDuration;
 
-        private float _damage;
-        public float Damage => _damage;
-
-        #endregion
+#endregion
 
         private void OnEnable()
         {
@@ -48,20 +39,19 @@ namespace Runtime
 
         public void ChangeConfig(PlayerConfig config)
         {
-            _health = config.maxHealth;
-            _currentHealth = _health;
+            health = config.maxHealth;
+            currentHealth = health;
 
-            _moveSpeed = config.moveSpeed;
+            moveSpeed = config.moveSpeed;
             _dashSpeed = config.dashSpeed;
             _dashDuration = config.dashDuration;
-            _damage = config.damage;
             
-            _healthBar.Init(this);
+            healthBar.Init(this);
 
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
 
-            print($"moveSpeed: {_moveSpeed} // _dashSpeed: {_dashSpeed} // _dashDuration: {_dashDuration}");
+            print($"moveSpeed: {moveSpeed} // _dashSpeed: {_dashSpeed} // _dashDuration: {_dashDuration}");
         }
 
         public void ChangeAllModifiers()
@@ -71,15 +61,19 @@ namespace Runtime
             dashComponent.IncreaseDashDurationModifier();
         }
 
-        public void TakeDamage(float incomingDamage)
+        public override void TakeDamage(float incomingDamage)
         {
-            _currentHealth -= incomingDamage;
-            OnHealthChanged?.Invoke(_currentHealth);
+            base.TakeDamage(incomingDamage);
+            if (!(currentHealth <= 0)) return;
 
-            if (Mathf.Clamp(_currentHealth, 0, _health) <= 0)
-            {
-                OnPlayerDeath?.Invoke();
-            }
+            LaunchOnPlayerDeathLogic();
+        }
+
+        private void LaunchOnPlayerDeathLogic()
+        {
+            print("PLAYER IS DEAD !");
+            gameObject.SetActive(false);
+            OnPlayerDeath?.Invoke();
         }
 
         private void OnDisable()

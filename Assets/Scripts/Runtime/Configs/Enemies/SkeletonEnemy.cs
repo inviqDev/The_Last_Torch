@@ -14,11 +14,11 @@ namespace Runtime
         protected override void PerformAttack(CharacterBase target)
         {
             // play anim
+            if (target is PlayerModel player)
+            {
+                player.TakeDamage(damage);
+            }
             
-            var dam = Damage;
-            var player = target as PlayerModel;
-
-            player?.TakeDamage(dam);
         }
 
         private void OnDisable()

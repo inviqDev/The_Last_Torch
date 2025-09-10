@@ -18,7 +18,7 @@ namespace Runtime
         [Header("Target select")] [SerializeField]
         private LayerMask enemyLayerMask; // слой врагов для raycast
 
-        [SerializeField] private float aimMaxDistance = 200f;
+        // [SerializeField] private float aimMaxDistance = 200f;
 
         // --- простейший режим выбора цели ---
         // private bool _isSelectingTarget = false;

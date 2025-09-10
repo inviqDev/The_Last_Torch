@@ -9,7 +9,8 @@ namespace Runtime
         [SerializeField] private LayerMask enemyLayerMask;
         [SerializeField] private PlayerAttack playerAttackComponent;
 
-        private List<EnemyModel> _attackableEnemies;
+        public List<EnemyModel> _attackableEnemies;
+        public bool EnemyExists => _attackableEnemies.Count > 0;
 
         private void OnEnable()
         {
@@ -21,11 +22,24 @@ namespace Runtime
         {
             if (OtherIsNotEnemy(other, out var enemy)) return;
 
+            enemy.OnEnemyDeath += OnEnemyDeath;
             _attackableEnemies.Add(enemy);
             playerAttackComponent.enabled = true;
-            
-            // var playerDamage = GameManager.Instance.Player.Damage;
-            // other.gameObject.GetComponent<EnemyModel>().TakeDamage(playerDamage);
+        }
+
+        private void OnEnemyDeath(EnemyModel enemy)
+        {
+            enemy.OnEnemyDeath -= OnEnemyDeath;
+            RemoveEnemyFromAttackableCollection(enemy);
+        }
+
+        private void RemoveEnemyFromAttackableCollection(EnemyModel enemy)
+        {
+            _attackableEnemies.Remove(enemy);
+            if (_attackableEnemies.Count == 0)
+            {
+                playerAttackComponent.enabled = false;
+            }
         }
 
         public EnemyModel GetClosestEnemyFromList()
@@ -52,12 +66,7 @@ namespace Runtime
         private void OnTriggerExit(Collider other)
         {
             if (OtherIsNotEnemy(other, out var enemy)) return;
-
-            _attackableEnemies.Remove(enemy);
-            if (_attackableEnemies.Count == 0)
-            {
-                playerAttackComponent.enabled = false;
-            }
+            RemoveEnemyFromAttackableCollection(enemy);
         }
 
         private bool OtherIsNotEnemy(Collider other, out EnemyModel enemy)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Runtime
@@ -9,6 +8,12 @@ namespace Runtime
     {
         public event Action<PlayerConfig> OnConfigChanged;
 
+        //////////////////////////////////////////////////
+        [SerializeField] private AbilityConfig lightning;
+        [SerializeField] private AbilityConfig frost;
+        //////////////////////////////////////////////////
+        
+        [SerializeField] private AbilityConfig defaultAbilityConfig;
         [SerializeField] private PlayerConfig[] configs;
         [SerializeField] private int currentLevel;
         private PlayerConfig _currentConfig;
@@ -19,16 +24,22 @@ namespace Runtime
 
         public PlayerModel SpawnPlayer(Vector3 spawnPoint)
         {
-            _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
-            LoadDefaultConfig();
-            
-            return _player;
+            return _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
         }
 
-        public void LoadDefaultConfig()
+        public void LoadDefaultConfig(AbilityUI abilityUI)
         {
+            UnityEngine.Assertions.Assert.IsNotNull(_player, "player is null");
+
             var defaultConfig = configs[currentLevel - 1];
             _player?.ChangeConfig(defaultConfig);
+            
+            var newAbility = new Ability(_player, defaultAbilityConfig, abilityUI);
+            _player?.PlayerAttack.AddNewAbility(newAbility);
+            
+            // ========================================== //
+            _player?.PlayerAttack.AddNewAbility(new Ability(_player, lightning, UIManager.Instance?.GetAbilityUI()));
+            _player?.PlayerAttack.AddNewAbility(new Ability(_player, frost, UIManager.Instance?.GetAbilityUI()));
         }
 
         public void IncreasePlayerLevel()

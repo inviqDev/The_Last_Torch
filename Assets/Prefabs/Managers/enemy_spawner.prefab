@@ -243,7 +243,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a26048e18a4979c47a2efb851344a9c0, type: 2}
   - {fileID: 11400000, guid: 6076df7a059cfa545a8a9d87ce144a3a, type: 2}
   enemyPrefabs:
-  - {fileID: 3759920369388064347, guid: 0e93b78ebfe37d049889bc519acee19b, type: 3}
+  - {fileID: 7137391189395878695, guid: 0e93b78ebfe37d049889bc519acee19b, type: 3}
   spawnPoints:
   - {fileID: 7566866661674604006}
   - {fileID: 8557000988179204948}
@@ -254,7 +254,7 @@ MonoBehaviour:
   - {fileID: 550442823117731086}
   - {fileID: 253379987384208058}
   _enemySpawnInterval: 1.25
-  _waveEnemiesAmount: 12
+  _waveEnemiesAmount: 34
 --- !u!1 &5757194293231428539
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,28 +5,44 @@ namespace Runtime
 {
     public class PlayerAttack : MonoBehaviour
     {
-        [Header("Find closest enemy settings")] 
-        [SerializeField] private LayerMask enemyLayerMask;
+        [Header("Find closest enemy settings")] [SerializeField]
+        private LayerMask enemyLayerMask;
+
         [SerializeField] private float overlapRadius = 14f;
-        
+
         [SerializeField] private AttackableEnemiesCollector collector;
-        
-        // [SerializeField] private List<Ability> abilities;
-        // [SerializeField] private List<Ability> targetAbilities;
+
+        private List<Ability> autoAttackAbilities;
 
         private readonly Collider[] overlapColliders = new Collider[128];
         private Transform closestEnemy;
 
-        // private void Update()
-        // {
-        //     foreach (var a in abilities)
-        //     {
-        //         if (a.State != Ability.AbilityState.Ready) continue;
-        //         
-        //         var enemy = collector.GetClosestEnemyFromList();
-        //         a.Activate(enemy);
-        //     }
-        // }
+        private void Awake()
+        {
+            autoAttackAbilities = new List<Ability>();
+        }
+
+        public void AddNewAbility(Ability ability)
+        {
+            autoAttackAbilities.Add(ability);
+        }
+
+        private void Update()
+        {
+            if (!collector.EnemyExists) return;
+
+            foreach (var a in autoAttackAbilities)
+            {
+                if (a.State != Ability.AbilityState.Ready) continue;
+
+                var enemy = collector.GetClosestEnemyFromList();
+                // var vfx = Instantiate(a.AbilityVFX, enemy.transform.position, Quaternion.identity);
+                enemy.TakeDamage(a.Damage);
+                a.SetAbilityState(Ability.AbilityState.OnCooldown);
+                
+                if (enemy.CurrentHealth <= 0) return;
+            }
+        }
 
         private EnemyModel GetClosestEnemyPhysicsOverlap()
         {
