@@ -71,8 +71,6 @@ namespace Runtime
 
         private void LaunchOnPlayerDeathLogic()
         {
-            print("PLAYER IS DEAD !");
-            gameObject.SetActive(false);
             OnPlayerDeath?.Invoke();
         }
 

@@ -35,7 +35,12 @@ namespace Runtime
 
         private void OnPlayerDeath()
         {
+            print("PLAYER IS DEAD !");
             
+            UIManager.TurnOnGameplayUI();
+            gameObject.SetActive(false);
+            
+            Time.timeScale = 0f;
         }
     }
 }

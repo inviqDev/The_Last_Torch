@@ -13,6 +13,7 @@ namespace Runtime
         protected float currentHealth;
         protected float moveSpeed;
         
+        public float Health => health;
         public float CurrentHealth => currentHealth;
         
         public virtual void TakeDamage(float incomingDamage)
