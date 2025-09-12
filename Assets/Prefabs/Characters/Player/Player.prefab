@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 788152584972958013}
   - component: {fileID: 2631918413885425405}
   - component: {fileID: 6055564229998812072}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: enemies_collector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,7 +181,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.CameraMover
   defaultOffsetFromTarget: {x: 0, y: 1, z: -1.2}
   offsetDistance: 15
-  correctionZ: 5
   smoothTime: 0.2
   minDistance: 15
   maxDistance: 65
@@ -202,6 +201,10 @@ MonoBehaviour:
   movementComponent: {fileID: 7034329582900553992}
   dashComponent: {fileID: 4479476291269109723}
   playerAttack: {fileID: 2947505582540525192}
+  levelsAmount: 5
+  firstLevelExp: 100
+  multiplier: 2
+  levelsExp: []
 --- !u!114 &2052228038588309076
 MonoBehaviour:
   m_ObjectHideFlags: 0

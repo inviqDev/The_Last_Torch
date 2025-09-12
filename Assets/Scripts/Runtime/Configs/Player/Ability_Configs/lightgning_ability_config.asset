@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ea28685e72e70644b1790b127868b5c, type: 3}
+  m_Name: lightgning_ability_config
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
+  abilityName: LIGHTNING
+  abilityIcon: {fileID: 21300000, guid: 8b8b6d4921a12024d9f38d23f8143b27, type: 3}
+  progressTime: 0.5
+  cooldownTime: 1
+  abilityVFX: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}
+  damage: 5

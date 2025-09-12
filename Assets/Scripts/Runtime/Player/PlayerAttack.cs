@@ -5,44 +5,57 @@ namespace Runtime
 {
     public class PlayerAttack : MonoBehaviour
     {
-        [Header("Find closest enemy settings")] [SerializeField]
-        private LayerMask enemyLayerMask;
-
+        [Header("Find closest enemy settings")] 
+        [SerializeField] private LayerMask enemyLayerMask;
         [SerializeField] private float overlapRadius = 14f;
 
         [SerializeField] private AttackableEnemiesCollector collector;
-
-        private List<Ability> autoAttackAbilities;
-
         private readonly Collider[] overlapColliders = new Collider[128];
-        private Transform closestEnemy;
+
+        private List<Ability> activeAutoAttackAbilities;
+        private EnemyModel closestEnemy;
 
         private void Awake()
         {
-            autoAttackAbilities = new List<Ability>();
+            activeAutoAttackAbilities = new List<Ability>();
         }
 
         public void AddNewAbility(Ability ability)
         {
-            autoAttackAbilities.Add(ability);
+            activeAutoAttackAbilities.Add(ability);
         }
 
         private void Update()
         {
             if (!collector.EnemyExists) return;
 
-            foreach (var a in autoAttackAbilities)
+            foreach (var ability in activeAutoAttackAbilities)
             {
-                if (a.State != Ability.AbilityState.Ready) continue;
+                if (ability.State != Ability.AbilityState.Ready) continue;
 
-                var enemy = collector.GetClosestEnemyFromList();
-                // var vfx = Instantiate(a.AbilityVFX, enemy.transform.position, Quaternion.identity);
-                enemy.TakeDamage(a.Damage);
-                a.SetAbilityState(Ability.AbilityState.OnCooldown);
+                closestEnemy = collector.GetClosestEnemyFromList();
+                var vfx = Instantiate(ability.AbilityVFX);
+                vfx.UseAbility(transform, closestEnemy.transform);
                 
-                if (enemy.CurrentHealth <= 0) return;
+                closestEnemy.TakeDamage(ability.Damage);
+                ability.SetAbilityState(Ability.AbilityState.OnCooldown);
+
+                if (closestEnemy.CurrentHealth <= 0) return;
             }
         }
+
+        // private void UseAbility(Ability ability, EnemyModel enemy)
+        // {
+        //     if (ability.AbilityVFX)
+        //     {
+        //         var vfx = Instantiate(ability.AbilityVFX, transform.position, Quaternion.identity);
+        //         vfx.GetComponent<LightningBolt>().Fire(transform, enemy.transform);
+        //     }
+        //     
+        //     enemy.TakeDamage(ability.Damage);
+        //     ability.SetAbilityState(Ability.AbilityState.OnCooldown);
+        // }
+
 
         private EnemyModel GetClosestEnemyPhysicsOverlap()
         {
@@ -54,6 +67,7 @@ namespace Runtime
 
             if (count == 0) return null;
 
+            Transform closestTransform = null;
             var minSqrMag = float.MaxValue;
             for (var i = 0; i < count; i++)
             {
@@ -64,11 +78,20 @@ namespace Runtime
                 if (currentSqrMag < minSqrMag)
                 {
                     minSqrMag = currentSqrMag;
-                    closestEnemy = currentCol.transform;
+                    closestTransform = currentCol.transform;
                 }
             }
+            
+            if (!closestTransform) return null;
+            UnityEngine.Assertions.Assert.IsNotNull(closestTransform, "closest transform is not found");
 
-            return closestEnemy.root.TryGetComponent(out EnemyModel enemy) ? enemy : null;
+            if (!closestTransform.root.TryGetComponent<EnemyModel>(out var enemyModel))
+            {
+                UnityEngine.Assertions.Assert.IsNotNull(enemyModel, "closest transform doesn't have EnemyModel component");
+                return null;
+            }
+
+            return enemyModel;
         }
     }
 }

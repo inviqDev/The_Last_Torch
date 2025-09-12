@@ -11,47 +11,101 @@ namespace Runtime
     [RequireComponent(typeof(CharacterController))]
     public class PlayerModel : CharacterBase
     {
+        public Action OnNextAbilityIsAvailable;
+        public Action<float, float> OnPlayerLevelChanged;
+        
+        public Action<float> OnPlayerExpChanged;
         public Action OnPlayerDeath;
 
-        // [SerializeField] private HealthBar _healthBar;
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
 
         [SerializeField] private PlayerAttack playerAttack;
-        public PlayerAttack PlayerAttack => playerAttack;
 
-        private PlayerManager pm;
-
-#region Player_Stats
+        [SerializeField] private int levelsAmount;
+        [SerializeField] private float firstLevelExp;
+        [SerializeField] private float multiplier = 2f;
+        public float[] levelsExp;
+        private int _currentLevel = 1;
+        private float _currentLevelMaxExp;
         
+        
+        public PlayerAttack PlayerAttack => playerAttack;
+        
+
+        #region Player_Stats
+
+        // total statistics?
+        // private float _totalCollectedExp;
+        
+        private float _currentExp;
         private float _dashSpeed;
         private float _dashDuration;
 
-#endregion
+        #endregion
 
-        private void OnEnable()
+
+        private int GetCurrentLevelExpIndex()
         {
-            MyAssert.IsNotNull(PlayerManager.Instance, "PlayerManager is null");
-
-            pm = PlayerManager.Instance;
-            pm.OnConfigChanged += ChangeConfig;
+            return _currentLevel - 1;
         }
 
-        public void ChangeConfig(PlayerConfig config)
+        private void SetUpLevelsExpArray()
         {
+            levelsExp = new float[levelsAmount];
+            levelsExp[GetCurrentLevelExpIndex()] = firstLevelExp;
+
+            _currentExp = 0f;
+            // _totalCollectedExp = 0f;
+            _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+
+            var currentValue = firstLevelExp;
+            for (var i = 1; i < levelsAmount; i++)
+            {
+                levelsExp[i] = currentValue * multiplier;
+                currentValue = levelsExp[i];
+            }
+            
+            OnNextAbilityIsAvailable?.Invoke();
+            OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+        }
+
+        public void SetUpPlayerConfig(PlayerConfig config)
+        {
+            SetUpLevelsExpArray();
+            OnPlayerExpChanged?.Invoke(_currentExp);
+            
             health = config.maxHealth;
             currentHealth = health;
 
             moveSpeed = config.moveSpeed;
             _dashSpeed = config.dashSpeed;
             _dashDuration = config.dashDuration;
-            
+
             healthBar.Init(this);
 
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
+        }
 
-            print($"moveSpeed: {moveSpeed} // _dashSpeed: {_dashSpeed} // _dashDuration: {_dashDuration}");
+        public void CollectExp(float pickedExpAmount)
+        {
+            _currentExp += pickedExpAmount;
+
+            if (_currentExp >= _currentLevelMaxExp)
+            {
+                // save "delta"
+                _currentExp -= _currentLevelMaxExp;
+                
+                // level up
+                ++_currentLevel;
+                _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+                
+                OnNextAbilityIsAvailable?.Invoke();
+                OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+            }
+
+            OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
         public void ChangeAllModifiers()
@@ -72,13 +126,6 @@ namespace Runtime
         private void LaunchOnPlayerDeathLogic()
         {
             OnPlayerDeath?.Invoke();
-        }
-
-        private void OnDisable()
-        {
-            if (!pm) return;
-
-            pm.OnConfigChanged -= ChangeConfig;
         }
     }
 }

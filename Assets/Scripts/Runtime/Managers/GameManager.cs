@@ -15,21 +15,21 @@ namespace Runtime
 
         public Camera CameraMain { get; private set; }
         public PlayerModel Player { get; private set; }
+        
 
         protected override void Awake()
         {
+            CameraMain = Camera.main;
+            
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
-            
-            
             Player = playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
             
-            UIManager.ResetAllAbilitiesUI();
-            playerManager.LoadDefaultConfig(UIManager.GetAbilityUI());
+            UIManager.InitLevelUI(Player);
+            playerManager.LoadPlayerDefaultConfig();
             
-            /////////////////////////////////////////////////////////////
-            CameraMain = Camera.main;
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
+            
             Player.OnPlayerDeath += OnPlayerDeath;
         }
 

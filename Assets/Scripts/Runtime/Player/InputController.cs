@@ -15,8 +15,8 @@ namespace Runtime
         private InputActions _inputActions;
         private Vector3 _lastMoveDirection;
 
-        [Header("Target select")] [SerializeField]
-        private LayerMask enemyLayerMask; // слой врагов для raycast
+        // [Header("Target select")] [SerializeField]
+        // private LayerMask enemyLayerMask; // слой врагов для raycast
 
         // [SerializeField] private float aimMaxDistance = 200f;
 
@@ -42,8 +42,7 @@ namespace Runtime
             _inputActions.Gameplay.Dash.performed += DashIsPerformed;
 
             _inputActions.Gameplay.Scroll.performed += OnScrollPerformed;
-
-            _inputActions.Gameplay.Level_Up.started += IncreasePlayerLevel;
+            
             _inputActions.Gameplay.ChangeModifiers.started += ChangeModifiers;
 
             // _inputActions.Gameplay.UseSkill.performed += OnUseAbilityPerformed;
@@ -54,11 +53,6 @@ namespace Runtime
         private void OnScrollPerformed(InputAction.CallbackContext ctx)
         {
             cameraMover.SetOffset(ctx.ReadValue<Vector2>().y);
-        }
-
-        private void IncreasePlayerLevel(InputAction.CallbackContext ctx)
-        {
-            PlayerManager.Instance?.IncreasePlayerLevel();
         }
 
         private void ChangeModifiers(InputAction.CallbackContext ctx)
@@ -128,7 +122,6 @@ namespace Runtime
 
             _inputActions.Gameplay.Scroll.performed -= OnScrollPerformed;
 
-            _inputActions.Gameplay.Level_Up.started -= IncreasePlayerLevel;
             _inputActions.Gameplay.ChangeModifiers.started -= ChangeModifiers;
 
             _inputActions.Gameplay.Disable();

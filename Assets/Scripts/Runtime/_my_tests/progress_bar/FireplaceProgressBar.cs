@@ -11,7 +11,7 @@ namespace Runtime._my_tests
     public class FireplaceProgressBar : ProgressBar
     {
         [SerializeField, Range(1, 10)] private int totalActivationTime;
-    
+        
         private Timer _timer;
         private float _currentActivationTime;
         private FireplaceStatus _status;
@@ -46,7 +46,7 @@ namespace Runtime._my_tests
 
         private void OnTriggerEnter(Collider other)
         {
-            var isPlayer = other.CompareTag(PlayerManager.Instance.Player.tag);
+            var isPlayer = other.CompareTag(GameManager.Instance?.Player.tag);
             var alreadyActive = _status == FireplaceStatus.Activated;
             if (!isPlayer && alreadyActive) return;
         
@@ -76,7 +76,7 @@ namespace Runtime._my_tests
 
         private void OnTriggerExit(Collider other)
         {
-            var isPlayer = other.CompareTag(PlayerManager.Instance.Player.tag);
+            var isPlayer = other.CompareTag(GameManager.Instance.Player.tag);
             // var alreadyActive = _status == FireplaceStatus.Activated;
             if (!isPlayer) return; //&& alreadyActive) return;
 

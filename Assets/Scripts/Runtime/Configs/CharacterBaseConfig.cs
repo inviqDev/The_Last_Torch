@@ -10,9 +10,6 @@ namespace Runtime
         [Header("Movement settings")]
         public float moveSpeed;
     
-        [Header("Ability settings")]
-        public Ability startAbility;
-        
         [Header("Attack settings")]
         public float damage;
     }

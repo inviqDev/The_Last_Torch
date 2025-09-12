@@ -2,10 +2,13 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Configs/Characters/Player", fileName = "PlayerConfig")]
+    [CreateAssetMenu(menuName = "Ability_Configs/Characters/Player", fileName = "PlayerConfig")]
     public class PlayerConfig : CharacterBaseConfig
     {
-        public AbilityConfig defaultAbility;
+        [Header("Ability settings")]
+        public AbilityConfig[] abilities;
+        
+        public float startExp;
         
         [Header("Dash settings")]
         public float dashSpeed;

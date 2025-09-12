@@ -9,10 +9,12 @@ namespace Runtime
 
         [SerializeField] private EnemyMovement mover;
 
+        protected float damage;
+        
         private float _angularSpeed;
         private float _acceleration;
         private float _stoppingDistance;
-        protected float damage;
+        private EnemyDropConfig dropConfig;
         
         public EnemyMovement Mover => mover;
 
@@ -23,6 +25,8 @@ namespace Runtime
         public void SetConfig(EnemyConfig config)
         {
             var player = GameManager.Instance.Player;
+
+            dropConfig = config.dropConfig;
             
             health = config.maxHealth;
             currentHealth = health;
@@ -45,20 +49,17 @@ namespace Runtime
             base.TakeDamage(incomingDamage);
             if (!(currentHealth <= 0)) return;
             
+            mover.StopAndReset();
+            
             LaunchOnEnemyDeathLogic();
+            
+            OnEnemyDeath?.Invoke(this);
         }
 
-        private void LaunchOnEnemyDeathLogic()
+        protected virtual void LaunchOnEnemyDeathLogic()
         {
-            var currentPos = transform.position;
-            mover.StopAndReset();
-            OnEnemyDeath?.Invoke(this);
-                
-            // Add DROP item logic here
-            var drop = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            drop.transform.position = currentPos;
-            drop.GetComponent<BoxCollider>().isTrigger = true;
-            drop.GetComponent<MeshRenderer>().material.color = Color.red;
+            var drop = Instantiate(dropConfig.dropGO, transform.position, Quaternion.identity);
+            drop.GetComponent<EnemyDrop>().SetExpGainedAmount(dropConfig.expGained);
         }
 
         protected virtual void PerformAttack(CharacterBase target)

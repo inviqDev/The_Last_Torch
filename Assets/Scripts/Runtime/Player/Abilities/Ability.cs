@@ -18,45 +18,48 @@ namespace Runtime
         private Sprite _abilityIcon;
 
         private float _damage;
-        private float _cooldown;
-        private GameObject _abilityVFX;
+        private float _progressTime;
+        private float _cooldownTime;
         
-        private readonly AbilityUI _abilityUI;
+        private AbilityVFX _abilityVFX;
+        
+        private readonly AbilitySlot _abilitySlot;
         private readonly Timer _timer;
         
         public AbilityState State => state;
-        public GameObject AbilityVFX => _abilityVFX;
+        public AbilityVFX AbilityVFX => _abilityVFX;
         public float Damage => _damage;
         
-        public Ability(MonoBehaviour owner, AbilityConfig config, AbilityUI abilityUI)
+        public Ability(MonoBehaviour owner, AbilityConfig config, AbilitySlot abilitySlot)
         {
             state = AbilityState.None;
             
             _abilityName = config.abilityName;
             _abilityIcon = config.abilityIcon;
 
+            _abilityVFX = config.abilityVFX;
+            _progressTime = config.progressTime;
+            _cooldownTime = config.cooldownTime;
             _damage = config.damage;
-            _cooldown = config.cooldown;
-            _abilityVFX = config.abilityPrefab;
             
-            _abilityUI = abilityUI;
+            _abilitySlot = abilitySlot;
             InitAbilityUI(config);
             
             _timer = new Timer(owner);
             _timer.OnAnyValueChanged += OnCooldownValueChanged;
             _timer.TimerIsOver += SetAbilityIsReadyState;
 
-            _timer.StartFromToTimer(0f, config.cooldown, TimerType.Increasing);
+            _timer.StartFromToTimer(0f, config.cooldownTime, TimerType.Increasing);
         }
 
         private void InitAbilityUI(AbilityConfig config)
         {
-            _abilityUI.SetUpAbilityUI(config, true);
+            _abilitySlot.SetUpAbilityUI(config, true);
         }
         
         private void OnCooldownValueChanged(float currentCooldown)
         {
-            _abilityUI.ShowCooldownProgress(currentCooldown);
+            _abilitySlot.ShowCooldownProgress(currentCooldown);
         }
 
         private void SetAbilityIsReadyState()
@@ -68,13 +71,14 @@ namespace Runtime
         {
             state = newState;
 
-            if (state == AbilityState.InProgress)
+            switch (state)
             {
-                
-            }
-            else if (state == AbilityState.OnCooldown)
-            {
-                _timer.StartFromToTimer(0f, _cooldown, TimerType.Increasing);
+                case AbilityState.InProgress:
+                    _timer.StartFromToTimer(0f, _progressTime, TimerType.Increasing);
+                    break;
+                case AbilityState.OnCooldown:
+                    _timer.StartFromToTimer(0f, _cooldownTime, TimerType.Increasing);
+                    break;
             }
         }
     }
