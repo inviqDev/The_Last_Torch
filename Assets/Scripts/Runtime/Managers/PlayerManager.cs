@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Runtime
@@ -6,47 +7,42 @@ namespace Runtime
     [DefaultExecutionOrder(-999)]
     public class PlayerManager : Singleton<PlayerManager>
     {
-        public event Action<PlayerConfig> OnConfigChanged;
-
-        [SerializeField] private PlayerConfig[] configs;
-        [SerializeField] private int currentLevel;
-        private PlayerConfig _currentConfig;
-    
         [SerializeField] private PlayerModel playerPrefab;
-        [SerializeField] private Transform _spawnPoint;
-        private PlayerModel _currentPlayer;
-        public PlayerModel CurrentPlayer => _currentPlayer;
-
-        protected override void Awake()
-        {
-            Debug.Assert(currentLevel < configs.Length - 1, "PLAYER CURRENT LEVEL IS NOT VALID !");
-            if (currentLevel > configs.Length - 1) return;
+        [SerializeField] private PlayerConfig playerConfig;
         
-            _currentConfig = configs[currentLevel - 1];
+        private PlayerModel _player;
+        private int _nextAbilityIndex;
+
+        public PlayerModel SpawnPlayer(Vector3 spawnPoint)
+        {
+            return _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
         }
 
-        public void SpawnPlayer()
+        public void LoadPlayerDefaultConfig()
         {
-            _currentPlayer = Instantiate(playerPrefab, _spawnPoint.position, Quaternion.identity, null);
-            _currentPlayer.ChangeConfig(_currentConfig);
+            UnityEngine.Assertions.Assert.IsNotNull(_player, "player is null");
+            
+            _player.OnNextAbilityIsAvailable += OnNextAbilityAvailable;
+            _player.OnPlayerDeath += OnPlayerDeath;
+
+            _nextAbilityIndex = 0;
+            _player.SetUpPlayerConfig(playerConfig);
         }
 
-        public void IncreasePlayerLevel()
+        private void OnNextAbilityAvailable()
         {
-            ++currentLevel;
-            LoadNextLevelConfig();
+            var nextAbility = playerConfig.abilities[_nextAbilityIndex];
+            var availableSlot = UIManager.Instance?.GetAvailableAbilitySlot();
+            var newAbility = new Ability(_player, nextAbility, availableSlot);
+            
+            _player?.PlayerAttack.AddNewAbility(newAbility);
+            _nextAbilityIndex++;
         }
-
-        private void LoadNextLevelConfig()
-        {
-            if (currentLevel > configs.Length)
-            {
-                print("OVER LIMIT");
-                currentLevel = 1;
-            }
         
-            _currentConfig = configs[currentLevel - 1];
-            OnConfigChanged?.Invoke(_currentConfig);
+        private void OnPlayerDeath()
+        {
+            _player.OnNextAbilityIsAvailable -= OnNextAbilityAvailable;
+            _player.OnPlayerDeath -= OnPlayerDeath;
         }
     }
 }

@@ -38,10 +38,11 @@ namespace Runtime
 
         private IEnumerator IncreasingTimerRoutine(float from, float to)
         {
-            while (from <= to)
+            var timerValue = from;
+            while (timerValue <= to)
             {
-                from += Time.deltaTime;
-                OnAnyValueChanged?.Invoke(from);
+                timerValue += Time.deltaTime;
+                OnAnyValueChanged?.Invoke(timerValue);
                 yield return null;
             }
         
@@ -50,10 +51,11 @@ namespace Runtime
 
         private IEnumerator DecreasingTimerRoutine(float from, float to)
         {
-            while (from >= to)
+            var timerValue = from;
+            while (timerValue >= to)
             {
-                from -= Time.deltaTime;
-                OnAnyValueChanged?.Invoke(from);
+                timerValue -= Time.deltaTime;
+                OnAnyValueChanged?.Invoke(timerValue);
                 yield return null;
             }
         

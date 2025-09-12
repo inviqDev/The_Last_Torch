@@ -1,39 +1,111 @@
+#region usings
+
+using System;
 using UnityEngine;
+using MyAssert = UnityEngine.Assertions.Assert;
+
+#endregion
 
 namespace Runtime
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerModel : MonoBehaviour
+    public class PlayerModel : CharacterBase
     {
-        [SerializeField] private BoxCollider _collisionDetector;
-    
+        public Action OnNextAbilityIsAvailable;
+        public Action<float, float> OnPlayerLevelChanged;
+        
+        public Action<float> OnPlayerExpChanged;
+        public Action OnPlayerDeath;
+
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
 
-        private float _moveSpeed;
+        [SerializeField] private PlayerAttack playerAttack;
 
+        [SerializeField] private int levelsAmount;
+        [SerializeField] private float firstLevelExp;
+        [SerializeField] private float multiplier = 2f;
+        public float[] levelsExp;
+        private int _currentLevel = 1;
+        private float _currentLevelMaxExp;
+        
+        
+        public PlayerAttack PlayerAttack => playerAttack;
+        
+
+        #region Player_Stats
+
+        // total statistics?
+        // private float _totalCollectedExp;
+        
+        private float _currentExp;
         private float _dashSpeed;
         private float _dashDuration;
 
-        private float _damage;
-        public float Damage => _damage;
+        #endregion
 
-        private void Start()
+
+        private int GetCurrentLevelExpIndex()
         {
-            PlayerManager.Instance.OnConfigChanged += ChangeConfig;
+            return _currentLevel - 1;
         }
 
-        public void ChangeConfig(PlayerConfig config)
+        private void SetUpLevelsExpArray()
         {
-            _moveSpeed = config.MoveSpeed;
-            _dashSpeed = config.DashSpeed;
-            _dashDuration = config.DashDuration;
-            _damage = config.Damage;
-        
+            levelsExp = new float[levelsAmount];
+            levelsExp[GetCurrentLevelExpIndex()] = firstLevelExp;
+
+            _currentExp = 0f;
+            // _totalCollectedExp = 0f;
+            _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+
+            var currentValue = firstLevelExp;
+            for (var i = 1; i < levelsAmount; i++)
+            {
+                levelsExp[i] = currentValue * multiplier;
+                currentValue = levelsExp[i];
+            }
+            
+            OnNextAbilityIsAvailable?.Invoke();
+            OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+        }
+
+        public void SetUpPlayerConfig(PlayerConfig config)
+        {
+            SetUpLevelsExpArray();
+            OnPlayerExpChanged?.Invoke(_currentExp);
+            
+            health = config.maxHealth;
+            currentHealth = health;
+
+            moveSpeed = config.moveSpeed;
+            _dashSpeed = config.dashSpeed;
+            _dashDuration = config.dashDuration;
+
+            healthBar.Init(this);
+
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
-        
-            print($"moveSpeed: {_moveSpeed} // _dashSpeed: {_dashSpeed} // _dashDuration: {_dashDuration}");
+        }
+
+        public void CollectExp(float pickedExpAmount)
+        {
+            _currentExp += pickedExpAmount;
+
+            if (_currentExp >= _currentLevelMaxExp)
+            {
+                // save "delta"
+                _currentExp -= _currentLevelMaxExp;
+                
+                // level up
+                ++_currentLevel;
+                _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+                
+                OnNextAbilityIsAvailable?.Invoke();
+                OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+            }
+
+            OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
         public void ChangeAllModifiers()
@@ -41,6 +113,19 @@ namespace Runtime
             movementComponent.IncreaseMoveSpeedModifier();
             dashComponent.IncreaseDashSpeedModifier();
             dashComponent.IncreaseDashDurationModifier();
+        }
+
+        public override void TakeDamage(float incomingDamage)
+        {
+            base.TakeDamage(incomingDamage);
+            if (!(currentHealth <= 0)) return;
+
+            LaunchOnPlayerDeathLogic();
+        }
+
+        private void LaunchOnPlayerDeathLogic()
+        {
+            OnPlayerDeath?.Invoke();
         }
     }
 }

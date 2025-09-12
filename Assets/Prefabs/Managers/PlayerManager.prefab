@@ -44,10 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1cf304137bf24e46b3fef63107e6b87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  configs:
-  - {fileID: 11400000, guid: 358c351c9e76a5d49ac248ce1884b104, type: 2}
-  - {fileID: 11400000, guid: 6fc113dd59d1731419a725b8bea3ec17, type: 2}
-  - {fileID: 11400000, guid: a8a708a1857b0884ead8e73293742273, type: 2}
-  currentLevel: 1
   playerPrefab: {fileID: 2555167345274003748, guid: 886c6876f44c4e74e95ba1ddb31a18e2, type: 3}
-  _spawnPoint: {fileID: 0}
+  lightning: {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}
+  frost: {fileID: 11400000, guid: 474360a21aa250f4f88ff75fc56a80a7, type: 2}
+  fireZone: {fileID: 11400000, guid: 401a7e26e7127994a9123ff9e20e9a32, type: 2}
+  playerConfig: {fileID: 11400000, guid: 8ed8de1614083014d98260dcc85bbc06, type: 2}

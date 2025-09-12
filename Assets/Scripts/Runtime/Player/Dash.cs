@@ -26,8 +26,8 @@ namespace Runtime
 
         public void SetDashSettingsFromConfig(PlayerConfig config)
         {
-            _dashSpeed = config.DashSpeed * _dashSpeedModifier;
-            _dashDuration = config.DashDuration * _dashDurationModifier;
+            _dashSpeed = config.dashSpeed * _dashSpeedModifier;
+            _dashDuration = config.dashDuration * _dashDurationModifier;
         }
 
         public void IncreaseDashSpeedModifier()
