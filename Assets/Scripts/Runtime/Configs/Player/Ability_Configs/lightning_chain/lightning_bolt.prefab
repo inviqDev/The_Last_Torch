@@ -192,3 +192,4 @@ MonoBehaviour:
   fadeOut: 0.05
   followWhileAlive: 0
   uvScrollSpeed: 6
+  uniquePoolKey: lightning_bolt

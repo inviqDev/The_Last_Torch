@@ -20,10 +20,14 @@ namespace Runtime
         }
     }
 
-    public abstract class AbilityVFX : MonoBehaviour
+    public abstract class AbilityVFX : MonoBehaviour, IPoolable
     {
         /// Сигнал «визуал полностью закончился» (ровно один раз).
         public event Action<Ability> Finished;
+        
+        [Header("Unique Key in pool dictionary")]
+        [SerializeField] protected string uniquePoolKey;
+        public string UniquePoolKey => uniquePoolKey;
 
         public void Play(AbilityContext ctx)
         {
@@ -34,5 +38,16 @@ namespace Runtime
 
         /// Реализуют наследники (корутина/логика эффекта внутри)
         protected abstract void OnPlay(AbilityContext ctx);
+
+        
+        public void OnGetFromPool()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void ReturnToPool()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

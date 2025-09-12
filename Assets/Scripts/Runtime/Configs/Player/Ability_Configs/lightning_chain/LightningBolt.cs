@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 namespace Runtime
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class LightningBolt : MonoBehaviour
+    public class LightningBolt : MonoBehaviour, IPoolable
     {
         [Header("Shape")]
         [SerializeField] private float pointsPerUnit = 3f;
@@ -142,6 +142,20 @@ namespace Runtime
             {
                 var c = baseColor; c.a *= a; mat.SetColor("_Color", c);
             }
+        }
+
+        [Header("Unique Key in pool dictionary")]
+        [SerializeField] protected string uniquePoolKey;
+        public string UniquePoolKey => uniquePoolKey;
+        
+        public void OnGetFromPool()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void ReturnToPool()
+        {
+            gameObject.SetActive(false);
         }
     }
 }

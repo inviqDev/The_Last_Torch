@@ -44,10 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5698b8d4ba0a46c781e9031fd6f90cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.LightningChain
+  uniquePoolKey: lightning_chain
   maxBounces: 5
   hopRadius: 8
   hopDelay: 0.2
   hopSpeed: 0
   boltPrefab: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}
-  segmentDuration: 0.85
+  segmentDuration: 0.25
   waitSegmentsToFinish: 1

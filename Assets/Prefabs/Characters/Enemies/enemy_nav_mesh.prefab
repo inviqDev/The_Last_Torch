@@ -87,6 +87,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.SkeletonEnemy
   healthBar: {fileID: 3353626554875654610}
+  uniquePoolKey: Enemy
   mover: {fileID: 9176691546186717458}
   _triggerDetector: {fileID: 5711451419781729639}
 --- !u!1 &8461540215610863759

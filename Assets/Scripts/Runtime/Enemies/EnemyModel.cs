@@ -3,9 +3,14 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class EnemyModel : CharacterBase
+    public class EnemyModel : CharacterBase, IPoolable
     {
         public event Action<EnemyModel> OnEnemyDeath;
+        
+        [Header("Unique Key in pool dictionary")]
+        [SerializeField] protected string uniquePoolKey;
+        public string UniquePoolKey => uniquePoolKey;
+        
 
         [SerializeField] private EnemyMovement mover;
 
@@ -14,6 +19,7 @@ namespace Runtime
         private float _angularSpeed;
         private float _acceleration;
         private float _stoppingDistance;
+        
         private EnemyDropConfig dropConfig;
         
         public EnemyMovement Mover => mover;
@@ -49,21 +55,32 @@ namespace Runtime
             base.TakeDamage(incomingDamage);
             if (!(currentHealth <= 0)) return;
             
-            mover.StopAndReset();
-            
             LaunchOnEnemyDeathLogic();
-            
             OnEnemyDeath?.Invoke(this);
         }
 
         protected virtual void LaunchOnEnemyDeathLogic()
         {
+            mover.StopAndReset();
+            
             var drop = Instantiate(dropConfig.dropGO, transform.position, Quaternion.identity);
             drop.GetComponent<EnemyDrop>().SetExpGainedAmount(dropConfig.expGained);
+            
+            ReturnToPool();
         }
 
         protected virtual void PerformAttack(CharacterBase target)
         {
+        }
+        
+        public void OnGetFromPool()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void ReturnToPool()
+        {
+            gameObject.SetActive(false);
         }
     }
 }

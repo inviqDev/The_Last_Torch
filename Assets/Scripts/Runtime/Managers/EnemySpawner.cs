@@ -51,9 +51,15 @@ namespace Runtime
 
         private void SpawnEnemy(int counter)
         {
-            var enemy = TryGetEnemyFromPool();
+            var enemy = Pool.Instance?.TryGetObjectFromPool(enemyPrefabs[0]);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");
+            
+            var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            enemy.Mover.WarpTo(spawnPoint.position);
+            enemy.transform.SetParent(null);
 
+            enemy.OnEnemyDeath += MoveEnemyToPool;
+            
             var redImprovedEnemySpawnInterval = 2.5f;
             if (counter % redImprovedEnemySpawnInterval == 0)
             {
@@ -65,33 +71,6 @@ namespace Runtime
             }
             
             enemy.SetConfig(_currentConfig);
-        }
-
-        private EnemyModel TryGetEnemyFromPool()
-        {
-            EnemyModel enemy = null;
-            var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-
-            switch (_pool.Count)
-            {
-                case > 0:
-                    enemy = _pool.Pop();
-                    enemy.gameObject.SetActive(true);
-                    break;
-                case 0:
-                    enemy = Instantiate(enemyPrefabs[0]);
-                    break;
-            }
-
-            Debug.Assert(enemy, "enemy is not spawned");
-            
-            enemy.Mover.WarpTo(spawnPoint.position);
-            enemy.transform.SetParent(null);
-            enemy.OnEnemyDeath += MoveEnemyToPool;
-
-            _spawnedEnemies.Add(enemy);
-
-            return enemy;
         }
 
         private void MoveEnemyToPool(EnemyModel enemy)
