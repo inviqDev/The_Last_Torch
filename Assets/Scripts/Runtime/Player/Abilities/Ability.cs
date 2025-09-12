@@ -32,7 +32,7 @@ namespace Runtime
         
         public Ability(MonoBehaviour owner, AbilityConfig config, AbilitySlot abilitySlot)
         {
-            state = AbilityState.None;
+            state = AbilityState.OnCooldown;
             
             _abilityName = config.abilityName;
             _abilityIcon = config.abilityIcon;
@@ -47,9 +47,14 @@ namespace Runtime
             
             _timer = new Timer(owner);
             _timer.OnAnyValueChanged += OnCooldownValueChanged;
-            _timer.TimerIsOver += SetAbilityIsReadyState;
+            
+            _timer.TimerIsOver += () =>
+            {
+                if (state == AbilityState.OnCooldown)
+                    state = AbilityState.Ready;
+            };
 
-            _timer.StartFromToTimer(0f, config.cooldownTime, TimerType.Increasing);
+            SetAbilityState(AbilityState.OnCooldown);
         }
 
         private void InitAbilityUI(AbilityConfig config)
@@ -64,7 +69,10 @@ namespace Runtime
 
         private void SetAbilityIsReadyState()
         {
-            state = AbilityState.Ready;
+            if (state == AbilityState.OnCooldown)
+            {
+                state = AbilityState.Ready;
+            }
         }
 
         public void SetAbilityState(AbilityState newState)
@@ -74,7 +82,7 @@ namespace Runtime
             switch (state)
             {
                 case AbilityState.InProgress:
-                    _timer.StartFromToTimer(0f, _progressTime, TimerType.Increasing);
+                    _timer.StopTimer();
                     break;
                 case AbilityState.OnCooldown:
                     _timer.StartFromToTimer(0f, _cooldownTime, TimerType.Increasing);

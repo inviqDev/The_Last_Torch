@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: red_enemy_config
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
   maxHealth: 25
-  moveSpeed: 5
+  moveSpeed: 25
   damage: 20
   dropConfig: {fileID: 11400000, guid: 8c879132581902b42bed6fdf69b42167, type: 2}
   angularSpeed: 720

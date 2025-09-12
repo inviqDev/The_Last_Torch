@@ -3,13 +3,15 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class AttackableEnemiesCollector : MonoBehaviour
+    public class EnemiesCollector : MonoBehaviour
     {
         [Header("Enemy model layer")] 
         [SerializeField] private LayerMask enemyLayerMask;
         [SerializeField] private PlayerAttack playerAttackComponent;
 
-        public List<EnemyModel> _attackableEnemies;
+        private List<EnemyModel> _attackableEnemies;
+        public List<EnemyModel> AttackableEnemies => _attackableEnemies;
+        
         public bool EnemyExists => _attackableEnemies.Count > 0;
 
         private void OnEnable()

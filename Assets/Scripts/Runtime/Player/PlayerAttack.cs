@@ -5,18 +5,15 @@ namespace Runtime
 {
     public class PlayerAttack : MonoBehaviour
     {
-        [Header("Find closest enemy settings")] 
-        [SerializeField] private LayerMask enemyLayerMask;
-        [SerializeField] private float overlapRadius = 14f;
-
-        [SerializeField] private AttackableEnemiesCollector collector;
-        private readonly Collider[] overlapColliders = new Collider[128];
+        [SerializeField] private EnemiesCollector collector;
 
         private List<Ability> activeAutoAttackAbilities;
         private EnemyModel closestEnemy;
 
         private void Awake()
         {
+            UnityEngine.Assertions.Assert.IsNotNull(GameManager.Instance, "GameManager is not found");
+            
             activeAutoAttackAbilities = new List<Ability>();
         }
 
@@ -33,65 +30,34 @@ namespace Runtime
             {
                 if (ability.State != Ability.AbilityState.Ready) continue;
 
-                closestEnemy = collector.GetClosestEnemyFromList();
-                var vfx = Instantiate(ability.AbilityVFX);
-                vfx.UseAbility(transform, closestEnemy.transform);
-                
-                closestEnemy.TakeDamage(ability.Damage);
-                ability.SetAbilityState(Ability.AbilityState.OnCooldown);
+                var enemy = collector.GetClosestEnemyFromList();
+                if (!enemy) continue;
 
-                if (closestEnemy.CurrentHealth <= 0) return;
-            }
-        }
+                // 1) Способность уходит в InProgress
+                ability.SetAbilityState(Ability.AbilityState.InProgress);
 
-        // private void UseAbility(Ability ability, EnemyModel enemy)
-        // {
-        //     if (ability.AbilityVFX)
-        //     {
-        //         var vfx = Instantiate(ability.AbilityVFX, transform.position, Quaternion.identity);
-        //         vfx.GetComponent<LightningBolt>().Fire(transform, enemy.transform);
-        //     }
-        //     
-        //     enemy.TakeDamage(ability.Damage);
-        //     ability.SetAbilityState(Ability.AbilityState.OnCooldown);
-        // }
-
-
-        private EnemyModel GetClosestEnemyPhysicsOverlap()
-        {
-            var count = Physics.OverlapSphereNonAlloc(
-                transform.position,
-                overlapRadius,
-                overlapColliders,
-                enemyLayerMask);
-
-            if (count == 0) return null;
-
-            Transform closestTransform = null;
-            var minSqrMag = float.MaxValue;
-            for (var i = 0; i < count; i++)
-            {
-                var currentCol = overlapColliders[i];
-                if (!currentCol) continue;
-
-                var currentSqrMag = (transform.position - currentCol.transform.position).sqrMagnitude;
-                if (currentSqrMag < minSqrMag)
+                // 2) Инстансим VFX (без кастов)
+                var vfx = Instantiate(ability.AbilityVFX); // тип: AbilityVFX
+                void OnFinished(Ability a)
                 {
-                    minSqrMag = currentSqrMag;
-                    closestTransform = currentCol.transform;
+                    vfx.Finished -= OnFinished;
+                    a.SetAbilityState(Ability.AbilityState.OnCooldown);
                 }
-            }
-            
-            if (!closestTransform) return null;
-            UnityEngine.Assertions.Assert.IsNotNull(closestTransform, "closest transform is not found");
+                vfx.Finished += OnFinished;
 
-            if (!closestTransform.root.TryGetComponent<EnemyModel>(out var enemyModel))
-            {
-                UnityEngine.Assertions.Assert.IsNotNull(enemyModel, "closest transform doesn't have EnemyModel component");
-                return null;
-            }
+                // 3) Контекст — общая точка расширения для любых VFX
+                var ctx = new AbilityContext(
+                    player: GameManager.Instance.Player,
+                    initialTarget: enemy,
+                    enemiesCollector: collector,
+                    ability: ability
+                );
 
-            return enemyModel;
+                vfx.Play(ctx);
+
+                // не триггерим другие абилки в этот же кадр
+                break;
+            }
         }
     }
 }
