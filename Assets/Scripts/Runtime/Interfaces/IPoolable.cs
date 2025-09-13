@@ -7,6 +7,6 @@ namespace Runtime
         public string UniquePoolKey { get; }
         
         public void OnGetFromPool();
-        public void ReturnToPool();
+        public void OnReturnToPool();
     }
 }

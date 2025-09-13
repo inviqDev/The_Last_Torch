@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ba854a440c119b4e96732bdcde63c69, type: 3}
   m_Name: player_config_vol_2
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerConfig
-  maxHealth: 500000
-  moveSpeed: 15
+  maxHealth: 100
+  moveSpeed: 5
   damage: 10
   abilities:
   - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}

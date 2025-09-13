@@ -65,8 +65,6 @@ namespace Runtime
             
             var drop = Instantiate(dropConfig.dropGO, transform.position, Quaternion.identity);
             drop.GetComponent<EnemyDrop>().SetExpGainedAmount(dropConfig.expGained);
-            
-            ReturnToPool();
         }
 
         protected virtual void PerformAttack(CharacterBase target)
@@ -75,12 +73,14 @@ namespace Runtime
         
         public void OnGetFromPool()
         {
+            transform.SetParent(null);
             gameObject.SetActive(true);
         }
 
-        public void ReturnToPool()
+        public void OnReturnToPool()
         {
             gameObject.SetActive(false);
+            transform.SetParent(EnemySpawner.Instance?.transform);
         }
     }
 }

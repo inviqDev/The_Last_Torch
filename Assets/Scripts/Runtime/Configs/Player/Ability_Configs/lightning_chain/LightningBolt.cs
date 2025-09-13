@@ -7,6 +7,10 @@ namespace Runtime
     [RequireComponent(typeof(LineRenderer))]
     public class LightningBolt : MonoBehaviour, IPoolable
     {
+        [Header("Unique Key in pool dictionary")]
+        [SerializeField] protected string uniquePoolKey;
+        public string UniquePoolKey => uniquePoolKey;
+        
         [Header("Shape")]
         [SerializeField] private float pointsPerUnit = 3f;
         [SerializeField] private int   minPoints = 8;
@@ -46,7 +50,7 @@ namespace Runtime
                 : (mat.HasProperty("_Color") ? mat.GetColor("_Color") : Color.white);
         }
 
-        public void Play(Transform from, Transform to, float? overrideDuration = null, bool? follow = null)
+        public void Launch(Transform from, Transform to, float? overrideDuration = null, bool? follow = null)
         {
             fromT = from; toT = to;
             if (overrideDuration.HasValue) duration = overrideDuration.Value;
@@ -95,8 +99,7 @@ namespace Runtime
             }
             SetAlpha(0f);
 
-            // если у тебя пул — сделай SetActive(false)
-            Destroy(gameObject);
+            Pool.Instance?.ReturnToPool(this);
         }
 
         private void RebuildOnce()
@@ -143,19 +146,18 @@ namespace Runtime
                 var c = baseColor; c.a *= a; mat.SetColor("_Color", c);
             }
         }
-
-        [Header("Unique Key in pool dictionary")]
-        [SerializeField] protected string uniquePoolKey;
-        public string UniquePoolKey => uniquePoolKey;
         
         public void OnGetFromPool()
         {
+            transform.SetParent(null);
             gameObject.SetActive(true);
         }
-
-        public void ReturnToPool()
+        
+        public void OnReturnToPool()
         {
+            StopAllCoroutines();
             gameObject.SetActive(false);
+            transform.SetParent(Pool.Instance?.transform);
         }
     }
 }

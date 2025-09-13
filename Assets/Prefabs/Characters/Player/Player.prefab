@@ -53,7 +53,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 14
+  m_Radius: 20
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2631918413885425405
 Rigidbody:
@@ -98,7 +98,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   playerAttackComponent: {fileID: 2947505582540525192}
-  _attackableEnemies: []
 --- !u!1 &6432256446531588187
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,9 +221,6 @@ MonoBehaviour:
   dashComponent: {fileID: 4479476291269109723}
   cameraMover: {fileID: 1895004586295658128}
   playerAttack: {fileID: 2947505582540525192}
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!114 &7034329582900553992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,10 +277,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a25f4f113e409e249b0b8d6d6db967ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerAttack
-  enemyLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  overlapRadius: 10
   collector: {fileID: 6055564229998812072}
 --- !u!1 &7365291058574766826
 GameObject:

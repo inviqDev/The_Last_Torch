@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d32679df06217f488fd2fb06c94a57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyDrop
+  uniquePoolKey: enemy_drop
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128

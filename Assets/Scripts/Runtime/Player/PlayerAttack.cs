@@ -13,7 +13,6 @@ namespace Runtime
         private void Awake()
         {
             UnityEngine.Assertions.Assert.IsNotNull(GameManager.Instance, "GameManager is not found");
-            
             activeAutoAttackAbilities = new List<Ability>();
         }
 
@@ -30,32 +29,36 @@ namespace Runtime
             {
                 if (ability.State != Ability.AbilityState.Ready) continue;
 
-                var enemy = collector.GetClosestEnemyFromList();
-                if (!enemy) continue;
+                closestEnemy = collector.GetClosestEnemyFromList(out var distanceToClosestEnemy);
+                if (!closestEnemy || distanceToClosestEnemy > ability.MinAttackDistance) continue;
 
-                // 1) Способность уходит в InProgress
                 ability.SetAbilityState(Ability.AbilityState.InProgress);
 
-                // 2) Инстансим VFX (без кастов)
-                var vfx = Instantiate(ability.AbilityVFX); // тип: AbilityVFX
+                var abilityVFX = Pool.Instance?.TryGetObjectFromPool(ability.AbilityVFX);
+                if (!abilityVFX)
+                {
+                    return;
+                }
+                
                 void OnFinished(Ability a)
                 {
-                    vfx.Finished -= OnFinished;
+                    abilityVFX.Finished -= OnFinished;
+                    
+                    Pool.Instance?.ReturnToPool(abilityVFX);
                     a.SetAbilityState(Ability.AbilityState.OnCooldown);
                 }
-                vfx.Finished += OnFinished;
+                
+                abilityVFX.Finished += OnFinished;
 
                 // 3) Контекст — общая точка расширения для любых VFX
                 var ctx = new AbilityContext(
                     player: GameManager.Instance.Player,
-                    initialTarget: enemy,
+                    initialTarget: closestEnemy,
                     enemiesCollector: collector,
                     ability: ability
                 );
 
-                vfx.Play(ctx);
-
-                // не триггерим другие абилки в этот же кадр
+                abilityVFX.Play(ctx);
                 break;
             }
         }

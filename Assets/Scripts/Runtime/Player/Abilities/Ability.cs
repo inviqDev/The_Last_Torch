@@ -16,17 +16,19 @@ namespace Runtime
         
         private string _abilityName;
         private Sprite _abilityIcon;
-
-        private float _damage;
-        private float _progressTime;
-        private float _cooldownTime;
-        
-        private AbilityVFX _abilityVFX;
         
         private readonly AbilitySlot _abilitySlot;
         private readonly Timer _timer;
         
+        private float _minAttackDistance;
+        private AbilityVFX _abilityVFX;
+        
+        private float _progressTime;
+        private float _cooldownTime;
+        private float _damage;
+        
         public AbilityState State => state;
+        public float MinAttackDistance => _minAttackDistance;
         public AbilityVFX AbilityVFX => _abilityVFX;
         public float Damage => _damage;
         
@@ -38,6 +40,8 @@ namespace Runtime
             _abilityIcon = config.abilityIcon;
 
             _abilityVFX = config.abilityVFX;
+            _minAttackDistance = config.minAttackDistance;
+            
             _progressTime = config.progressTime;
             _cooldownTime = config.cooldownTime;
             _damage = config.damage;

@@ -45,10 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.LightningChain
   uniquePoolKey: lightning_chain
-  maxBounces: 5
-  hopRadius: 8
-  hopDelay: 0.2
-  hopSpeed: 0
+  bouncesAmount: 5
+  maxBounceDistance: 5
   boltPrefab: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}
-  segmentDuration: 0.25
-  waitSegmentsToFinish: 1
+  boltAnimDuration: 0.75
+  waitBoltAnimFinish: 0

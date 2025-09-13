@@ -44,11 +44,15 @@ namespace Runtime
             }
         }
 
-        public EnemyModel GetClosestEnemyFromList()
+        public EnemyModel GetClosestEnemyFromList(out float distance)
         {
             UnityEngine.Assertions.Assert.IsTrue(_attackableEnemies.Count > 0, "attackable enemies list is empty");
             
-            if (_attackableEnemies.Count == 0) return null;
+            if (_attackableEnemies.Count == 0)
+            {
+                distance = float.MaxValue;
+                return null;
+            }
 
             EnemyModel closestEnemy = null;
             var minSqrMag = float.MaxValue;
@@ -62,6 +66,7 @@ namespace Runtime
                 closestEnemy = e;
             }
             
+            distance = Mathf.Sqrt(minSqrMag);
             return closestEnemy;
         }
 

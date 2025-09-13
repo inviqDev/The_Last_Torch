@@ -199,6 +199,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4485699672327951209, guid: 2e596d64288ccd145b8c79400c67bb90, type: 3}
   m_PrefabInstance: {fileID: 6230296967792202159}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &49569125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 49569127}
+  - component: {fileID: 49569126}
+  m_Layer: 0
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &49569126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49569125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4769f74773c4a0e8f8a883d640294df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.Pool
+--- !u!4 &49569127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49569125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 71.9528, y: 0.05, z: -27.90208}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &160948994
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,11 +3116,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6270846358526233794, guid: 2e596d64288ccd145b8c79400c67bb90, type: 3}
       propertyPath: _waveEnemiesAmount
-      value: 54
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 6270846358526233794, guid: 2e596d64288ccd145b8c79400c67bb90, type: 3}
       propertyPath: _enemySpawnInterval
-      value: 0.1
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 6270846358526233794, guid: 2e596d64288ccd145b8c79400c67bb90, type: 3}
       propertyPath: 'configs.Array.data[0]'
@@ -3456,3 +3500,4 @@ SceneRoots:
   - {fileID: 318526749}
   - {fileID: 1425571713}
   - {fileID: 2327244291906738780}
+  - {fileID: 49569127}

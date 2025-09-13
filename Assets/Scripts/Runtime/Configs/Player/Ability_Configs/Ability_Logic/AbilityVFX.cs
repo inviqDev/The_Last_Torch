@@ -38,16 +38,18 @@ namespace Runtime
 
         /// Реализуют наследники (корутина/логика эффекта внутри)
         protected abstract void OnPlay(AbilityContext ctx);
-
         
         public void OnGetFromPool()
         {
+            transform.SetParent(null);
             gameObject.SetActive(true);
         }
-
-        public void ReturnToPool()
+        
+        public void OnReturnToPool()
         {
+            StopAllCoroutines();
             gameObject.SetActive(false);
+            transform.SetParent(Pool.Instance?.transform);
         }
     }
 }
