@@ -21,7 +21,6 @@ namespace Runtime
             
         }
 
-
         private void OnDisable()
         {
             _triggerDetector.OnTriggerWithPlayer -= PerformAttack;

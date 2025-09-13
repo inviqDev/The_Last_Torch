@@ -6,16 +6,14 @@ namespace Runtime
 {
     public class LightningChain : AbilityVFX
     {
-        [Header("Chain")]
-        [SerializeField] private int   maxBounces = 4;      // доп. прыжки ПОСЛЕ первого удара
-        [SerializeField] private float hopRadius  = 5f;     // максимум до следующей цели
-        [SerializeField] private float hopDelay   = 0.03f;  // маленькая пауза между звеньями (0..0.06)
-        [SerializeField] private float hopSpeed   = 0f;     // если >0, задержка = dist / speed
+        [Header("Chain")] 
+        [SerializeField] private int bouncesAmount = 5;
+        [SerializeField] private float maxBounceDistance = 5f;
 
-        [Header("Segment")]
+        [Header("Segment")] 
         [SerializeField] private LightningBolt boltPrefab;
-        [SerializeField] private float segmentDuration = 0.12f; // жизни одного звена
-        [SerializeField] private bool  waitSegmentsToFinish = false; // ждать окончания визуала всех звеньев перед КД
+        [SerializeField] private float boltAnimDuration = 0.12f;
+        [SerializeField] private bool waitBoltAnimFinish;
 
         private readonly List<EnemyModel> affected = new();
 
@@ -29,102 +27,81 @@ namespace Runtime
         {
             var player = ctx.Player;
             var ability = ctx.Ability;
-            var current = ctx.InitialTarget;
+            var currentEnemy = ctx.InitialTarget;
 
             if (!boltPrefab)
             {
-                Debug.LogError("[LightningChain] boltPrefab not set");
+                UnityEngine.Assertions.Assert.IsNotNull(boltPrefab, "[LightningChain] boltPrefab not set");
+
                 RaiseFinished(ability);
                 yield break;
             }
 
             affected.Clear();
 
-            int linksLeft = 1 + maxBounces;       // общее число звеньев
-            Transform from = player.transform;
+            var bouncesLeft = bouncesAmount;
+            var from = player.transform;
 
-            // Для опционального ожидания окончания всех сегментов:
-            // float lastSegmentTotalTime = segmentDuration + boltPrefab.GetComponent<LightningBolt>() ? 0.06f : 0f;
-
-            while (current && linksLeft > 0)
+            while (currentEnemy && bouncesLeft > 0)
             {
-                if (!current.gameObject.activeInHierarchy || current.CurrentHealth <= 0) break;
-
-                // 1) визуал звена — спавним и не ждём
-                var seg = Instantiate(boltPrefab, Vector3.zero, Quaternion.identity);
+                var bolt = Pool.Instance?.TryGetObjectFromPool(boltPrefab);
+                UnityEngine.Assertions.Assert.IsNotNull(bolt, "[Lightning Bolt] is not spawned");
 
                 float duration;
                 bool needToFollow;
-                
                 if (from == ctx.Player.transform)
                 {
                     needToFollow = false;
-                    duration = 0.25f;
+                    duration = 0.15f;
                 }
                 else
                 {
-                    duration = segmentDuration;
+                    duration = this.boltAnimDuration;
                     needToFollow = true;
                 }
-                
-                seg.Play(from, current.transform, duration, needToFollow);
 
-                // 2) урон — сразу
-                current.TakeDamage(ability.Damage);
-                affected.Add(current);
+                bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
 
-                // 3) готовим следующее звено
-                linksLeft--;
-                if (linksLeft <= 0) break;
+                currentEnemy.TakeDamage(ability.Damage);
+                affected.Add(currentEnemy);
 
-                var next = FindNextEnemy(current, ctx.EnemiesCollector.AttackableEnemies, hopRadius);
-                if (!next) break;
+                bouncesLeft--;
+                if (bouncesLeft <= 0) break;
 
-                // задержка между прыжками: либо фикс, либо «время перелёта»
-                if (hopSpeed > 0f)
-                {
-                    float dist = (next.transform.position - current.transform.position).magnitude;
-                    float travel = dist / hopSpeed;
-                    if (travel > 0f) yield return new WaitForSeconds(travel);
-                }
-                else if (hopDelay > 0f)
-                {
-                    yield return new WaitForSeconds(hopDelay);
-                }
+                var nextTarget = FindClosestEnemy(currentEnemy, ctx.EnemiesCollector.AttackableEnemies);
+                if (!nextTarget) break;
 
-                from = current.transform;
-                current = next;
+                from = currentEnemy.transform;
+                currentEnemy = nextTarget;
             }
 
-            // хотим ли ждать полного затухания последнего сегмента?
-            if (waitSegmentsToFinish)
-                yield return new WaitForSeconds(segmentDuration /* + fade, если нужно */);
+            if (waitBoltAnimFinish)
+            {
+                yield return new WaitForSeconds(boltAnimDuration);
+            }
 
             RaiseFinished(ctx.Ability);
-            gameObject.SetActive(false);
         }
 
-        private EnemyModel FindNextEnemy(EnemyModel from, List<EnemyModel> list, float radius)
+        private EnemyModel FindClosestEnemy(EnemyModel from, List<EnemyModel> attackableEnemies)
         {
-            if (list == null || list.Count == 0) return null;
+            if (attackableEnemies == null || attackableEnemies.Count == 0) return null;
 
-            EnemyModel best = null;
-            float bestSqr = float.MaxValue;
-            float maxSqr = radius * radius;
+            EnemyModel closestEnemy = null;
+            var maxSqrMag = maxBounceDistance * maxBounceDistance;
 
-            for (int i = 0; i < list.Count; i++)
+            foreach (var e in attackableEnemies)
             {
-                var e = list[i];
-                if (!e) continue;
-                if (ReferenceEquals(e, from)) continue;
-                if (affected.Contains(e)) continue;
+                if (!e || ReferenceEquals(e, from) || affected.Contains(e)) continue;
                 if (!e.gameObject.activeInHierarchy || e.CurrentHealth <= 0) continue;
 
-                float sqr = (e.transform.position - from.transform.position).sqrMagnitude;
-                if (sqr > maxSqr) continue;
-                if (sqr < bestSqr) { bestSqr = sqr; best = e; }
+                var sqr = (e.transform.position - from.transform.position).sqrMagnitude;
+                if (sqr > maxSqrMag) continue;
+                
+                closestEnemy = e;
             }
-            return best;
+
+            return closestEnemy;
         }
     }
 }

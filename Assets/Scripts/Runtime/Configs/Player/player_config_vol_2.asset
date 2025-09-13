@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: player_config_vol_2
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerConfig
   maxHealth: 100
-  moveSpeed: 15
+  moveSpeed: 5
   damage: 10
   abilities:
   - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}

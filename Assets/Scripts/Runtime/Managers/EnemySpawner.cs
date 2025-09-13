@@ -15,7 +15,6 @@ namespace Runtime
         [SerializeField] private float _enemySpawnInterval;
         [SerializeField] private int _waveEnemiesAmount;
 
-        private Stack<EnemyModel> _pool;
         private Timer _timer;
 
         // currently unused collection of launched enemies
@@ -27,8 +26,6 @@ namespace Runtime
             base.Awake();
 
             _currentConfig = configs[0];
-
-            _pool = new Stack<EnemyModel>();
             _spawnedEnemies = new List<EnemyModel>();
 
             _timer = new Timer(this);
@@ -46,14 +43,23 @@ namespace Runtime
 
         private void WaveIsFullyReleased()
         {
+            _timer.StopTimer();
+            
+            _timer.OnTicked -= SpawnEnemy;
+            _timer.TimerIsOver -= WaveIsFullyReleased;
+            
             print("Current wave is fully released => launch next wave of something ??");
         }
 
         private void SpawnEnemy(int counter)
         {
-            var enemy = TryGetEnemyFromPool();
+            var enemy = Pool.Instance?.TryGetObjectFromPool(enemyPrefabs[0]);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");
-
+            
+            var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            enemy.Mover.WarpTo(spawnPoint.position);
+            enemy.transform.SetParent(null);
+            
             var redImprovedEnemySpawnInterval = 2.5f;
             if (counter % redImprovedEnemySpawnInterval == 0)
             {
@@ -64,45 +70,16 @@ namespace Runtime
                 _currentConfig = configs[0];
             }
             
-            enemy.SetConfig(_currentConfig);
-        }
-
-        private EnemyModel TryGetEnemyFromPool()
-        {
-            EnemyModel enemy = null;
-            var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-
-            switch (_pool.Count)
-            {
-                case > 0:
-                    enemy = _pool.Pop();
-                    enemy.gameObject.SetActive(true);
-                    break;
-                case 0:
-                    enemy = Instantiate(enemyPrefabs[0]);
-                    break;
-            }
-
-            Debug.Assert(enemy, "enemy is not spawned");
-            
-            enemy.Mover.WarpTo(spawnPoint.position);
-            enemy.transform.SetParent(null);
             enemy.OnEnemyDeath += MoveEnemyToPool;
-
-            _spawnedEnemies.Add(enemy);
-
-            return enemy;
+            enemy.SetConfig(_currentConfig);
         }
 
         private void MoveEnemyToPool(EnemyModel enemy)
         {
             enemy.OnEnemyDeath -= MoveEnemyToPool;
 
-            enemy.gameObject.SetActive(false);
-            enemy.transform.SetParent(transform);
-
             _spawnedEnemies.Remove(enemy);
-            _pool.Push(enemy);
+            Pool.Instance?.ReturnToPool(enemy);
         }
     }
 }

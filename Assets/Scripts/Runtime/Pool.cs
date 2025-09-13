@@ -1,0 +1,54 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Runtime
+{
+    [DefaultExecutionOrder(-995)]
+    public class Pool : Singleton<Pool>
+    {
+        private readonly Dictionary<string, Stack<IPoolable>> _pool = new();
+
+        /// <summary>
+        /// Выдать префаб из пула, если в пуле пусто — инстанциируем prefab.
+        /// </summary>
+        public T TryGetObjectFromPool<T>(T prefab) where T : MonoBehaviour, IPoolable
+        {
+            var uniquePoolKey = prefab.UniquePoolKey;
+            EnsureBucket(uniquePoolKey);
+            
+            if (!_pool.TryGetValue(uniquePoolKey, out var stack))
+            {
+                _pool[uniquePoolKey] = new Stack<IPoolable>();
+            }
+            
+            var poolableObject = stack?.Count > 0 ? stack.Pop() : Instantiate(prefab);
+            var item = (T)poolableObject;
+            item.OnGetFromPool();
+            
+            return item;
+        }
+        
+        public void ReturnToPool(IPoolable item)
+        {
+            if (item == null) return;
+        
+            var uniquePoolKey = item.UniquePoolKey;
+            EnsureBucket(uniquePoolKey);
+            item.OnReturnToPool();
+            
+            _pool[uniquePoolKey].Push(item);
+        }
+        
+        private void EnsureBucket(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                UnityEngine.Assertions.Assert.IsTrue(!string.IsNullOrEmpty(key), "poolable item's unique pool key is not set");
+                return;
+            }
+            
+            if (!_pool.ContainsKey(key))
+                _pool[key] = new Stack<IPoolable>();
+        }
+    }
+}

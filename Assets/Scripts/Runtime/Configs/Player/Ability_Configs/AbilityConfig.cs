@@ -10,7 +10,9 @@ namespace Runtime
 
         public float progressTime;
         public float cooldownTime;
+        
         public AbilityVFX abilityVFX;
+        public float minAttackDistance;
 
         public float damage;
     }
