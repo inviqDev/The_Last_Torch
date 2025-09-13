@@ -62,5 +62,13 @@ namespace Runtime
                 break;
             }
         }
+
+        public void ChangeAbilitiesDamage(float value)
+        {
+            foreach (var a in activeAutoAttackAbilities)
+            {
+                a.ChangeDamageValue(value);
+            }
+        } 
     }
 }

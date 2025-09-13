@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3164749444688043708}
   - component: {fileID: 8011138907982365748}
   - component: {fileID: 9176691546186717458}
-  - component: {fileID: 7137391189395878695}
+  - component: {fileID: 6353162181446665463}
   m_Layer: 8
   m_Name: enemy_nav_mesh
   m_TagString: Untagged
@@ -74,7 +74,7 @@ MonoBehaviour:
   repathInterval: 0.25
   faceTargetWhenStopped: 1
   faceTurnSpeed: 720
---- !u!114 &7137391189395878695
+--- !u!114 &6353162181446665463
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,13 +83,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7882916538433953225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8efd1a269cc4b13b2198c805e911d8c, type: 3}
+  m_Script: {fileID: 11500000, guid: d3dc036e712c4f688a4ff7cc9fa5c6a8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Runtime_Assembly::Runtime.SkeletonEnemy
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyModel
   healthBar: {fileID: 3353626554875654610}
   uniquePoolKey: Enemy
+  meshRenderer: {fileID: 535704433151859898}
   mover: {fileID: 9176691546186717458}
-  _triggerDetector: {fileID: 5711451419781729639}
 --- !u!1 &8461540215610863759
 GameObject:
   m_ObjectHideFlags: 0

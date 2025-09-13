@@ -3,24 +3,26 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class EnemyModel : CharacterBase, IPoolable
+    public class EnemyModel : Character, IPoolable
     {
         public event Action<EnemyModel> OnEnemyDeath;
         
         [Header("Unique Key in pool dictionary")]
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
-        
 
+        [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private EnemyMovement mover;
 
-        protected float damage;
+        private EnemyDropConfig dropConfig;
+        private EnemyDrop dropGO;
+        private Material dropMaterial;
         
         private float _angularSpeed;
         private float _acceleration;
         private float _stoppingDistance;
         
-        private EnemyDropConfig dropConfig;
+        protected float damage;
         
         public EnemyMovement Mover => mover;
 
@@ -28,16 +30,21 @@ namespace Runtime
         {
             Debug.Assert(GameManager.Instance, "GameManager has not been found");
         }
+        
         public void SetConfig(EnemyConfig config)
         {
             var player = GameManager.Instance.Player;
 
-            dropConfig = config.dropConfig;
-            
             health = config.maxHealth;
             currentHealth = health;
             moveSpeed = config.moveSpeed;
             
+            dropConfig = config.dropConfig;
+            dropGO = config.dropConfig.dropGO;
+            
+            transform.localScale *= config.localScaleModifier;
+            dropMaterial = config.material;
+            meshRenderer.material = dropMaterial;
             healthBar.Init(this);
 
             _angularSpeed = config.angularSpeed;
@@ -62,12 +69,16 @@ namespace Runtime
         protected virtual void LaunchOnEnemyDeathLogic()
         {
             mover.StopAndReset();
+
+            var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
+            UnityEngine.Assertions.Assert.IsNotNull(drop, "drop object not found");
             
-            var drop = Instantiate(dropConfig.dropGO, transform.position, Quaternion.identity);
-            drop.GetComponent<EnemyDrop>().SetExpGainedAmount(dropConfig.expGained);
+            drop.transform.position = transform.position;
+            drop.MeshRenderer.material = dropMaterial;
+            drop.SetUpConfigValues(dropConfig);
         }
 
-        protected virtual void PerformAttack(CharacterBase target)
+        protected virtual void PerformAttack(Character target)
         {
         }
         

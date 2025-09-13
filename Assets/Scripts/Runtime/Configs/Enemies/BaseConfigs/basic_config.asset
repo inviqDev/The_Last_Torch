@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb0a43fa11e430a449df9944900bdbd2, type: 3}
-  m_Name: basic_enemy_config
+  m_Name: basic_config
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
-  maxHealth: 15
+  maxHealth: 10
   moveSpeed: 4
   damage: 10
+  localScaleModifier: 1
+  material: {fileID: 2100000, guid: 66878dcb86bc59a42a8b0caeca172e4a, type: 2}
   dropConfig: {fileID: 11400000, guid: be08e1cd3d09519499a85f2719f725fe, type: 2}
   angularSpeed: 720
   acceleration: 16
-  stoppingDistance: 0.2
+  stoppingDistance: 0.25

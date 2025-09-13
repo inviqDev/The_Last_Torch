@@ -5,7 +5,7 @@ namespace Runtime
 {
     public class EnemyTriggerDetector : MonoBehaviour
     {
-        public Action<CharacterBase> OnTriggerWithPlayer;
+        public Action<Character> OnTriggerWithPlayer;
         
         [Header("Player model layer")]
         [SerializeField] private LayerMask playerLayerMask;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public abstract class CharacterBase : MonoBehaviour
+    public abstract class Character : MonoBehaviour
     {
         public Action<float> OnHealthChanged;
         

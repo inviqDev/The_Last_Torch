@@ -71,14 +71,6 @@ namespace Runtime
             _abilitySlot.ShowCooldownProgress(currentCooldown);
         }
 
-        private void SetAbilityIsReadyState()
-        {
-            if (state == AbilityState.OnCooldown)
-            {
-                state = AbilityState.Ready;
-            }
-        }
-
         public void SetAbilityState(AbilityState newState)
         {
             state = newState;
@@ -92,6 +84,11 @@ namespace Runtime
                     _timer.StartFromToTimer(0f, _cooldownTime, TimerType.Increasing);
                     break;
             }
+        }
+
+        public void ChangeDamageValue(float value)
+        {
+            _damage += value;
         }
     }
 }

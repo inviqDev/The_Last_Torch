@@ -2,9 +2,11 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Ability_Configs/Characters/Enemy", fileName = "EnemyConfig")]
+    [CreateAssetMenu(menuName = "Characters/Enemy", fileName = "enemy_config")]
     public class EnemyConfig : CharacterBaseConfig
     {
+        public float localScaleModifier;
+        public Material material;
         public EnemyDropConfig dropConfig;
         
         [Header("NavMesh settings")]

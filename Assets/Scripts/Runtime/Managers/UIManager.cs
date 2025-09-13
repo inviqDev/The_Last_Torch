@@ -20,13 +20,15 @@ namespace Runtime
             return abilitySlotsController.GetAvailableSlot();
         }
 
-        public void TurnOffGameplayUI()
+        public void TurnOffGameOverPanel()
         {
             gameOverPanel.SetActive(false);
+            Time.timeScale = 0f;
         }
 
-        public void TurnOnGameplayUI()
+        public void TurnOnGameOverPanel()
         {
+            Time.timeScale = 0f;
             gameOverPanel.SetActive(true);
         }
     }

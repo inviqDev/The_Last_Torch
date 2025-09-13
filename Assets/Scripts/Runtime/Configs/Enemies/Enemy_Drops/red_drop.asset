@@ -10,7 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41f7948b806f98b48b7b85c58181a5f1, type: 3}
-  m_Name: basic_enemy_drop
+  m_Name: red_drop
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyDropConfig
-  dropGO: {fileID: 4414293035562717118, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
-  expGained: 10
+  dropGO: {fileID: 3483562175034757215, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
+  expGained: 25
+  healthBoost: 10
+  moveSpeedBoost: 0
+  damageBoost: 0

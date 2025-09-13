@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class SkeletonEnemy : EnemyModel
+    public class BasicEnemy : EnemyModel
     {
         [SerializeField] private EnemyTriggerDetector _triggerDetector;
 
@@ -11,14 +11,13 @@ namespace Runtime
             _triggerDetector.OnTriggerWithPlayer += PerformAttack;
         }
 
-        protected override void PerformAttack(CharacterBase target)
+        protected override void PerformAttack(Character target)
         {
             // play anim
             if (target is PlayerModel player)
             {
                 player.TakeDamage(damage);
             }
-            
         }
 
         private void OnDisable()

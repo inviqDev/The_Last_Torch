@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56273e59c7b64aadb345acf73074e371, type: 3}
+  m_Name: wave_003
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyWaveConfig
+  basicEnemy: {fileID: 11400000, guid: 266cbe918956e3744883a2b429a23d7e, type: 2}
+  basicEnemiesAmount: 15
+  willSpawnRed: 0
+  redUnique: {fileID: 11400000, guid: 6076df7a059cfa545a8a9d87ce144a3a, type: 2}
+  redEnemiesAmount: 0
+  willSpawnBlue: 1
+  blueUnique: {fileID: 11400000, guid: a79e2274862f8dc4f970a3abc9ca5e8e, type: 2}
+  blueEnemiesAmount: 2
+  willSpawnYellow: 0
+  yellowUnique: {fileID: 11400000, guid: 74a73822b9643664e887e853532ac5a3, type: 2}
+  yellowEnemiesAmount: 0
+  willSpawnBoss: 0
+  bossEnemy: {fileID: 11400000, guid: f18c50ee43042f34e85acfef2d9023df, type: 2}
+  bossEnemiesAmount: 0
+  willSpawnSuperBoss: 0
+  superBoss: {fileID: 11400000, guid: 9299a6ce627f1394d9126c96da8ac944, type: 2}
+  willSpawnExtraWave: 0
+  spawningInterval: 1.25

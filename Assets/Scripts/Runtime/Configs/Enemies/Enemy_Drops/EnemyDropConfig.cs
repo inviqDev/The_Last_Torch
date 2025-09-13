@@ -5,7 +5,11 @@ namespace Runtime
     [CreateAssetMenu(fileName = "DropConfig", menuName = "Enemy/Drop")]
     public class EnemyDropConfig : ScriptableObject
     {
-        public GameObject dropGO;
+        public EnemyDrop dropGO;
         public float expGained;
+
+        public float healthBoost;
+        public float moveSpeedBoost;
+        public float damageBoost;
     }
 }

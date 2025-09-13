@@ -11,21 +11,21 @@ namespace Runtime
 {
     public class HealthBar : MonoBehaviour
     {
-        private CharacterBase _characterBase;
+        private Character _character;
         private Slider _healthBar;
         private readonly float _minValue = 0f;
         
-        public void Init(CharacterBase character)
+        public void Init(Character character)
         {
-            _characterBase = character;
+            _character = character;
             MyAssert.IsNotNull(character, "character is null");
-            if (!_characterBase) return;
+            if (!_character) return;
             
             _healthBar = GetComponent<Slider>();
-            _healthBar.maxValue = _characterBase.CurrentHealth;
-            _healthBar.value = _characterBase.CurrentHealth;
+            _healthBar.maxValue = _character.CurrentHealth;
+            _healthBar.value = _character.CurrentHealth;
 
-            _characterBase.OnHealthChanged += OnHealthChanged;
+            _character.OnHealthChanged += OnHealthChanged;
         }
 
         private void OnHealthChanged(float currentHealth)
@@ -36,8 +36,8 @@ namespace Runtime
 
         private void OnDisable()
         {
-            if (!_characterBase) return;
-            _characterBase.OnHealthChanged += OnHealthChanged;
+            if (!_character) return;
+            _character.OnHealthChanged += OnHealthChanged;
         }
     }
 }

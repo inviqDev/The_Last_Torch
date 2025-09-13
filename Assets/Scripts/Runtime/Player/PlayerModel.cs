@@ -9,7 +9,7 @@ using MyAssert = UnityEngine.Assertions.Assert;
 namespace Runtime
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerModel : CharacterBase
+    public class PlayerModel : Character
     {
         public Action OnNextAbilityIsAvailable;
         public Action<float, float> OnPlayerLevelChanged;
@@ -28,7 +28,6 @@ namespace Runtime
         public float[] levelsExp;
         private int _currentLevel = 1;
         private float _currentLevelMaxExp;
-        
         
         public PlayerAttack PlayerAttack => playerAttack;
         
@@ -126,6 +125,24 @@ namespace Runtime
         private void LaunchOnPlayerDeathLogic()
         {
             OnPlayerDeath?.Invoke();
+        }
+
+        public void ChangeStats(float healthBoost, float moveSpeedBoost, float damageBoost)
+        {
+            if (healthBoost != 0f)
+            {
+                health += healthBoost;
+            }
+
+            if (moveSpeedBoost != 0f)
+            {
+                moveSpeed += moveSpeedBoost;
+            }
+
+            if (damageBoost != 0f)
+            {
+                playerAttack.ChangeAbilitiesDamage(damageBoost);
+            }
         }
     }
 }
