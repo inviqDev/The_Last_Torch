@@ -24,7 +24,6 @@ namespace Runtime
             
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             Player = playerManager.SpawnPlayer(playerSpawnPoint);
-            
             MyAsserts.IsNotNull(Player, "Player is null");
             
             UIManager.InitLevelUI(Player);
