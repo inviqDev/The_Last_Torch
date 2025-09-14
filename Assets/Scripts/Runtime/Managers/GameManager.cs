@@ -34,10 +34,10 @@ namespace Runtime
             
             spawner.SpawnNextWave();
             
-            Player.OnPlayerDeath += OnPlayerDeath;
+            Player.OnCharacterDeath += OnPlayerDeath;
         }
 
-        private void OnPlayerDeath()
+        private void OnPlayerDeath(Character player)    
         {
             print("PLAYER IS DEAD !");
             

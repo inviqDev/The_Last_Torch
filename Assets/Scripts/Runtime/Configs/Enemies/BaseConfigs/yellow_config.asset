@@ -15,7 +15,8 @@ MonoBehaviour:
   maxHealth: 50
   moveSpeed: 3
   damage: 25
-  localScaleModifier: 1.75
+  EnemyType: 3
+  scaleModifier: 2
   material: {fileID: 2100000, guid: b328ac4efb3db9c4997cc25b46a451af, type: 2}
   dropConfig: {fileID: 11400000, guid: 8c879132581902b42bed6fdf69b42167, type: 2}
   angularSpeed: 720

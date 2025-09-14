@@ -7,19 +7,30 @@ namespace Runtime
     [DefaultExecutionOrder(-998)]
     public class EnemySpawner : Singleton<EnemySpawner>
     {
-        [SerializeField] private EnemyModel[] enemyPrefabs;
+        [System.Serializable]
+        public struct prefabBuild
+        {
+            public EnemyType enemyType;
+            public EnemyModel enemyPrefab;
+        }
+        
         [SerializeField] private SpawnWaveConfig[] waveConfigs;
+        [SerializeField] private int currentWaveIndex;
+        
         [SerializeField] private Transform[] nonBossPoints;
         [SerializeField] private Transform[] bossPoints;
         [SerializeField] private Transform superBossSpawnPoint;
         
+        [SerializeField] private prefabBuild[] prefabBuilds;
+        private Dictionary<EnemyType, EnemyModel> _enemyDictionary;
+        
         private readonly Queue<EnemyConfig> _bossWaveQueue = new();
         private readonly Queue<EnemyConfig> _waveQueue = new();
-        
+
+        private EnemyType _enemyType;
         private Timer _timer;
         
         private SpawnWaveConfig _currentWaveConfig;
-        private int _currentWaveIndex;
         private float _spawnInterval;
         
         private int _bossSpawnPointIndex;
@@ -30,20 +41,26 @@ namespace Runtime
             base.Awake();
 
             _timer = new Timer(this);
-            _currentWaveIndex = 0;
             _bossSpawnPointIndex = 0;
+            
+            _enemyDictionary = new Dictionary<EnemyType, EnemyModel>(prefabBuilds.Length);
+            foreach (var e in prefabBuilds)
+            {
+                MyAsserts.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
+                _enemyDictionary[e.enemyType] = e.enemyPrefab;
+            }
         }
 
         public void SpawnNextWave()
         {
-            if (_currentWaveIndex < 0 || _currentWaveIndex >= waveConfigs.Length)
+            if (currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length)
             {
-                MyAsserts.IsTrue(_currentWaveIndex < 0 || _currentWaveIndex >= waveConfigs.Length, 
+                MyAsserts.IsTrue(currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length, 
                     "messed up spawner configs logic");
                 return;
             }
 
-            _currentWaveConfig = waveConfigs[_currentWaveIndex];
+            _currentWaveConfig = waveConfigs[currentWaveIndex];
             _spawnInterval = _currentWaveConfig.spawningInterval;
 
             if (_currentWaveConfig.willSpawnExtraWave)
@@ -60,7 +77,7 @@ namespace Runtime
 
             var totalAmount = _waveQueue.Count + _bossWaveQueue.Count;
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
-            // при желании: UI-событие "WaveStarted(_currentWaveIndex)"
+            // при желании: UI-событие "WaveStarted(currentWaveIndex)"
         }
 
         private void WaveIsFullyReleased()
@@ -70,9 +87,9 @@ namespace Runtime
             _timer.OnTicked -= SpawnEnemy;
             _timer.TimerIsOver -= WaveIsFullyReleased;
 
-            print($"[EnemySpawner] Wave #{_currentWaveIndex} released.");
+            print($"[EnemySpawner] Wave #{currentWaveIndex} released.");
             
-            _currentWaveIndex++;
+            currentWaveIndex++;
             SpawnNextWave();
         }
 
@@ -89,10 +106,7 @@ namespace Runtime
                 MyAsserts.IsNotNull(config, "config is invalid");
             }
             
-            Transform spawnPoint = null;
-            var enemy = Pool.Instance?.TryGetObjectFromPool(enemyPrefabs[0]);
-            MyAsserts.IsNotNull(enemy, "enemy is not spawned");
-            
+            Transform spawnPoint;
             if (IsSuperBossConfig(config))
             {
                 MyAsserts.IsNotNull(superBossSpawnPoint, "super boss spawn point is not set");
@@ -101,7 +115,7 @@ namespace Runtime
             else if (IsNormalBossConfig(config))
             {
                 MyAsserts.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
-                MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point iIndex is out of range");
+                MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point index is out of range");
 
                 if (_currentWaveConfig.willSpawnExtraWave)
                 {
@@ -120,54 +134,31 @@ namespace Runtime
                 spawnPoint = nonBossPoints[Random.Range(0, nonBossPoints.Length)];
             }
             
+            var prefab = GetEnemyTypePrefab(config);
+            MyAsserts.IsNotNull(prefab, $"THere is no prefab mapped for {config.EnemyType}");
+            
+            var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
+            MyAsserts.IsNotNull(enemy, "enemy is not spawned");
+            
             MyAsserts.IsNotNull(spawnPoint, "point is not set properly");
             enemy.Mover.WarpTo(spawnPoint.position);
-            // enemy.transform.SetParent(null);
 
-            enemy.OnEnemyDeath += MoveEnemyToPool;
+            enemy.OnCharacterDeath += MoveEnemyToPool;
             enemy.SetConfig(config);
         }
 
-        private void MoveEnemyToPool(EnemyModel enemy)
+        private EnemyModel GetEnemyTypePrefab(EnemyConfig config)
         {
-            enemy.OnEnemyDeath -= MoveEnemyToPool;
-            Pool.Instance?.ReturnToPool(enemy);
+            if (!config) return null;
+            MyAsserts.IsNotNull(_enemyDictionary, "enemy dictionary is not set");
+            return _enemyDictionary.GetValueOrDefault(config.EnemyType);
         }
-
-        // ===== Helpers =====
-        // private void BuildWaveQueue(SpawnWaveConfig currentConfig)
-        // {
-        //     _bossWaveQueue.Clear();
-        //     _waveQueue.Clear();
-        //     
-        //     if (currentConfig.willSpawnSuperBoss && currentConfig.superBoss)
-        //     {
-        //         _bossWaveQueue.Enqueue(currentConfig.superBoss);
-        //     }
-        //
-        //     if (currentConfig.willSpawnBoss && currentConfig.bossEnemy)
-        //     {
-        //         _bossWaveQueue.Enqueue(currentConfig.bossEnemy);
-        //     }
-        //
-        //     EnqueueMany(currentConfig.basicEnemy, currentConfig.basicEnemiesAmount);
-        //     if (currentConfig.willSpawnRed)
-        //     {
-        //         EnqueueMany(currentConfig.redUnique, currentConfig.redEnemiesAmount);
-        //     }
-        //     
-        //     if (currentConfig.willSpawnBlue)
-        //     {
-        //         EnqueueMany(currentConfig.blueUnique, currentConfig.blueEnemiesAmount);
-        //     }
-        //     
-        //     if (currentConfig.willSpawnYellow)
-        //     {
-        //         EnqueueMany(currentConfig.yellowUnique, currentConfig.yellowEnemiesAmount);
-        //     }
-        //
-        //     ReshuffleWaveQueue();
-        // }
+        
+        private void MoveEnemyToPool(Character enemy)
+        {
+            enemy.OnCharacterDeath -= MoveEnemyToPool;
+            Pool.Instance?.ReturnToPool(enemy as EnemyModel);
+        }
         
         private void BuildWaveQueue(SpawnWaveConfig currentConfig)
         {
@@ -239,9 +230,12 @@ namespace Runtime
         private bool IsNormalBossConfig(EnemyConfig cfg)
         {
             // обычный босс в двух случаях: обычная босс-волна или extra-волна
-            return cfg == (_currentWaveConfig?.bossEnemy &&
-                           (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave));
-        }
+            return _currentWaveConfig?.bossEnemy == cfg &&
+                       (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
+            
 
+            // return _currentWaveConfig?.bossEnemy &&
+            //                (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
+        }
     }
 }

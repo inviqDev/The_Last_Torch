@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityName: LIGHTNING
   abilityIcon: {fileID: 21300000, guid: 8b8b6d4921a12024d9f38d23f8143b27, type: 3}
   progressTime: 0.5
-  cooldownTime: 0.25
+  cooldownTime: 1
   abilityVFX: {fileID: 3579021516814992675, guid: 00e7507d53fdeb142b7fb5a3025ef78a, type: 3}
   minAttackDistance: 12
   damage: 50

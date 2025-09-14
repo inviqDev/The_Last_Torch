@@ -13,6 +13,8 @@ namespace Runtime
         private PlayerModel _player;
         private int _nextAbilityIndex;
 
+        private List<Ability> _playerAbilities;
+        
         public PlayerModel SpawnPlayer(Vector3 spawnPoint)
         {
             return _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
@@ -23,8 +25,14 @@ namespace Runtime
             UnityEngine.Assertions.Assert.IsNotNull(_player, "player is null");
             
             _player.OnNextAbilityIsAvailable += OnNextAbilityAvailable;
-            _player.OnPlayerDeath += OnPlayerDeath;
+            _player.OnCharacterDeath += OnPlayerDeath;
 
+            _playerAbilities = new List<Ability>();
+            foreach (var a in playerConfig.abilities)
+            {
+                _playerAbilities.Add(new Ability(_player, a, null));
+            }
+            
             _nextAbilityIndex = 0;
             _player.SetUpPlayerConfig(playerConfig);
         }
@@ -39,10 +47,10 @@ namespace Runtime
             _nextAbilityIndex++;
         }
         
-        private void OnPlayerDeath()
+        private void OnPlayerDeath(Character player)
         {
+            _player.OnCharacterDeath -= OnPlayerDeath;
             _player.OnNextAbilityIsAvailable -= OnNextAbilityAvailable;
-            _player.OnPlayerDeath -= OnPlayerDeath;
         }
     }
 }

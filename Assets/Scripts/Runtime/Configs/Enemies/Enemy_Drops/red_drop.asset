@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyDropConfig
   dropGO: {fileID: 3483562175034757215, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
   expGained: 25
-  healthBoost: 10
+  healthBoost: 50
   moveSpeedBoost: 0
   damageBoost: 0

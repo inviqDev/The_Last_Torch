@@ -86,6 +86,11 @@ namespace Runtime
             }
         }
 
+        public void ChangeAbilityDamage(float increment)
+        {
+            _damage += increment;
+        }
+
         public void ChangeDamageValue(float value)
         {
             _damage += value;

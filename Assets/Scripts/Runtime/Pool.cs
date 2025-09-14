@@ -7,10 +7,7 @@ namespace Runtime
     public class Pool : Singleton<Pool>
     {
         private readonly Dictionary<string, Stack<IPoolable>> _pool = new();
-
-        /// <summary>
-        /// Выдать префаб из пула, если в пуле пусто — инстанциируем prefab.
-        /// </summary>
+        
         public T TryGetObjectFromPool<T>(T prefab) where T : MonoBehaviour, IPoolable
         {
             var uniquePoolKey = prefab.UniquePoolKey;
@@ -43,7 +40,8 @@ namespace Runtime
         {
             if (string.IsNullOrEmpty(key))
             {
-                UnityEngine.Assertions.Assert.IsTrue(!string.IsNullOrEmpty(key), "poolable item's unique pool key is not set");
+                UnityEngine.Assertions.Assert.IsTrue(!string.IsNullOrEmpty(key), 
+                    "poolable item's unique pool key is not set");
                 return;
             }
             

@@ -4,7 +4,7 @@ namespace Runtime
 {
     public class CharacterBaseConfig : ScriptableObject
     {
-        [Header("Health settings")]
+        [Header("MaxHealth settings")]
         public float maxHealth;
         
         [Header("Movement settings")]

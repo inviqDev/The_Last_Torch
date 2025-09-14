@@ -12,10 +12,12 @@ namespace Runtime
     public class PlayerModel : Character
     {
         public Action OnNextAbilityIsAvailable;
-        public Action<float, float> OnPlayerLevelChanged;
         
+        public Action<float, float> OnPlayerMaxHealthChanged;
+        public Action<float> OnPlayerMoveSpeedChanged;
+        
+        public Action<int, float, float> OnPlayerLevelChanged;
         public Action<float> OnPlayerExpChanged;
-        public Action OnPlayerDeath;
 
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private Dash dashComponent;
@@ -30,7 +32,6 @@ namespace Runtime
         private float _currentLevelMaxExp;
         
         public PlayerAttack PlayerAttack => playerAttack;
-        
 
         #region Player_Stats
 
@@ -42,7 +43,6 @@ namespace Runtime
         private float _dashDuration;
 
         #endregion
-
 
         private int GetCurrentLevelExpIndex()
         {
@@ -66,7 +66,7 @@ namespace Runtime
             }
             
             OnNextAbilityIsAvailable?.Invoke();
-            OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+            OnPlayerLevelChanged?.Invoke(_currentLevel, 0f, _currentLevelMaxExp);
         }
 
         public void SetUpPlayerConfig(PlayerConfig config)
@@ -74,8 +74,8 @@ namespace Runtime
             SetUpLevelsExpArray();
             OnPlayerExpChanged?.Invoke(_currentExp);
             
-            health = config.maxHealth;
-            currentHealth = health;
+            maxHealth = config.maxHealth;
+            currentHealth = maxHealth;
 
             moveSpeed = config.moveSpeed;
             _dashSpeed = config.dashSpeed;
@@ -85,6 +85,9 @@ namespace Runtime
 
             movementComponent.SetMoveSettingsFromConfig(config);
             dashComponent.SetDashSettingsFromConfig(config);
+            
+            OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
+            OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
         }
 
         public void CollectExp(float pickedExpAmount)
@@ -101,7 +104,7 @@ namespace Runtime
                 _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
                 
                 OnNextAbilityIsAvailable?.Invoke();
-                OnPlayerLevelChanged?.Invoke(0f, _currentLevelMaxExp);
+                OnPlayerLevelChanged?.Invoke(_currentLevel, 0f, _currentLevelMaxExp);
             }
 
             OnPlayerExpChanged?.Invoke(_currentExp);
@@ -124,19 +127,25 @@ namespace Runtime
 
         private void LaunchOnPlayerDeathLogic()
         {
-            OnPlayerDeath?.Invoke();
+            OnCharacterDeath?.Invoke(this);
         }
 
         public void ChangeStats(float healthBoost, float moveSpeedBoost, float damageBoost)
         {
             if (healthBoost != 0f)
             {
-                health += healthBoost;
+                maxHealth += healthBoost;
+                currentHealth += healthBoost;
+                
+                OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             }
 
             if (moveSpeedBoost != 0f)
             {
                 moveSpeed += moveSpeedBoost;
+                movementComponent.SetNewMoveSpeed(moveSpeed);
+                
+                OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
             }
 
             if (damageBoost != 0f)

@@ -5,7 +5,7 @@ namespace Runtime
 {
     public class EnemyModel : Character, IPoolable
     {
-        public event Action<EnemyModel> OnEnemyDeath;
+        public Action<EnemyConfig> OnConfigLoaded;
         
         [Header("Unique Key in pool dictionary")]
         [SerializeField] protected string uniquePoolKey;
@@ -20,7 +20,7 @@ namespace Runtime
         
         private float _angularSpeed;
         private float _acceleration;
-        private float _stoppingDistance;
+        protected float stoppingDistance;
         
         protected float damage;
         
@@ -33,28 +33,30 @@ namespace Runtime
         
         public void SetConfig(EnemyConfig config)
         {
-            var player = GameManager.Instance.Player;
+            var player = GameManager.Instance?.Player;
 
-            health = config.maxHealth;
-            currentHealth = health;
+            maxHealth = config.maxHealth;
+            currentHealth = maxHealth;
             moveSpeed = config.moveSpeed;
             
             dropConfig = config.dropConfig;
             dropGO = config.dropConfig.dropGO;
-            
-            transform.localScale *= config.localScaleModifier;
             dropMaterial = config.material;
-            meshRenderer.material = dropMaterial;
-            healthBar.Init(this);
-
+            meshRenderer.sharedMaterial = dropMaterial;
+            
+            transform.localScale = Vector3.one * config.scaleModifier;
+            
             _angularSpeed = config.angularSpeed;
             _acceleration = config.acceleration;
-            _stoppingDistance = config.stoppingDistance;
+            stoppingDistance = config.stoppingDistance;
 
             damage = config.damage;
 
+            healthBar.Init(this);
             mover.ApplyMovementConfig(player,
-                moveSpeed, _angularSpeed, _acceleration, _stoppingDistance);
+                moveSpeed, _angularSpeed, _acceleration, stoppingDistance);
+            
+            OnConfigLoaded?.Invoke(config);
         }
 
         public override void TakeDamage(float incomingDamage)
@@ -63,7 +65,7 @@ namespace Runtime
             if (!(currentHealth <= 0)) return;
             
             LaunchOnEnemyDeathLogic();
-            OnEnemyDeath?.Invoke(this);
+            OnCharacterDeath?.Invoke(this);
         }
 
         protected virtual void LaunchOnEnemyDeathLogic()
@@ -87,7 +89,7 @@ namespace Runtime
             transform.SetParent(null);
             gameObject.SetActive(true);
         }
-
+        
         public void OnReturnToPool()
         {
             gameObject.SetActive(false);

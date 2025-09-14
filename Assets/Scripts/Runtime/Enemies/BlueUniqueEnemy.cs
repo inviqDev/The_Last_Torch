@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class BasicEnemy : EnemyModel
+    public class BlueUniqueEnemy : EnemyModel
     {
         [SerializeField] private EnemyAttackTrigger _attackTrigger;
         

@@ -1,5 +1,6 @@
 #region usings
 
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,27 +12,65 @@ namespace Runtime
 {
     public class HealthBar : MonoBehaviour
     {
+        [SerializeField] private Slider slider;
+        [SerializeField] private TextMeshProUGUI healthInfo;
+        
         private Character _character;
-        private Slider _healthBar;
         private readonly float _minValue = 0f;
+        private float _maxValue;
         
         public void Init(Character character)
         {
             _character = character;
-            MyAssert.IsNotNull(character, "character is null");
+            MyAssert.IsNotNull(_character, "character is not set properly");
+            
             if (!_character) return;
             
-            _healthBar = GetComponent<Slider>();
-            _healthBar.maxValue = _character.CurrentHealth;
-            _healthBar.value = _character.CurrentHealth;
-
+            _maxValue = _character.MaxHealth;
+            slider.maxValue = _maxValue;
+            slider.value = _character.CurrentHealth;
+            
+            if (_character is PlayerModel player)
+            {
+                player.OnPlayerMaxHealthChanged += OnPlayerMaxHealthChanged;
+            }
+            
             _character.OnHealthChanged += OnHealthChanged;
+            _character.OnCharacterDeath += OnCharacterDeath;
+            
+            SetHealthInfo(_character.CurrentHealth, _character.MaxHealth);
+        }
+
+        private void OnCharacterDeath(Character character)
+        {
+            if (_character is PlayerModel player)
+            {
+                player.OnPlayerMaxHealthChanged -= OnPlayerMaxHealthChanged;
+            }
+            
+            _character.OnHealthChanged -= OnHealthChanged;
+            _character.OnCharacterDeath -= OnCharacterDeath;
+        }
+
+        private void OnPlayerMaxHealthChanged(float newMaxHealth, float newCurrentHealth)
+        {
+            slider.maxValue = newMaxHealth;
+            slider.value = newCurrentHealth;
+            
+            SetHealthInfo(newCurrentHealth, newMaxHealth);
+        }
+
+        private void SetHealthInfo(float currentHealth, float maxHealth)
+        {
+            healthInfo.text = $"{currentHealth} / {maxHealth}";
         }
 
         private void OnHealthChanged(float currentHealth)
         {
             if (currentHealth < _minValue) return;
-            _healthBar.value = currentHealth;
+            
+            slider.value = currentHealth;
+            SetHealthInfo(_character.CurrentHealth, _character.MaxHealth);
         }
 
         private void OnDisable()
