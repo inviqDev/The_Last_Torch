@@ -7,32 +7,46 @@ namespace Runtime
     public class AbilitySlot : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI abilityName;
-        [SerializeField] private Image abilityIcon;
-        [SerializeField] private Button abilityButton;
-        [SerializeField] private Slider abilitySlider;
+        [SerializeField] private Image iconImage;
+        [SerializeField] private Button activationButton;
+        [SerializeField] private Slider cooldownProgress;
+        [SerializeField] private TextMeshProUGUI damage;
 
         private readonly float _minSliderValue = 0f;
         private float _maxSliderValue;
-        
+
         public bool IsActive { get; private set; }
 
-        public void SetUpAbilityUI(Ability ability, bool isActive)
+        public void SetUpAbilityUI(Ability ability) //, bool isActive)
         {
-            abilityName.text = ability.Name;
-            abilityIcon.sprite = ability.Icon;
+            IsActive = ability.State != Ability.AbilityState.None;
 
-            abilitySlider.minValue = _minSliderValue;
+            ability.OnDamageValueChanged += OnDamageValueChanged;
+
+            abilityName.text = ability.Name;
+            iconImage.sprite = ability.Icon;
+
             _maxSliderValue = ability.Cooldown;
-            abilitySlider.maxValue = _maxSliderValue;
-            abilitySlider.value = abilitySlider.minValue;
-            
-            IsActive = isActive;
-            abilityButton.interactable = IsActive;
+            cooldownProgress.minValue = _minSliderValue;
+            cooldownProgress.maxValue = _maxSliderValue;
+
+            activationButton.interactable = IsActive;
+
+            if (IsActive)
+            {
+                OnDamageValueChanged(ability.Damage);
+                // ShowCooldownProgress(_minSliderValue);
+            }
+        }
+
+        private void OnDamageValueChanged(float newDamageValue)
+        {
+            damage.text = $"{newDamageValue} DMG";
         }
 
         public void ShowCooldownProgress(float progress)
         {
-            abilitySlider.value = progress;
+            cooldownProgress.value = progress;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Runtime
@@ -80,7 +81,7 @@ namespace Runtime
 
         private void ActivateNextAbility()
         {
-            var ability = _availableAbilities[_nextAbilityIndex++];
+            var ability = _availableAbilities[_nextAbilityIndex];
             var slot = UIManager.Instance?.GetAvailableAbilitySlot();
 
             if (!slot)
@@ -89,16 +90,25 @@ namespace Runtime
                 return;
             }
             
-            slot.SetUpAbilityUI(ability, true);
             ability.ActivateAbility(this, slot);
+            slot.SetUpAbilityUI(ability);
+            
+            _availableAbilities.Remove(ability);
             _activeAbilities.Add(ability);
         }
 
-        public void ChangeAbilitiesDamage(float value)
+        public void ChangeAbilitiesDamage(float increment)
         {
+            // print($"ACTIVE => BEFORE : Ability {a.Name} deals {a.Damage} damage");
+            
             foreach (var a in _activeAbilities)
             {
-                a.ChangeDamageValue(value);
+                a.ChangeDamageValue(increment);
+            }
+
+            foreach (var a in _availableAbilities)
+            {
+                a.ChangeDamageValue(increment);
             }
         } 
     }

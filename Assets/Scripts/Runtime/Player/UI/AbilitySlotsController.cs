@@ -17,7 +17,7 @@ namespace Runtime
             var defaultAbility = new Ability(defaultAbilityConfig);
             foreach (var s in abilitySlots)
             {
-                s.SetUpAbilityUI(defaultAbility, false);
+                s.SetUpAbilityUI(defaultAbility);
             }
         }
 

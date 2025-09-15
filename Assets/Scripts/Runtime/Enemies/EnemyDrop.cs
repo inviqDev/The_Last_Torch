@@ -39,8 +39,8 @@ namespace Runtime
         {
             _expGained = dropConfig.expGained;
             _healthBoost = dropConfig.healthBoost;
-            _damageBoost = dropConfig.damageBoost;
             _moveSpeed = dropConfig.moveSpeedBoost;
+            _damageBoost = dropConfig.damageBoost;
         }
 
         private bool OtherIsNotPlayer(Collider other, out PlayerModel player)

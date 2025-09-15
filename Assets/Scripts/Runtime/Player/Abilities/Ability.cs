@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Runtime
@@ -11,6 +12,8 @@ namespace Runtime
             InProgress,
             OnCooldown,
         }
+        
+        public Action<float> OnDamageValueChanged;
 
         private AbilityState state;
         
@@ -85,6 +88,7 @@ namespace Runtime
         public void ChangeDamageValue(float increment)
         {
             Damage += increment;
+            OnDamageValueChanged?.Invoke(Damage);
         }
     }
 }

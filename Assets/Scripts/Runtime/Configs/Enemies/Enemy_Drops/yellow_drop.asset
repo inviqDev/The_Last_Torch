@@ -16,4 +16,4 @@ MonoBehaviour:
   expGained: 25
   healthBoost: 0
   moveSpeedBoost: 0
-  damageBoost: 1
+  damageBoost: 10
