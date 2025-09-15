@@ -17,10 +17,7 @@ namespace Runtime
             playerLevelSlider.Init(player);
         }
 
-        public AbilitySlot GetAvailableAbilitySlot()
-        {
-            return abilitySlotsController.GetAvailableSlot();
-        }
+        public AbilitySlot GetAvailableAbilitySlot() => abilitySlotsController.GetAvailableSlot();
 
         public void TurnOffGameOverPanel()
         {

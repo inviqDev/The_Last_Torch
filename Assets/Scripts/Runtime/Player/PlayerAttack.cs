@@ -6,26 +6,36 @@ namespace Runtime
     public class PlayerAttack : MonoBehaviour
     {
         [SerializeField] private EnemiesCollector collector;
-
-        private List<Ability> activeAutoAttackAbilities;
+        [SerializeField] private AbilityConfig[] abilityConfigs;
+        
+        private List<Ability> _availableAbilities;
+        private int _nextAbilityIndex;
+        
+        private List<Ability> _activeAbilities;
         private EnemyModel closestEnemy;
 
-        private void Awake()
+        public void Init(PlayerModel player)
         {
-            UnityEngine.Assertions.Assert.IsNotNull(GameManager.Instance, "GameManager is not found");
-            activeAutoAttackAbilities = new List<Ability>();
-        }
-
-        public void AddNewAbility(Ability ability)
-        {
-            activeAutoAttackAbilities.Add(ability);
+            _availableAbilities = new List<Ability>();
+            _nextAbilityIndex = 0;
+            
+            foreach (var a in abilityConfigs)
+            {
+                var ability = new Ability(a);
+                _availableAbilities.Add(ability);
+            }
+            
+            _activeAbilities = new List<Ability>();
+            ActivateNextAbility();
+            
+            player.OnNextAbilityIsAvailable += OnNextAbilityIsAvailable;
         }
 
         private void Update()
         {
             if (!collector.EnemyExists) return;
 
-            foreach (var ability in activeAutoAttackAbilities)
+            foreach (var ability in _activeAbilities)
             {
                 if (ability.State != Ability.AbilityState.Ready) continue;
 
@@ -62,10 +72,31 @@ namespace Runtime
                 break;
             }
         }
+        
+        private void OnNextAbilityIsAvailable()
+        {
+            ActivateNextAbility();
+        }
+
+        private void ActivateNextAbility()
+        {
+            var ability = _availableAbilities[_nextAbilityIndex++];
+            var slot = UIManager.Instance?.GetAvailableAbilitySlot();
+
+            if (!slot)
+            {
+                UnityEngine.Assertions.Assert.IsNotNull(slot, $"slot for {ability.Name} is not found");
+                return;
+            }
+            
+            slot.SetUpAbilityUI(ability, true);
+            ability.ActivateAbility(this, slot);
+            _activeAbilities.Add(ability);
+        }
 
         public void ChangeAbilitiesDamage(float value)
         {
-            foreach (var a in activeAutoAttackAbilities)
+            foreach (var a in _activeAbilities)
             {
                 a.ChangeDamageValue(value);
             }

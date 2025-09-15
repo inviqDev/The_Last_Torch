@@ -28,6 +28,7 @@ namespace Runtime
             
             UIManager.InitLevelUI(Player);
             playerManager.LoadPlayerDefaultConfig();
+            Player.PlayerAttack.Init(Player);
             
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
             

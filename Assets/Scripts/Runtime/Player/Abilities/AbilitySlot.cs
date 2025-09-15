@@ -10,22 +10,24 @@ namespace Runtime
         [SerializeField] private Image abilityIcon;
         [SerializeField] private Button abilityButton;
         [SerializeField] private Slider abilitySlider;
-        
-        public Slider abilityCooldownSlider => abilitySlider;
+
+        private readonly float _minSliderValue = 0f;
+        private float _maxSliderValue;
         
         public bool IsActive { get; private set; }
 
-        public void SetUpAbilityUI(AbilityConfig config, bool isActive)
+        public void SetUpAbilityUI(Ability ability, bool isActive)
         {
-            abilityName.text = config.abilityName;
-            abilityIcon.sprite = config.abilityIcon;
+            abilityName.text = ability.Name;
+            abilityIcon.sprite = ability.Icon;
 
-            abilitySlider.minValue = 0f;
-            abilitySlider.maxValue = config.cooldownTime;
+            abilitySlider.minValue = _minSliderValue;
+            _maxSliderValue = ability.Cooldown;
+            abilitySlider.maxValue = _maxSliderValue;
             abilitySlider.value = abilitySlider.minValue;
             
-            abilityButton.interactable = isActive;
             IsActive = isActive;
+            abilityButton.interactable = IsActive;
         }
 
         public void ShowCooldownProgress(float progress)
