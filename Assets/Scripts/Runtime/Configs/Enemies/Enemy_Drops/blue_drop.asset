@@ -15,5 +15,5 @@ MonoBehaviour:
   dropGO: {fileID: 3483562175034757215, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
   expGained: 25
   healthBoost: 0
-  moveSpeedBoost: 5
+  moveSpeedBoost: 1
   damageBoost: 0

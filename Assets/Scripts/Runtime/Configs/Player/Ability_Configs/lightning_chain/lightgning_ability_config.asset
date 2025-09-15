@@ -18,4 +18,4 @@ MonoBehaviour:
   cooldownTime: 1
   abilityVFX: {fileID: 3579021516814992675, guid: 00e7507d53fdeb142b7fb5a3025ef78a, type: 3}
   minAttackDistance: 12
-  damage: 50
+  damage: 5

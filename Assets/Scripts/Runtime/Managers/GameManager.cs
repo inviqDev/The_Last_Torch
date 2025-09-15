@@ -17,6 +17,8 @@ namespace Runtime
         public Camera CameraMain { get; private set; }
         public PlayerModel Player { get; private set; }
         
+        private SuperBoss _superBoss;
+        
 
         protected override void Awake()
         {
@@ -32,10 +34,25 @@ namespace Runtime
             
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
             
+            // spawner.OnSuperBossSpawned += OnSuperBossSpawned;
             spawner.SpawnNextWave();
             
             Player.OnCharacterDeath += OnPlayerDeath;
         }
+        
+        // private void OnSuperBossSpawned(SuperBoss boss)
+        // {
+        //     _superBoss = boss;
+        //     boss.OnSuperBossDeath += ShowWinUI;
+        //     print("SINGED UP");
+        // }
+        //
+        // private void ShowWinUI()
+        // {
+        //     print("CALLED EVENT");
+        //     UIManager.Instance?.ShowWinGamePanel();
+        //     _superBoss.OnSuperBossDeath -= ShowWinUI;
+        // }
 
         private void OnPlayerDeath(Character player)    
         {

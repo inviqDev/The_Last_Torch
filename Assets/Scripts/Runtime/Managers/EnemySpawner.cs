@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyAsserts = UnityEngine.Assertions.Assert;
+using Random = UnityEngine.Random;
 
 namespace Runtime
 {
@@ -13,6 +15,8 @@ namespace Runtime
             public EnemyType enemyType;
             public EnemyModel enemyPrefab;
         }
+
+        public Action<SuperBoss> OnSuperBossSpawned;
         
         [SerializeField] private SpawnWaveConfig[] waveConfigs;
         [SerializeField] private int currentWaveIndex;
@@ -136,6 +140,11 @@ namespace Runtime
             
             var prefab = GetEnemyTypePrefab(config);
             MyAsserts.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
+
+            if (prefab is SuperBoss superBoss)
+            {
+                OnSuperBossSpawned?.Invoke(superBoss);
+            }
             
             var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");

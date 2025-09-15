@@ -75,7 +75,7 @@ namespace Runtime
             var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
             UnityEngine.Assertions.Assert.IsNotNull(drop, "drop object not found");
             
-            drop.transform.position = transform.position;
+            drop.transform.position = new Vector3(transform.position.x, 0.75f, transform.position.z);;
             drop.MeshRenderer.material = dropMaterial;
             drop.SetUpConfigValues(dropConfig);
         }

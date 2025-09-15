@@ -437,8 +437,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3afa3b20bb230540865272d1dda8b0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  enemyPrefabs:
-  - {fileID: 6353162181446665463, guid: 0e93b78ebfe37d049889bc519acee19b, type: 3}
   waveConfigs:
   - {fileID: 11400000, guid: 4a98aad15e48e3c4486485c08a2178fc, type: 2}
   - {fileID: 11400000, guid: 2519f1867e4b84f418d43bc364992c55, type: 2}
@@ -450,6 +448,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9c4253ce018df9d4f97ce9701f4ad520, type: 2}
   - {fileID: 11400000, guid: 7df074a1ec0ef274a84fbcfd6ace7aa5, type: 2}
   - {fileID: 11400000, guid: 2197e28b74a41a248b18a15c2ee49973, type: 2}
+  currentWaveIndex: 0
   nonBossPoints:
   - {fileID: 7566866661674604006}
   - {fileID: 8557000988179204948}
@@ -470,6 +469,19 @@ MonoBehaviour:
   - {fileID: 7078440955105118674}
   - {fileID: 299307229157458841}
   superBossSpawnPoint: {fileID: 70615933217154064}
+  prefabBuilds:
+  - enemyType: 0
+    enemyPrefab: {fileID: 8114587345889946756, guid: 0e93b78ebfe37d049889bc519acee19b, type: 3}
+  - enemyType: 1
+    enemyPrefab: {fileID: 4054929471304086045, guid: 64dd30d52372c504b9d8fe619cb6e98c, type: 3}
+  - enemyType: 2
+    enemyPrefab: {fileID: 8387701642563151798, guid: 9abd99ebb4621434a88b3f2e4589ec6c, type: 3}
+  - enemyType: 3
+    enemyPrefab: {fileID: -6491221086642551400, guid: 5055b4253ceeeea4791fd9d685e84c0b, type: 3}
+  - enemyType: 4
+    enemyPrefab: {fileID: 4092661514222853395, guid: 50105f8373c972045b8f235dac58fb77, type: 3}
+  - enemyType: 5
+    enemyPrefab: {fileID: -2077080986507585144, guid: eb9d782c180927946b31b3acf6c8ef99, type: 3}
 --- !u!1 &5625074996499935560
 GameObject:
   m_ObjectHideFlags: 0

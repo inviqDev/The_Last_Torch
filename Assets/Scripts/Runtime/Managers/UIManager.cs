@@ -8,6 +8,8 @@ namespace Runtime
         [SerializeField] private AbilitySlotsController abilitySlotsController;
         [SerializeField] private PlayerLevelProgressBar playerLevelSlider;
         [SerializeField] private PlayerStatsInfo playerStatsInfo;
+        
+        [SerializeField] private GameObject winGamePanel;
         [SerializeField] private GameObject gameOverPanel;
 
         public void InitLevelUI(PlayerModel player)
@@ -29,6 +31,11 @@ namespace Runtime
         {
             Time.timeScale = 0f;
             gameOverPanel.SetActive(true);
+        }
+
+        public void ShowWinGamePanel()
+        {
+            winGamePanel.SetActive(true);
         }
     }
 }
