@@ -9,19 +9,17 @@ namespace Runtime
         public Action<PlayerModel> OnPlayerDamaged;
         public Action<Projectile> OnMoveToPool;
 
-        [Header("Unique Key in pool dictionary")] [SerializeField]
-        private string uniquePoolKey;
-
+        [Header("Unique Key in pool dictionary")] 
+        [SerializeField] private string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
 
-        [Header("Player layer mask")] [SerializeField]
-        private LayerMask playerLayerMask;
-
+        [Header("Player layer mask")] 
+        [SerializeField] private LayerMask playerLayerMask;
         [SerializeField] private float moveSpeed = 12f;
         [SerializeField] private float lifeTime = 2f;
 
         private Coroutine _routine;
-        private Vector3 _dir;
+        private Vector3 _direction;
 
         public void LaunchProjectile(Vector3 origin, Vector3 targetPos)
         {
@@ -32,11 +30,11 @@ namespace Runtime
             }
 
             transform.position = origin;
-            _dir = (targetPos - origin).normalized;
+            _direction = (targetPos - origin).normalized;
 
-            if (_dir != Vector3.zero)
+            if (_direction != Vector3.zero)
             {
-                transform.rotation = Quaternion.LookRotation(_dir);
+                transform.rotation = Quaternion.LookRotation(_direction);
             }
 
             _routine = StartCoroutine(FlyRoutine());
@@ -47,7 +45,7 @@ namespace Runtime
             var t = 0f;
             while (t < lifeTime)
             {
-                transform.Translate(_dir * (moveSpeed * Time.deltaTime), Space.World);
+                transform.Translate(_direction * (moveSpeed * Time.deltaTime), Space.World);
                 t += Time.deltaTime;
 
                 yield return null;
@@ -70,6 +68,12 @@ namespace Runtime
             Pool.Instance?.ReturnToPool(this);
         }
 
+        public void ChangeProjectileBasicSettings(ProjectileSettings newSettings)
+        {
+            transform.localScale = Vector3.one * newSettings.sizeMultiplier;
+            moveSpeed = newSettings.moveSpeed;
+        }
+
         // ===== Pool =====
 
         public void OnGetFromPool()
@@ -88,6 +92,7 @@ namespace Runtime
                 _routine = null;
             }
 
+            transform.localScale = Vector3.one;
             gameObject.SetActive(false);
             transform.SetParent(Pool.Instance?.transform);
         }

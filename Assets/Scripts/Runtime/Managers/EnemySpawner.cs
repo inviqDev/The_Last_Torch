@@ -135,7 +135,7 @@ namespace Runtime
             }
             
             var prefab = GetEnemyTypePrefab(config);
-            MyAsserts.IsNotNull(prefab, $"THere is no prefab mapped for {config.EnemyType}");
+            MyAsserts.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
             
             var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");
