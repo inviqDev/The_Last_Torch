@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace Runtime
@@ -5,28 +6,28 @@ namespace Runtime
     public class UIManager : Singleton<UIManager>
     {
         [SerializeField] private AbilitySlotsController abilitySlotsController;
-        [SerializeField] private ExpProgressBar _expSlider;
-
+        [SerializeField] private PlayerLevelProgressBar playerLevelSlider;
+        [SerializeField] private PlayerStatsInfo playerStatsInfo;
         [SerializeField] private GameObject gameOverPanel;
 
         public void InitLevelUI(PlayerModel player)
         {
             abilitySlotsController.ResetAbilitySlots();
-            _expSlider.Init(player);
+            playerStatsInfo.Init(player);
+            playerLevelSlider.Init(player);
         }
 
-        public AbilitySlot GetAvailableAbilitySlot()
-        {
-            return abilitySlotsController.GetAvailableSlot();
-        }
+        public AbilitySlot GetAvailableAbilitySlot() => abilitySlotsController.GetAvailableSlot();
 
-        public void TurnOffGameplayUI()
+        public void TurnOffGameOverPanel()
         {
             gameOverPanel.SetActive(false);
+            Time.timeScale = 0f;
         }
 
-        public void TurnOnGameplayUI()
+        public void TurnOnGameOverPanel()
         {
+            Time.timeScale = 0f;
             gameOverPanel.SetActive(true);
         }
     }

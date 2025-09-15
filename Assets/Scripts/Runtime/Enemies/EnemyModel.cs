@@ -3,24 +3,26 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class EnemyModel : CharacterBase, IPoolable
+    public class EnemyModel : Character, IPoolable
     {
-        public event Action<EnemyModel> OnEnemyDeath;
+        public Action<EnemyConfig> OnConfigLoaded;
         
         [Header("Unique Key in pool dictionary")]
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
-        
 
+        [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private EnemyMovement mover;
 
-        protected float damage;
+        private EnemyDropConfig dropConfig;
+        private EnemyDrop dropGO;
+        private Material dropMaterial;
         
         private float _angularSpeed;
         private float _acceleration;
-        private float _stoppingDistance;
+        protected float stoppingDistance;
         
-        private EnemyDropConfig dropConfig;
+        protected float damage;
         
         public EnemyMovement Mover => mover;
 
@@ -28,26 +30,33 @@ namespace Runtime
         {
             Debug.Assert(GameManager.Instance, "GameManager has not been found");
         }
+        
         public void SetConfig(EnemyConfig config)
         {
-            var player = GameManager.Instance.Player;
+            var player = GameManager.Instance?.Player;
 
-            dropConfig = config.dropConfig;
-            
-            health = config.maxHealth;
-            currentHealth = health;
+            maxHealth = config.maxHealth;
+            currentHealth = maxHealth;
             moveSpeed = config.moveSpeed;
             
-            healthBar.Init(this);
-
+            dropConfig = config.dropConfig;
+            dropGO = config.dropConfig.dropGO;
+            dropMaterial = config.material;
+            meshRenderer.sharedMaterial = dropMaterial;
+            
+            transform.localScale = Vector3.one * config.scaleModifier;
+            
             _angularSpeed = config.angularSpeed;
             _acceleration = config.acceleration;
-            _stoppingDistance = config.stoppingDistance;
+            stoppingDistance = config.stoppingDistance;
 
             damage = config.damage;
 
+            healthBar.Init(this);
             mover.ApplyMovementConfig(player,
-                moveSpeed, _angularSpeed, _acceleration, _stoppingDistance);
+                moveSpeed, _angularSpeed, _acceleration, stoppingDistance);
+            
+            OnConfigLoaded?.Invoke(config);
         }
 
         public override void TakeDamage(float incomingDamage)
@@ -56,18 +65,22 @@ namespace Runtime
             if (!(currentHealth <= 0)) return;
             
             LaunchOnEnemyDeathLogic();
-            OnEnemyDeath?.Invoke(this);
+            OnCharacterDeath?.Invoke(this);
         }
 
         protected virtual void LaunchOnEnemyDeathLogic()
         {
             mover.StopAndReset();
+
+            var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
+            UnityEngine.Assertions.Assert.IsNotNull(drop, "drop object not found");
             
-            var drop = Instantiate(dropConfig.dropGO, transform.position, Quaternion.identity);
-            drop.GetComponent<EnemyDrop>().SetExpGainedAmount(dropConfig.expGained);
+            drop.transform.position = transform.position;
+            drop.MeshRenderer.material = dropMaterial;
+            drop.SetUpConfigValues(dropConfig);
         }
 
-        protected virtual void PerformAttack(CharacterBase target)
+        protected virtual void PerformAttack(Character target)
         {
         }
         
@@ -76,7 +89,7 @@ namespace Runtime
             transform.SetParent(null);
             gameObject.SetActive(true);
         }
-
+        
         public void OnReturnToPool()
         {
             gameObject.SetActive(false);

@@ -4,26 +4,45 @@ namespace Runtime
 {
     public class EnemyDrop : MonoBehaviour, IPoolable
     {
-        [Header("Unique Key in pool dictionary")]
+        [Header("Unique Key in pool dictionary")] 
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
-        
+
         [SerializeField] private LayerMask playerLayerMask;
-        private float _expGained;
+
+        private MeshRenderer meshRenderer;
+        public MeshRenderer MeshRenderer => meshRenderer;
         
+        private float _expGained;
+        private float _healthBoost;
+        private float _damageBoost;
+        private float _moveSpeed;
+
+        private void Awake()
+        {
+            meshRenderer = GetComponent<MeshRenderer>();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (OtherIsNotPlayer(other, out var player)) return;
-            
-            player.CollectExp(_expGained);
-            gameObject.SetActive(false);
-        }
 
-        public void SetExpGainedAmount(float amountFromConfig)
-        {
-            _expGained = amountFromConfig;
+            player.CollectExp(_expGained);
+            
+            /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/
+            player.ChangeStats(_healthBoost, _moveSpeed, _damageBoost);
+            
+            Pool.Instance?.ReturnToPool(this);
         }
         
+        public void SetUpConfigValues(EnemyDropConfig dropConfig)
+        {
+            _expGained = dropConfig.expGained;
+            _healthBoost = dropConfig.healthBoost;
+            _moveSpeed = dropConfig.moveSpeedBoost;
+            _damageBoost = dropConfig.damageBoost;
+        }
+
         private bool OtherIsNotPlayer(Collider other, out PlayerModel player)
         {
             if ((playerLayerMask.value & 1 << other.gameObject.layer) != 0)

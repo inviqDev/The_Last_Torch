@@ -24,15 +24,15 @@ namespace Runtime
         {
             if (OtherIsNotEnemy(other, out var enemy)) return;
 
-            enemy.OnEnemyDeath += OnEnemyDeath;
+            enemy.OnCharacterDeath += OnEnemyDeath;
             _attackableEnemies.Add(enemy);
             playerAttackComponent.enabled = true;
         }
 
-        private void OnEnemyDeath(EnemyModel enemy)
+        private void OnEnemyDeath(Character enemy)
         {
-            enemy.OnEnemyDeath -= OnEnemyDeath;
-            RemoveEnemyFromAttackableCollection(enemy);
+            enemy.OnCharacterDeath -= OnEnemyDeath;
+            RemoveEnemyFromAttackableCollection(enemy as EnemyModel);
         }
 
         private void RemoveEnemyFromAttackableCollection(EnemyModel enemy)

@@ -28,7 +28,12 @@ namespace Runtime
         {
             _moveSpeed = config.moveSpeed * _moveSpeedModifier;
         }
-    
+
+        public void SetNewMoveSpeed(float speed)
+        {
+            _moveSpeed = speed;
+        }
+        
         public void IncreaseMoveSpeedModifier()
         {
             _moveSpeed *= _moveSpeedModifier;

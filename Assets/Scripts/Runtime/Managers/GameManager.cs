@@ -11,6 +11,7 @@ namespace Runtime
     {
         [SerializeField] private LevelEnvironment levelEnv;
         [SerializeField] private PlayerManager playerManager;
+        [SerializeField] private EnemySpawner spawner;
         [SerializeField] private UIManager UIManager;
 
         public Camera CameraMain { get; private set; }
@@ -27,17 +28,20 @@ namespace Runtime
             
             UIManager.InitLevelUI(Player);
             playerManager.LoadPlayerDefaultConfig();
+            Player.PlayerAttack.Init(Player);
             
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
             
-            Player.OnPlayerDeath += OnPlayerDeath;
+            spawner.SpawnNextWave();
+            
+            Player.OnCharacterDeath += OnPlayerDeath;
         }
 
-        private void OnPlayerDeath()
+        private void OnPlayerDeath(Character player)    
         {
             print("PLAYER IS DEAD !");
             
-            UIManager.TurnOnGameplayUI();
+            UIManager.TurnOnGameOverPanel();
             gameObject.SetActive(false);
             
             Time.timeScale = 0f;
