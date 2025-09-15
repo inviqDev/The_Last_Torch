@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3164749444688043708}
   - component: {fileID: 8011138907982365748}
   - component: {fileID: 9176691546186717458}
-  - component: {fileID: 4092661514222853395}
+  - component: {fileID: -2077080986507585144}
   m_Layer: 8
-  m_Name: boss_enemy
+  m_Name: super_boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
   repathInterval: 0.25
   faceTargetWhenStopped: 1
   faceTurnSpeed: 720
---- !u!114 &4092661514222853395
+--- !u!114 &-2077080986507585144
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,19 +83,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 7882916538433953225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dce279541db44959a8b187450ad6ddc, type: 3}
+  m_Script: {fileID: 11500000, guid: f67f6d60fc7b48f09291f615ae3aedbc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Runtime_Assembly::Runtime.BossEnemy
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.SuperBoss
   healthBar: {fileID: 8606326115295042901}
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  uniquePoolKey: boss_enemy
+  uniquePoolKey: super_boss_enemy
   meshRenderer: {fileID: 535704433151859898}
   mover: {fileID: 9176691546186717458}
   projectileSettings:
-    sizeMultiplier: 3
-    moveSpeed: 35
+    sizeMultiplier: 5
+    moveSpeed: 50
   attackTrigger: {fileID: 1900771864123513942}
   projectile: {fileID: 6696566908028617965, guid: a4e21c3b556ba0949a0e70b8defd5370, type: 3}
   cooldown: 10
@@ -226,7 +226,7 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  enemyModel: {fileID: 4092661514222853395}
+  enemyModel: {fileID: -2077080986507585144}
   detectorCol: {fileID: 1090595330033799847}
 --- !u!1001 &9085307835473741681
 PrefabInstance:
