@@ -11,6 +11,7 @@ namespace Runtime
     {
         [SerializeField] private PlayerManager playerManager;
         [SerializeField] private SoundManager soundManager;
+        [SerializeField] private ParticlesManager particlesManager;
         [SerializeField] private UIManager UIManager;
         
         [SerializeField] private LevelEnvironment levelEnv;
@@ -37,6 +38,8 @@ namespace Runtime
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
             
             soundManager.Init();
+            particlesManager.Init();
+            
             // spawner.OnSuperBossSpawned += OnSuperBossSpawned;
             spawner.SpawnNextWave();
             

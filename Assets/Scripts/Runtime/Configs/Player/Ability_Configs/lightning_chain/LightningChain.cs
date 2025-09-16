@@ -65,6 +65,7 @@ namespace Runtime
 
                 bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
                 SoundManager.Instance?.PlaySound("lightning_sound", transform.position);
+                ParticlesManager.Instance?.PlayParticle("lightning_particles_vfx", currentEnemy);
 
                 currentEnemy.TakeDamage(ability.Damage);
                 affected.Add(currentEnemy);

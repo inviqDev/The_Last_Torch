@@ -28,7 +28,7 @@ namespace Runtime
             }
 
             var sound = Pool.Instance?.TryGetObjectFromPool(s);
-            sound?.Play(position);
+            sound?.PlayAudioClip(position);
         }
     }
 }

@@ -20,12 +20,14 @@ namespace Runtime
         
         [SerializeField] private SpawnWaveConfig[] waveConfigs;
         [SerializeField] private int currentWaveIndex;
+        [SerializeField] private bool spawnWavesContinuously; 
         
         [SerializeField] private Transform[] nonBossPoints;
         [SerializeField] private Transform[] bossPoints;
         [SerializeField] private Transform superBossSpawnPoint;
         
         [SerializeField] private prefabBuild[] prefabBuilds;
+        
         private Dictionary<EnemyType, EnemyModel> _enemyDictionary;
         
         private readonly Queue<EnemyConfig> _bossWaveQueue = new();
@@ -76,9 +78,12 @@ namespace Runtime
 
             _timer.StopTimer();
             _timer.OnTicked += SpawnEnemy;
-            _timer.TimerIsOver += WaveIsFullyReleased;
 
-
+            if (spawnWavesContinuously)
+            {
+                _timer.TimerIsOver += WaveIsFullyReleased;
+            }
+            
             var totalAmount = _waveQueue.Count + _bossWaveQueue.Count;
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
             // при желании: UI-событие "WaveStarted(currentWaveIndex)"
