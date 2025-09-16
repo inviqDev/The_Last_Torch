@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2800642697388307458
+--- !u!1 &6597667268687445382
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2168555248898228247}
-  - component: {fileID: 3457345058114431962}
+  - component: {fileID: 789107164744094032}
+  - component: {fileID: 6592606851171773486}
   m_Layer: 0
-  m_Name: particles_manager
+  m_Name: app_root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2168555248898228247
+--- !u!4 &789107164744094032
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2800642697388307458}
+  m_GameObject: {fileID: 6597667268687445382}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,17 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3457345058114431962
+--- !u!114 &6592606851171773486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2800642697388307458}
+  m_GameObject: {fileID: 6597667268687445382}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 191cdb7195273184ca78b5fe8263925e, type: 3}
+  m_Script: {fileID: 11500000, guid: 12c0fd6f8b24488b9952b5c2001306a5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Runtime_Assembly::Runtime.ParticlesManager
-  particles:
-  - {fileID: -577214947243813036, guid: 11e34cec2a0949743a1d8203dd96bfcb, type: 3}
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime._my_tests.async_scene_loader.TransitionService
+  loadingOverlayPrefab: {fileID: 6216198930878303874, guid: a2ce57a5547b8a24a811bf114c42a6d3, type: 3}
+  overlayFade: 0.35
+  initialTransition: {fileID: 11400000, guid: c58f82c215a8a17448102c4bb1e5ab55, type: 2}
+  unloadProgressPortion: 0.14

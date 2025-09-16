@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77c258e4abdaced43a65a2edae860f66, type: 3}
+  m_Name: main_menu_payload_config
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime._my_tests.async_scene_loader.MainMenuPayloadConfig
+  levelEnv: {fileID: 6444735900222717066, guid: aa28937baeb0c424ab2a93e12febf8b8, type: 3}
