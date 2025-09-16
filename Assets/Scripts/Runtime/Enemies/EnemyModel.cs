@@ -93,7 +93,7 @@ namespace Runtime
         public void OnReturnToPool()
         {
             gameObject.SetActive(false);
-            transform.SetParent(EnemySpawner.Instance?.transform);
+            transform.SetParent(Pool.Instance?.EnemiesRoot);
         }
     }
 }

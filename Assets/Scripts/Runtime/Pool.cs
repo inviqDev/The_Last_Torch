@@ -6,7 +6,17 @@ namespace Runtime
     [DefaultExecutionOrder(-995)]
     public class Pool : Singleton<Pool>
     {
+        [SerializeField] private Transform enemiesRoot;
+        [SerializeField] private Transform soundsRoot;
+        [SerializeField] private Transform particlesRoot;
+
+        
         private readonly Dictionary<string, Stack<IPoolable>> _pool = new();
+        
+        public Transform EnemiesRoot => enemiesRoot;
+        public Transform ParticlesRoot => particlesRoot;
+        public Transform SoundsRoot => soundsRoot;
+
         
         public T TryGetObjectFromPool<T>(T prefab) where T : MonoBehaviour, IPoolable
         {
