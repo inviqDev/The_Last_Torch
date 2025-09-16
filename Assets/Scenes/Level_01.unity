@@ -2814,10 +2814,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3a7aecedc94a21926bd47654f56fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.GameManager
-  levelEnv: {fileID: 2539365219310068085}
   playerManager: {fileID: 6992061094116154981, guid: a12fc4878250949498af14c06794e079, type: 3}
-  spawner: {fileID: 161572318}
+  soundManager: {fileID: 1864035350}
   UIManager: {fileID: 841161221}
+  levelEnv: {fileID: 2539365219310068085}
+  spawner: {fileID: 161572318}
 --- !u!1 &1575522260
 GameObject:
   m_ObjectHideFlags: 0
@@ -3122,6 +3123,52 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1864035349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1864035351}
+  - component: {fileID: 1864035350}
+  m_Layer: 0
+  m_Name: sound_manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1864035350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864035349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f437d22cc4a781143811acbe077a1f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.SoundManager
+  sounds:
+  - {fileID: 5886726765700127663, guid: 5943076680f1822438f9e3da17d096cb, type: 3}
+--- !u!4 &1864035351
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864035349}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1868374878
 GameObject:
   m_ObjectHideFlags: 0
@@ -4255,6 +4302,7 @@ SceneRoots:
   - {fileID: 570596345}
   - {fileID: 1526450143}
   - {fileID: 9148454842483043042}
+  - {fileID: 1864035351}
   - {fileID: 2099848570}
   - {fileID: 2106889117}
   - {fileID: 6230296967792202159}
