@@ -42,6 +42,11 @@ namespace Runtime
 
         private void StopAttackingOnPlayerDeath(Character player)
         {
+            if (!_player)
+            {
+                return;
+            }
+
             _player.OnCharacterDeath -= StopAttackingOnPlayerDeath;
             _player = null;
             

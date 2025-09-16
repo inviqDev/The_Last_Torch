@@ -9,10 +9,12 @@ namespace Runtime
 {
     public class GameManager : Singleton<GameManager>
     {
-        [SerializeField] private LevelEnvironment levelEnv;
         [SerializeField] private PlayerManager playerManager;
-        [SerializeField] private EnemySpawner spawner;
+        [SerializeField] private SoundManager soundManager;
         [SerializeField] private UIManager UIManager;
+        
+        [SerializeField] private LevelEnvironment levelEnv;
+        [SerializeField] private EnemySpawner spawner;
 
         public Camera CameraMain { get; private set; }
         public PlayerModel Player { get; private set; }
@@ -34,6 +36,7 @@ namespace Runtime
             
             Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
             
+            soundManager.Init();
             // spawner.OnSuperBossSpawned += OnSuperBossSpawned;
             spawner.SpawnNextWave();
             

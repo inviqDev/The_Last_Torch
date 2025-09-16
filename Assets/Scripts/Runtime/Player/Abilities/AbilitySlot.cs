@@ -48,5 +48,11 @@ namespace Runtime
         {
             cooldownProgress.value = progress;
         }
+
+        public void SetInProgressUIState(bool isInteractable, bool isActive)
+        {
+            activationButton.interactable = isInteractable;
+            cooldownProgress.gameObject.SetActive(isActive);
+        }
     }
 }

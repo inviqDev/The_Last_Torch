@@ -8,29 +8,34 @@ namespace Runtime
         [SerializeField] private EnemyAttackTrigger attackTrigger;
         [SerializeField] private Projectile projectile;
         [SerializeField] private float cooldown = 2.0f;
-        
+
         private PlayerModel _player;
         private Coroutine _attackLoop;
-        
+
         private void OnEnable()
         {
             UnityEngine.Assertions.Assert.IsNotNull(attackTrigger, "attackTrigger is not set");
             if (!attackTrigger) return;
-            
+
             attackTrigger.OnPlayerEnter += OnPlayerEnter;
-            attackTrigger.OnPlayerExit  += OnPlayerExit;
+            attackTrigger.OnPlayerExit += OnPlayerExit;
         }
-        
+
         private void OnPlayerEnter(PlayerModel player)
         {
             _player = player;
-            
+
             _player.OnCharacterDeath += StopAttackingOnPlayerDeath;
             StartAttackingProcess();
         }
 
         private void StopAttackingOnPlayerDeath(Character player)
         {
+            if (!_player)
+            {
+                return;
+            }
+
             _player.OnCharacterDeath -= StopAttackingOnPlayerDeath;
             _player = null;
             
@@ -42,7 +47,7 @@ namespace Runtime
             _player = null;
             StopAttackLoop();
         }
-        
+
         private void StartAttackingProcess()
         {
             if (_attackLoop != null) return;
@@ -53,11 +58,11 @@ namespace Runtime
         private void StopAttackLoop()
         {
             if (_attackLoop == null) return;
-            
+
             StopCoroutine(_attackLoop);
             _attackLoop = null;
         }
-        
+
         private IEnumerator AttackLoop()
         {
             var wait = new WaitForSeconds(cooldown);
@@ -74,8 +79,8 @@ namespace Runtime
                 yield return wait;
 
                 if (_player) continue;
-                
-                _attackLoop = null; 
+
+                _attackLoop = null;
                 yield break;
             }
         }
@@ -89,10 +94,10 @@ namespace Runtime
             proj.OnPlayerDamaged += OnPlayerDamaged;
 
             var offset = transform.forward * (transform.localScale.x * 0.5f) + transform.forward;
-            
+
             var origin = transform.position + offset;
             var targetPos = target.transform.position;
-            
+
             proj.LaunchProjectile(origin, targetPos);
         }
 
@@ -106,15 +111,15 @@ namespace Runtime
             proj.OnPlayerDamaged -= OnPlayerDamaged;
             proj.OnMoveToPool -= OnMoveToPool;
         }
-        
+
         private void OnDisable()
         {
             if (attackTrigger)
             {
                 attackTrigger.OnPlayerEnter -= OnPlayerEnter;
-                attackTrigger.OnPlayerExit  -= OnPlayerExit;
+                attackTrigger.OnPlayerExit -= OnPlayerExit;
             }
-            
+
             StopAttackLoop();
         }
     }

@@ -58,7 +58,9 @@ namespace Runtime
             _timer.TimerIsOver += () =>
             {
                 if (state == AbilityState.OnCooldown)
+                {
                     state = AbilityState.Ready;
+                }
             };
 
             SetAbilityState(AbilityState.OnCooldown);
@@ -76,10 +78,13 @@ namespace Runtime
             switch (state)
             {
                 case AbilityState.None:
-                case AbilityState.InProgress:
-                    _timer?.StopTimer();
                     break;
+                case AbilityState.InProgress:
+                    _abilitySlot.SetInProgressUIState(true, false);
+                    break;
+                
                 case AbilityState.OnCooldown:
+                    _abilitySlot.SetInProgressUIState(false, true);
                     _timer?.StartFromToTimer(0f, Cooldown, TimerType.Increasing);
                     break;
             }

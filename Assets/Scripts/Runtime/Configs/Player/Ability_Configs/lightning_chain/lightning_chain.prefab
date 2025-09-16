@@ -50,3 +50,5 @@ MonoBehaviour:
   boltPrefab: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}
   boltAnimDuration: 0.75
   waitBoltAnimFinish: 0
+  prewarmTime: 0.2
+  waitPrewarmTime: 1

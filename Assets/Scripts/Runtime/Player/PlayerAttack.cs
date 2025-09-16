@@ -43,8 +43,6 @@ namespace Runtime
                 closestEnemy = collector.GetClosestEnemyFromList(out var distanceToClosestEnemy);
                 if (!closestEnemy || distanceToClosestEnemy > ability.MinAttackDistance) continue;
 
-                ability.SetAbilityState(Ability.AbilityState.InProgress);
-
                 var abilityVFX = Pool.Instance?.TryGetObjectFromPool(ability.AbilityVFX);
                 if (!abilityVFX)
                 {
@@ -69,6 +67,7 @@ namespace Runtime
                     ability: ability
                 );
 
+                ability.SetAbilityState(Ability.AbilityState.InProgress);
                 abilityVFX.Play(ctx);
                 break;
             }

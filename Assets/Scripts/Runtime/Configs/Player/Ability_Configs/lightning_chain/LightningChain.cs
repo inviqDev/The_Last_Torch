@@ -14,7 +14,10 @@ namespace Runtime
         [SerializeField] private LightningBolt boltPrefab;
         [SerializeField] private float boltAnimDuration = 0.12f;
         [SerializeField] private bool waitBoltAnimFinish;
-
+        
+        [SerializeField] private float prewarmTime;
+        [SerializeField] private bool waitPrewarmTime;
+        
         private readonly List<EnemyModel> affected = new();
 
         protected override void OnPlay(AbilityContext ctx)
@@ -56,15 +59,18 @@ namespace Runtime
                 }
                 else
                 {
-                    duration = this.boltAnimDuration;
+                    duration = boltAnimDuration;
                     needToFollow = true;
                 }
 
                 bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
+                SoundManager.Instance?.PlaySound("lightning_sound", transform.position);
 
                 currentEnemy.TakeDamage(ability.Damage);
                 affected.Add(currentEnemy);
 
+                if (waitPrewarmTime) yield return new WaitForSeconds(prewarmTime);
+                
                 bouncesLeft--;
                 if (bouncesLeft <= 0) break;
 
@@ -80,6 +86,7 @@ namespace Runtime
                 yield return new WaitForSeconds(boltAnimDuration);
             }
 
+            affected.Clear();
             RaiseFinished(ctx.Ability);
         }
 
