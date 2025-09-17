@@ -172,6 +172,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6592606851171773486, guid: 3e94e53b7c54d7f43ac4aa04f8971a60, type: 3}
+      propertyPath: overlayFade
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6592606851171773486, guid: 3e94e53b7c54d7f43ac4aa04f8971a60, type: 3}
+      propertyPath: unloadProgressPortion
+      value: 0.34
+      objectReference: {fileID: 0}
     - target: {fileID: 6597667268687445382, guid: 3e94e53b7c54d7f43ac4aa04f8971a60, type: 3}
       propertyPath: m_Name
       value: app_root

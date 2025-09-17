@@ -35,6 +35,12 @@ namespace Runtime
             _timer.StartFromToTimer(0f, float.MaxValue, TimerType.Increasing);
         }
 
+        public void LaunchStopGameLogic()
+        {
+            _timer?.StopTimer();
+            killsBarInfo.ResetKillBarInfo();
+        }
+
         private void ChangeMainTimerValue(float timerValue)
         {
             var totalSeconds = Mathf.FloorToInt(timerValue);

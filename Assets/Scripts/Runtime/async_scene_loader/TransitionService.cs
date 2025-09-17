@@ -49,6 +49,7 @@ namespace Runtime
         {
             base.Awake();
             CreateOverlayOrDie(); // Create and configure the overlay once
+            overlayFade = 0f;
         }
 
         private void Start()
@@ -120,6 +121,7 @@ namespace Runtime
                 RunPostLoadHooks(asset);
 
                 // 7) Hide overlay — player now sees the new scene
+                overlayFade = 0.5f;
                 yield return HideOverlayAndFinish();
             }
             finally

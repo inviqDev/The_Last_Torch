@@ -360,8 +360,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 997931861, guid: c6bdd4b1b16be594fafad697707ef435, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -617,6 +617,7 @@ GameObject:
   - component: {fileID: 7117982136880026865}
   - component: {fileID: 4915187102973937589}
   - component: {fileID: 9116512026303426719}
+  - component: {fileID: 196425988530747900}
   m_Layer: 5
   m_Name: restart_level
   m_TagString: Untagged
@@ -671,8 +672,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 948930084, guid: c6bdd4b1b16be594fafad697707ef435, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -725,6 +726,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &196425988530747900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953236969166583882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b581ee52fb304f0e95d656ae3ac1e473, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.LoadSceneButton
+  transition: {fileID: 11400000, guid: 6bb64206685a92340a0d582df633c3be, type: 2}
 --- !u!1 &2260190281289711693
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,8 +2165,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9142652917498562227}
-  - {fileID: 2456354981710944338}
   - {fileID: 2280296189994162148}
+  - {fileID: 2456354981710944338}
   m_Father: {fileID: 4293561474891513675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2181,12 +2195,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 15
-    m_Right: 15
-    m_Top: 15
-    m_Bottom: 15
+    m_Left: 10
+    m_Right: 10
+    m_Top: 10
+    m_Bottom: 10
   m_ChildAlignment: 0
-  m_Spacing: 35
+  m_Spacing: 15
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -3360,6 +3374,7 @@ GameObject:
   - component: {fileID: 7382908314661409012}
   - component: {fileID: 7486134006297081169}
   - component: {fileID: 7397498073073279260}
+  - component: {fileID: 6125255544061862340}
   m_Layer: 5
   m_Name: pause_game
   m_TagString: Untagged
@@ -3414,8 +3429,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 1582153461, guid: c6bdd4b1b16be594fafad697707ef435, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3468,6 +3483,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6125255544061862340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560460337497278363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 024d58008dfc1f643b640463dfaeec9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.PauseGame
 --- !u!1 &7986404253715109137
 GameObject:
   m_ObjectHideFlags: 0
@@ -4252,6 +4279,10 @@ PrefabInstance:
       propertyPath: m_text
       value: UNAVAILABLE
       objectReference: {fileID: 0}
+    - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4381,6 +4412,10 @@ PrefabInstance:
       propertyPath: m_text
       value: 10 DMG
       objectReference: {fileID: 0}
+    - target: {fileID: 5316378658872813107, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
+      objectReference: {fileID: 0}
     - target: {fileID: 7567976840760107791, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
       propertyPath: m_Name
       value: player_ability_slot (1)
@@ -4388,6 +4423,10 @@ PrefabInstance:
     - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
       propertyPath: m_text
       value: IMPALE
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4522,6 +4561,10 @@ PrefabInstance:
       propertyPath: m_text
       value: UNAVAILABLE
       objectReference: {fileID: 0}
+    - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4651,6 +4694,10 @@ PrefabInstance:
       propertyPath: m_text
       value: 5 DMG
       objectReference: {fileID: 0}
+    - target: {fileID: 5316378658872813107, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
+      objectReference: {fileID: 0}
     - target: {fileID: 7567976840760107791, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
       propertyPath: m_Name
       value: player_ability_slot (2)
@@ -4658,6 +4705,10 @@ PrefabInstance:
     - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
       propertyPath: m_text
       value: UNAVAILABLE
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4791,6 +4842,10 @@ PrefabInstance:
     - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
       propertyPath: m_text
       value: UNAVAILABLE
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302497072466631569, guid: 1f2289f3537528840a49f57cc076be6f, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 3774873600
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

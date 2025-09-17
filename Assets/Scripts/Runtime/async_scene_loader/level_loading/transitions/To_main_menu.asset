@@ -18,5 +18,5 @@ MonoBehaviour:
     name: Main_Menu
   setActiveAfterLoad: 1
   showProgress: 1
-  minOverlayShowTime: 0.6
+  minOverlayShowTime: 0.75
   payload: {fileID: 11400000, guid: d8f7ee814357d6c44a259f0f99427d3d, type: 2}

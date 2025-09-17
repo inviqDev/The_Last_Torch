@@ -27,7 +27,7 @@ namespace Runtime
             }
             
             _activeAbilities = new List<Ability>();
-            ActivateNextAbility();
+            // ActivateNextAbility();
             
             player.OnNextAbilityIsAvailable += OnNextAbilityIsAvailable;
         }

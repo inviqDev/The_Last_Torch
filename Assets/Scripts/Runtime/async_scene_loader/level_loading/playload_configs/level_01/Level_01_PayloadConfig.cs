@@ -7,11 +7,26 @@ namespace Runtime
     [CreateAssetMenu(menuName = "Loading Level/Payload Config/Level 01", fileName = "level 01_payload_config")]
     public class Level_01_PayloadConfig : TransitionPayload
     {
+        public override void OnWillLoad()
+        {
+            var gameManager = GameManager.Instance;
+            MyAsserts.IsNotNull(gameManager, "game manager is not found");
+            
+            gameManager.Spawner?.StopSpawningEnemies();
+            gameManager.UIManager?.LaunchStopGameLogic();
+        }
+        
         public override void OnDidLoad(Scene scene)
         {
-            if (!GameManager.Instance?.UIManager.gameObject) return;
+            var gameManager = GameManager.Instance;
+            MyAsserts.IsNotNull(gameManager, "game manager is not found");
+
+            if (Time.timeScale < 1f)
+            {
+                Time.timeScale = 1f;
+            }
             
-            GameManager.Instance?.UIManager.gameObject.SetActive(true);
+            gameManager.UIManager?.gameObject.SetActive(true);
             GameManager.Instance?.Init();
         }
     }
