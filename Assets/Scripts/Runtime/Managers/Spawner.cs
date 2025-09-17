@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 namespace Runtime
 {
     [DefaultExecutionOrder(-998)]
-    public class Spawner : Singleton<Spawner>
+    public class Spawner : MonoBehaviour
     {
         [System.Serializable]
         public struct prefabBuild
@@ -42,10 +42,8 @@ namespace Runtime
         private int _bossSpawnPointIndex;
         private int _extraWaveLocalBossIndex;
 
-        protected override void Awake()
+        public void Init()
         {
-            base.Awake();
-
             _timer = new Timer(this);
             _bossSpawnPointIndex = 0;
             
@@ -55,9 +53,11 @@ namespace Runtime
                 MyAsserts.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
                 _enemyDictionary[e.enemyType] = e.enemyPrefab;
             }
+
+            SpawnNextWave();
         }
 
-        public void SpawnNextWave()
+        private void SpawnNextWave()
         {
             if (currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length)
             {
@@ -86,7 +86,6 @@ namespace Runtime
             
             var totalAmount = _waveQueue.Count + _bossWaveQueue.Count;
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
-            // при желании: UI-событие "WaveStarted(currentWaveIndex)"
         }
 
         private void WaveIsFullyReleased()

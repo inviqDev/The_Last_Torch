@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class ParticlesManager : Singleton<ParticlesManager>
+    public class ParticlesManager : MonoBehaviour
     {
         [SerializeField] private List<Particle> particles;
         

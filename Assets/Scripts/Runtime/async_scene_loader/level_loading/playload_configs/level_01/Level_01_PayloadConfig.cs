@@ -9,6 +9,9 @@ namespace Runtime
     {
         public override void OnDidLoad(Scene scene)
         {
+            if (!GameManager.Instance?.UIManager.gameObject) return;
+            
+            GameManager.Instance?.UIManager.gameObject.SetActive(true);
             GameManager.Instance?.Init();
         }
     }

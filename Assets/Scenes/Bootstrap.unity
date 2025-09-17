@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &1327873071 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 789107164744094032, guid: 3e94e53b7c54d7f43ac4aa04f8971a60, type: 3}
+  m_PrefabInstance: {fileID: 51874953196471323}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &51874953196471323
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -188,6 +193,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: game_manager
       objectReference: {fileID: 0}
+    - target: {fileID: 554843581025358752, guid: da8e80000f61ac4448ee5cb4a365773e, type: 3}
+      propertyPath: appRoot
+      value: 
+      objectReference: {fileID: 1327873071}
     - target: {fileID: 1097783083436829226, guid: da8e80000f61ac4448ee5cb4a365773e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

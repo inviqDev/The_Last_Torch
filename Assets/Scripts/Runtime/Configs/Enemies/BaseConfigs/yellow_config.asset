@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb0a43fa11e430a449df9944900bdbd2, type: 3}
   m_Name: yellow_config
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
-  maxHealth: 10
+  maxHealth: 30
   moveSpeed: 3
-  damage: 50
+  damage: 35
   EnemyType: 3
   scaleModifier: 2
   material: {fileID: 2100000, guid: 7a75c145ee3426041976181b1b1daa58, type: 2}
   dropConfig: {fileID: 11400000, guid: 9c13f53e8a13dc247abd6d2e6113da39, type: 2}
   angularSpeed: 720
   acceleration: 16
-  stoppingDistance: 0.25
+  stoppingDistance: 0.025

@@ -260,37 +260,6 @@ Transform:
   - {fileID: 594604810244450673}
   m_Father: {fileID: 7950454402233707435}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &3825230640683712013
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1130235887986672170}
-  m_Layer: 0
-  m_Name: point (6)
-  m_TagString: Untagged
-  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1130235887986672170
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3825230640683712013}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5363216305781413215}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4113897751399562158
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,7 +294,6 @@ Transform:
   - {fileID: 4065421144515246660}
   - {fileID: 7078440955105118674}
   - {fileID: 299307229157458841}
-  - {fileID: 1130235887986672170}
   m_Father: {fileID: 7950454402233707435}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4972575916835855054
@@ -399,7 +367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7950454402233707435}
-  - component: {fileID: 6270846358526233794}
+  - component: {fileID: 8636615145933245148}
   m_Layer: 0
   m_Name: spawner
   m_TagString: Untagged
@@ -425,7 +393,7 @@ Transform:
   - {fileID: 70615933217154064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6270846358526233794
+--- !u!114 &8636615145933245148
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -436,7 +404,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3afa3b20bb230540865272d1dda8b0d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.Spawner
   waveConfigs:
   - {fileID: 11400000, guid: 4a98aad15e48e3c4486485c08a2178fc, type: 2}
   - {fileID: 11400000, guid: 2519f1867e4b84f418d43bc364992c55, type: 2}

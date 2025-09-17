@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class SoundManager : Singleton<SoundManager>
+    public class SoundManager : MonoBehaviour
     {
         [SerializeField] private List<Sound> sounds;
         

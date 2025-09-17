@@ -12,69 +12,65 @@ namespace Runtime
         [SerializeField] private PlayerManager playerManager;
         [SerializeField] private Spawner spawner;
         [SerializeField] private UIManager UI_Manager;
-        
         [SerializeField] private SoundManager soundManager;
         [SerializeField] private ParticlesManager particlesManager;
         
         [SerializeField] private LevelEnvironment levelEnv;
 
-        public PlayerManager PlayerManager => playerManager;
-        public Spawner Spawner => spawner;
-        public UIManager UIManager => UI_Manager;
-        public SoundManager SoundManager => soundManager;
-        public ParticlesManager ParticlesManager => particlesManager;
-        
+        private PlayerManager _playerManager;
+        private Spawner _spawner;
+        private UIManager _uiManager;
+        private SoundManager _soundManager;
+        private ParticlesManager _particlesManager;
+        private LevelEnvironment _levelEnv;
+
+        public PlayerManager PlayerManager => _playerManager;
+        public Spawner Spawner => _spawner;
+        public UIManager UIManager => _uiManager;
+        public SoundManager SoundManager => _soundManager;
+        public ParticlesManager ParticlesManager => _particlesManager;
         
         public Camera CameraMain { get; private set; }
         public PlayerModel Player { get; private set; }
         
         private SuperBoss _superBoss;
         private Timer _timer;
-        
 
+        protected override void Awake()
+        {
+            _playerManager ??= Instantiate(playerManager, transform);
+            _spawner ??= Instantiate(spawner, transform);
+            _uiManager ??= Instantiate(UI_Manager, transform);
+            _soundManager ??= Instantiate(soundManager, transform);
+            _particlesManager ??= Instantiate(particlesManager, transform);
+            
+            playerManager.gameObject.SetActive(true);
+            spawner.gameObject.SetActive(true);
+            UI_Manager.gameObject.SetActive(true);
+            soundManager.gameObject.SetActive(true);
+            particlesManager.gameObject.SetActive(true);
+        }
+        
         public void Init()
         {
-            playerManager = Instantiate(playerManager, null);
-            spawner = Instantiate(spawner, null);
-            UI_Manager = Instantiate(UI_Manager, null);
-            soundManager = Instantiate(soundManager, null);
-            particlesManager = Instantiate(particlesManager, null);
-            levelEnv = Instantiate(levelEnv, Vector3.zero, Quaternion.identity, null);
-            
             CameraMain = Camera.main;
             
+            _levelEnv = Instantiate(levelEnv, Vector3.zero, Quaternion.identity, transform);
+            _levelEnv.gameObject.SetActive(true);
+            
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
-            Player = playerManager.SpawnPlayer(playerSpawnPoint);
+            Player = _playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
 
-            UIManager.InitLevelUI(Player);
-            playerManager.LoadPlayerDefaultConfig();
-            Player.PlayerAttack.Init(Player);
+            _uiManager.InitLevelUI(Player);
+            _playerManager.LoadPlayerConfig();
             
-            Player.GetComponent<CameraMover>().Init(CameraMain, Player.transform);
-            
-            soundManager.Init();
-            particlesManager.Init();
-            
-            // spawner.OnSuperBossSpawned += OnSuperBossSpawned;
-            spawner.SpawnNextWave();
+            _soundManager.Init();
+            _particlesManager.Init();
+            _spawner.Init();
             
             Player.OnCharacterDeath += OnPlayerDeath;
         }
-        
-        // private void OnSuperBossSpawned(SuperBoss boss)
-        // {
-        //     _superBoss = boss;
-        //     boss.OnSuperBossDeath += ShowWinUI;
-        //     print("SINGED UP");
-        // }
-        //
-        // private void ShowWinUI()
-        // {
-        //     print("CALLED EVENT");
-        //     UIManager.Instance?.ShowWinGamePanel();
-        //     _superBoss.OnSuperBossDeath -= ShowWinUI;
-        // }
 
         private void OnPlayerDeath(Character player)    
         {

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
   maxHealth: 20
   moveSpeed: 5
-  damage: 25
+  damage: 15
   EnemyType: 1
   scaleModifier: 2
   material: {fileID: 2100000, guid: b328ac4efb3db9c4997cc25b46a451af, type: 2}

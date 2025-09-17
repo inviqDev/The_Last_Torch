@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyConfig
   maxHealth: 10
   moveSpeed: 4
-  damage: 0.15
+  damage: 10
   EnemyType: 0
   scaleModifier: 1
   material: {fileID: 2100000, guid: 66878dcb86bc59a42a8b0caeca172e4a, type: 2}
   dropConfig: {fileID: 11400000, guid: be08e1cd3d09519499a85f2719f725fe, type: 2}
   angularSpeed: 720
   acceleration: 16
-  stoppingDistance: 0.25
+  stoppingDistance: 0.025

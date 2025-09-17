@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Runtime
 {
     [DefaultExecutionOrder(-999)]
-    public class PlayerManager : Singleton<PlayerManager>
+    public class PlayerManager : MonoBehaviour
     {
         [SerializeField] private PlayerModel playerPrefab;
         [SerializeField] private PlayerConfig playerConfig;
@@ -12,13 +12,15 @@ namespace Runtime
         
         public PlayerModel SpawnPlayer(Vector3 spawnPoint)
         {
+            var cameraMain = GameManager.Instance?.CameraMain;
             _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);
-            // _player.PlayerAttack.Init(_player);
+            _player.GetComponent<CameraMover>().Init(cameraMain, _player.transform);
+            _player.PlayerAttack.Init(_player);
             
             return _player;
         }
 
-        public void LoadPlayerDefaultConfig()
+        public void LoadPlayerConfig()
         {
             UnityEngine.Assertions.Assert.IsNotNull(_player, "player is null");
             _player.SetUpPlayerConfig(playerConfig);

@@ -8,7 +8,7 @@ namespace Runtime
 
         protected override void LaunchOnEnemyDeathLogic()
         {
-            UIManager.Instance?.ShowWinGamePanel();
+            GameManager.Instance?.UIManager.ShowWinGamePanel();
             // OnSuperBossDeath?.Invoke();
             // base.LaunchOnEnemyDeathLogic();
         }

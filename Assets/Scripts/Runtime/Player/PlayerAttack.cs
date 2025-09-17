@@ -81,7 +81,7 @@ namespace Runtime
         private void ActivateNextAbility()
         {
             var ability = _availableAbilities[_nextAbilityIndex];
-            var slot = UIManager.Instance?.GetAvailableAbilitySlot();
+            var slot = GameManager.Instance?.UIManager.GetAvailableAbilitySlot();
 
             if (!slot)
             {

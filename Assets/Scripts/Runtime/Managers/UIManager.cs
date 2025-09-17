@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class UIManager : Singleton<UIManager>
+    public class UIManager : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI timer;
         [SerializeField] private KillsBarInfo killsBarInfo;
