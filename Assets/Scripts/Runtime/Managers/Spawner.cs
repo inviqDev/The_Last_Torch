@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 namespace Runtime
 {
     [DefaultExecutionOrder(-998)]
-    public class EnemySpawner : Singleton<EnemySpawner>
+    public class Spawner : Singleton<Spawner>
     {
         [System.Serializable]
         public struct prefabBuild
@@ -96,7 +96,7 @@ namespace Runtime
             _timer.OnTicked -= SpawnEnemy;
             _timer.TimerIsOver -= WaveIsFullyReleased;
 
-            print($"[EnemySpawner] Wave #{currentWaveIndex} released.");
+            print($"[Spawner] Wave #{currentWaveIndex} released.");
             
             currentWaveIndex++;
             SpawnNextWave();
@@ -171,6 +171,8 @@ namespace Runtime
         private void MoveEnemyToPool(Character enemy)
         {
             enemy.OnCharacterDeath -= MoveEnemyToPool;
+
+            GameManager.Instance?.UIManager.ChangeKillsBarInfo(enemy);
             Pool.Instance?.ReturnToPool(enemy as EnemyModel);
         }
         

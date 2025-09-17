@@ -449,7 +449,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7df074a1ec0ef274a84fbcfd6ace7aa5, type: 2}
   - {fileID: 11400000, guid: 2197e28b74a41a248b18a15c2ee49973, type: 2}
   currentWaveIndex: 0
-  spawnWavesContinuously: 0
+  spawnWavesContinuously: 1
   nonBossPoints:
   - {fileID: 7566866661674604006}
   - {fileID: 8557000988179204948}
