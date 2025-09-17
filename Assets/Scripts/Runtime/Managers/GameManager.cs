@@ -56,6 +56,7 @@ namespace Runtime
             CameraMain = Camera.main;
             
             _levelEnv = Instantiate(levelEnv, Vector3.zero, Quaternion.identity, transform);
+            _levelEnv.RebakeNavMeshSurface();
             _levelEnv.gameObject.SetActive(true);
             
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;

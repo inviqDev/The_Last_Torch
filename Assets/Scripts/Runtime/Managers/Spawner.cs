@@ -16,8 +16,8 @@ namespace Runtime
             public EnemyModel enemyPrefab;
         }
 
-        public Action<SuperBoss> OnSuperBossSpawned;
-        
+        // public Action OnSuperBossSpawned;
+
         [SerializeField] private SpawnWaveConfig[] waveConfigs;
         [SerializeField] private int currentWaveIndex;
         [SerializeField] private bool spawnWavesContinuously; 
@@ -29,9 +29,9 @@ namespace Runtime
         [SerializeField] private prefabBuild[] prefabBuilds;
         
         private Dictionary<EnemyType, EnemyModel> _enemyDictionary;
-        
-        private readonly Queue<EnemyConfig> _bossWaveQueue = new();
-        private readonly Queue<EnemyConfig> _waveQueue = new();
+        private Queue<EnemyConfig> _bossWaveQueue = new();
+        private Queue<EnemyConfig> _waveQueue = new();
+        private List<EnemyModel> _spawnedEnemies;
 
         private EnemyType _enemyType;
         private Timer _timer;
@@ -44,20 +44,24 @@ namespace Runtime
 
         public void Init()
         {
-            _timer = new Timer(this);
-            _bossSpawnPointIndex = 0;
-            
-            _enemyDictionary = new Dictionary<EnemyType, EnemyModel>(prefabBuilds.Length);
+            _enemyDictionary ??= new Dictionary<EnemyType, EnemyModel>(prefabBuilds.Length);
             foreach (var e in prefabBuilds)
             {
                 MyAsserts.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
                 _enemyDictionary[e.enemyType] = e.enemyPrefab;
             }
+            
+            _bossWaveQueue = new Queue<EnemyConfig>();
+            _waveQueue = new Queue<EnemyConfig>();
+            _spawnedEnemies = new List<EnemyModel>();
+            
+            _timer = new Timer(this);
+            _bossSpawnPointIndex = 0;
 
-            SpawnNextWave();
+            StartSpawningEnemies();
         }
 
-        private void SpawnNextWave()
+        private void StartSpawningEnemies()
         {
             if (currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length)
             {
@@ -88,17 +92,41 @@ namespace Runtime
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
         }
 
-        private void WaveIsFullyReleased()
+        public void StopSpawningEnemies()
         {
-            _timer.StopTimer();
+            if (_spawnedEnemies != null)
+            {
+                foreach (var e in _spawnedEnemies)
+                {
+                    e.Mover.StopAndReset();
+                    Pool.Instance?.ReturnToPool(e);
+                }
+                
+                _spawnedEnemies.Clear();
+            }
             
+            _waveQueue.Clear();
+            _bossWaveQueue.Clear();
+
+            if (_timer == null) return;
             _timer.OnTicked -= SpawnEnemy;
             _timer.TimerIsOver -= WaveIsFullyReleased;
+            _timer.StopTimer();
+        }
 
+        private void WaveIsFullyReleased()
+        {
             print($"[Spawner] Wave #{currentWaveIndex} released.");
             
+            _waveQueue.Clear();
+            _bossWaveQueue.Clear();
+            
+            _timer.StopTimer();
+            _timer.OnTicked -= SpawnEnemy;
+            _timer.TimerIsOver -= WaveIsFullyReleased;
+            
             currentWaveIndex++;
-            SpawnNextWave();
+            StartSpawningEnemies();
         }
 
         private void SpawnEnemy(int _)
@@ -145,13 +173,14 @@ namespace Runtime
             var prefab = GetEnemyTypePrefab(config);
             MyAsserts.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
 
-            if (prefab is SuperBoss superBoss)
-            {
-                OnSuperBossSpawned?.Invoke(superBoss);
-            }
+            // if (prefab is SuperBoss superBoss)
+            // {
+            //     OnSuperBossSpawned?.Invoke(superBoss);
+            // }
             
             var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");
+            _spawnedEnemies.Add(enemy);
             
             MyAsserts.IsNotNull(spawnPoint, "point is not set properly");
             enemy.Mover.WarpTo(spawnPoint.position);

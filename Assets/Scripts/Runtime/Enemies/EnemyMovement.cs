@@ -93,6 +93,9 @@ namespace Runtime
         // Вызывать при возврате в пул
         public void StopAndReset()
         {
+            if (!agent || !agent.gameObject.activeInHierarchy) return;
+            if (!agent.isOnNavMesh) return;
+            
             agent.isStopped = true;
             agent.ResetPath();
         }

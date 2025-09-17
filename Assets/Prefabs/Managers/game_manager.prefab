@@ -49,4 +49,4 @@ MonoBehaviour:
   UI_Manager: {fileID: 6396084754435940496, guid: 6a3e946ddc27a1f4582b3b7b846d5490, type: 3}
   soundManager: {fileID: -4673318367061662717, guid: 52f80ebd1f045ce4ca071ec1485b6db9, type: 3}
   particlesManager: {fileID: 1099067992950613715, guid: c3e1c7e4f86c2d34f8386ca16451789b, type: 3}
-  levelEnv: {fileID: 6444735900222717066, guid: aa28937baeb0c424ab2a93e12febf8b8, type: 3}
+  levelEnv: {fileID: 898429092922377505, guid: aa28937baeb0c424ab2a93e12febf8b8, type: 3}

@@ -92,8 +92,9 @@ namespace Runtime
         
         public void OnReturnToPool()
         {
-            gameObject.SetActive(false);
             transform.SetParent(Pool.Instance?.EnemiesRoot);
+            mover.StopAndReset();
+            gameObject.SetActive(false);
         }
     }
 }
