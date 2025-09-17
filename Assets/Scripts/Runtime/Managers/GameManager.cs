@@ -10,27 +10,43 @@ namespace Runtime
     public class GameManager : Singleton<GameManager>
     {
         [SerializeField] private PlayerManager playerManager;
+        [SerializeField] private Spawner spawner;
+        [SerializeField] private UIManager UI_Manager;
+        
         [SerializeField] private SoundManager soundManager;
         [SerializeField] private ParticlesManager particlesManager;
-        [SerializeField] private UIManager UIManager;
         
         [SerializeField] private LevelEnvironment levelEnv;
-        [SerializeField] private EnemySpawner spawner;
 
+        public PlayerManager PlayerManager => playerManager;
+        public Spawner Spawner => spawner;
+        public UIManager UIManager => UI_Manager;
+        public SoundManager SoundManager => soundManager;
+        public ParticlesManager ParticlesManager => particlesManager;
+        
+        
         public Camera CameraMain { get; private set; }
         public PlayerModel Player { get; private set; }
         
         private SuperBoss _superBoss;
+        private Timer _timer;
         
 
-        protected override void Awake()
+        public void Init()
         {
+            playerManager = Instantiate(playerManager, null);
+            spawner = Instantiate(spawner, null);
+            UI_Manager = Instantiate(UI_Manager, null);
+            soundManager = Instantiate(soundManager, null);
+            particlesManager = Instantiate(particlesManager, null);
+            levelEnv = Instantiate(levelEnv, Vector3.zero, Quaternion.identity, null);
+            
             CameraMain = Camera.main;
             
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             Player = playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
-            
+
             UIManager.InitLevelUI(Player);
             playerManager.LoadPlayerDefaultConfig();
             Player.PlayerAttack.Init(Player);

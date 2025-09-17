@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce94aa2ab0fa4ad2bc98a998ce181914, type: 3}
+  m_Name: To_level_01
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime._my_tests.async_scene_loader.TransitionAsset
+  targetScene:
+    sceneAsset: {fileID: 102900000, guid: 9aa268fc1ab0a7a44a210527dd0b7c4d, type: 3}
+    scenePath: Assets/Scenes/Level_01.unity
+    name: level_01
+  setActiveAfterLoad: 1
+  showProgress: 1
+  minOverlayShowTime: 1
+  payload: {fileID: 11400000, guid: 9ca2ec12bbfaf0d4e9bbfed2f5977c52, type: 2}
