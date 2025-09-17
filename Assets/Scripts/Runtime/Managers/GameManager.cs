@@ -63,6 +63,7 @@ namespace Runtime
             Player = _playerManager.SpawnPlayer(playerSpawnPoint);
             MyAsserts.IsNotNull(Player, "Player is null");
 
+            print(_uiManager.GetComponent<UIManager>().isActiveAndEnabled);
             _uiManager.InitLevelUI(Player);
             _playerManager.LoadPlayerConfig();
             

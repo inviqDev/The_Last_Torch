@@ -19,7 +19,10 @@ namespace Runtime
         // public Action OnSuperBossSpawned;
 
         [SerializeField] private SpawnWaveConfig[] waveConfigs;
+
+        [SerializeField] private bool testMode;
         [SerializeField] private int currentWaveIndex;
+        
         [SerializeField] private bool spawnWavesContinuously; 
         
         [SerializeField] private Transform[] nonBossPoints;
@@ -38,7 +41,6 @@ namespace Runtime
         
         private SpawnWaveConfig _currentWaveConfig;
         private float _spawnInterval;
-        
         private int _bossSpawnPointIndex;
         private int _extraWaveLocalBossIndex;
 
@@ -50,13 +52,18 @@ namespace Runtime
                 MyAsserts.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
                 _enemyDictionary[e.enemyType] = e.enemyPrefab;
             }
+
+            if (testMode)
+            {
+                currentWaveIndex = 0;
+            }
             
             _bossWaveQueue = new Queue<EnemyConfig>();
             _waveQueue = new Queue<EnemyConfig>();
             _spawnedEnemies = new List<EnemyModel>();
+            _bossSpawnPointIndex = 0;
             
             _timer = new Timer(this);
-            _bossSpawnPointIndex = 0;
 
             StartSpawningEnemies();
         }
@@ -107,6 +114,8 @@ namespace Runtime
             
             _waveQueue.Clear();
             _bossWaveQueue.Clear();
+
+            currentWaveIndex = 0;
 
             if (_timer == null) return;
             _timer.OnTicked -= SpawnEnemy;

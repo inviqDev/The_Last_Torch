@@ -19,13 +19,13 @@ namespace Runtime
         {
             totalAmount = 0;
             ChangeTotalKillsInfo(totalAmount);
-            
+
             commonAmount = 0;
             ChangeCommonKillsInfo(commonAmount);
-            
+
             uniqueAmount = 0;
             ChangeUniqueKillsInfo(uniqueAmount);
-            
+
             bossAmount = 0;
             ChangeBossKillsInfo(bossAmount);
         }
@@ -34,17 +34,17 @@ namespace Runtime
         {
             totalKills.text = $" : {newAmount.ToString()}";
         }
-        
+
         private void ChangeCommonKillsInfo(int newAmount)
         {
             commonKills.text = $" : {newAmount.ToString()}";
         }
-        
+
         private void ChangeUniqueKillsInfo(int newAmount)
         {
             uniqueKills.text = $" : {newAmount.ToString()}";
         }
-        
+
         private void ChangeBossKillsInfo(int newAmount)
         {
             bossKills.text = $" : {newAmount.ToString()}";
@@ -54,7 +54,7 @@ namespace Runtime
         {
             totalAmount++;
             ChangeTotalKillsInfo(totalAmount);
-            
+
             switch (enemy)
             {
                 case BasicEnemy:
@@ -71,5 +71,18 @@ namespace Runtime
                     break;
             }
         }
-    }
+
+        public void ResetKillBarInfo()
+        {
+            totalAmount = 0;
+            commonAmount = 0;
+            uniqueAmount = 0;
+            bossAmount = 0;
+            
+            ChangeTotalKillsInfo(totalAmount);
+            ChangeCommonKillsInfo(commonAmount);
+            ChangeUniqueKillsInfo(uniqueAmount);
+            ChangeBossKillsInfo(bossAmount);
+        }
+}
 }

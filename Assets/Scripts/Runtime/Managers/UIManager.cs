@@ -22,6 +22,7 @@ namespace Runtime
             abilitySlotsController.ResetAbilitySlots();
             playerStatsInfo.Init(player);
             playerLevelSlider.Init(player);
+            
             StartGameTimer();
         }
 
@@ -33,6 +34,12 @@ namespace Runtime
             
             _timer.OnAnyValueChanged += ChangeMainTimerValue;
             _timer.StartFromToTimer(0f, float.MaxValue, TimerType.Increasing);
+        }
+
+        public void LaunchStopGameLogic()
+        {
+            _timer?.StopTimer();
+            killsBarInfo.ResetKillBarInfo();
         }
 
         private void ChangeMainTimerValue(float timerValue)

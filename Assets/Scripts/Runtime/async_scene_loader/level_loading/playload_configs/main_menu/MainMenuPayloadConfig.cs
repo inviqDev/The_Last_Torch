@@ -17,8 +17,10 @@ namespace Runtime
 
         public override void OnDidLoad(Scene scene)
         {
-            if (!GameManager.Instance?.UIManager.gameObject) return;
-            GameManager.Instance?.UIManager.gameObject.SetActive(false);
+            var gameManager = GameManager.Instance;
+            MyAsserts.IsNotNull(gameManager, "game manager is not found");
+            
+            gameManager.UIManager?.gameObject.SetActive(false);
         }
     }
 }
