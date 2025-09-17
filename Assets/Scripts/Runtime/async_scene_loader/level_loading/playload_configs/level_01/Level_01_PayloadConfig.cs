@@ -20,6 +20,11 @@ namespace Runtime
         {
             var gameManager = GameManager.Instance;
             MyAsserts.IsNotNull(gameManager, "game manager is not found");
+
+            if (Time.timeScale < 1f)
+            {
+                Time.timeScale = 1f;
+            }
             
             gameManager.UIManager?.gameObject.SetActive(true);
             GameManager.Instance?.Init();

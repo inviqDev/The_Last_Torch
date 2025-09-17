@@ -3374,6 +3374,7 @@ GameObject:
   - component: {fileID: 7382908314661409012}
   - component: {fileID: 7486134006297081169}
   - component: {fileID: 7397498073073279260}
+  - component: {fileID: 6125255544061862340}
   m_Layer: 5
   m_Name: pause_game
   m_TagString: Untagged
@@ -3482,6 +3483,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6125255544061862340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7560460337497278363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 024d58008dfc1f643b640463dfaeec9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.PauseGame
 --- !u!1 &7986404253715109137
 GameObject:
   m_ObjectHideFlags: 0

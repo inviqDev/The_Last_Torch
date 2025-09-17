@@ -22,7 +22,6 @@ namespace Runtime
             abilitySlotsController.ResetAbilitySlots();
             playerStatsInfo.Init(player);
             playerLevelSlider.Init(player);
-            
             StartGameTimer();
         }
 
