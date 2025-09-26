@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: wave_004
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyWaveConfig
   basicEnemy: {fileID: 11400000, guid: 266cbe918956e3744883a2b429a23d7e, type: 2}
-  basicEnemiesAmount: 12
-  willSpawnRed: 0
+  basicEnemiesAmount: 38
+  willSpawnRed: 1
   redUnique: {fileID: 11400000, guid: 6076df7a059cfa545a8a9d87ce144a3a, type: 2}
-  redEnemiesAmount: 0
-  willSpawnBlue: 0
+  redEnemiesAmount: 1
+  willSpawnBlue: 1
   blueUnique: {fileID: 11400000, guid: a79e2274862f8dc4f970a3abc9ca5e8e, type: 2}
-  blueEnemiesAmount: 0
+  blueEnemiesAmount: 1
   willSpawnYellow: 1
   yellowUnique: {fileID: 11400000, guid: 74a73822b9643664e887e853532ac5a3, type: 2}
   yellowEnemiesAmount: 2
@@ -29,4 +29,4 @@ MonoBehaviour:
   willSpawnSuperBoss: 0
   superBoss: {fileID: 11400000, guid: 9299a6ce627f1394d9126c96da8ac944, type: 2}
   willSpawnExtraWave: 0
-  spawningInterval: 1.75
+  spawningInterval: 1.45

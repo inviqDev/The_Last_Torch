@@ -1,10 +1,5 @@
-#region usings
-
 using System;
 using UnityEngine;
-using MyAssert = UnityEngine.Assertions.Assert;
-
-#endregion
 
 namespace Runtime
 {
@@ -20,8 +15,9 @@ namespace Runtime
         public Action<float> OnPlayerExpChanged;
 
         [SerializeField] private PlayerMovement movementComponent;
-        [SerializeField] private Dash dashComponent;
-
+        [SerializeField] private PlayerDash playerDashComponent;
+        [SerializeField] private DashUI dashUIComponent;
+        
         [SerializeField] private PlayerAttack playerAttack;
 
         [SerializeField] private int levelsAmount;
@@ -82,9 +78,9 @@ namespace Runtime
             _dashDuration = config.dashDuration;
 
             healthBar.Init(this);
-
+            
             movementComponent.SetMoveSettingsFromConfig(config);
-            dashComponent.SetDashSettingsFromConfig(config);
+            playerDashComponent.SetDashSettingsFromConfig(config, dashUIComponent);
             
             OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
@@ -108,13 +104,6 @@ namespace Runtime
             }
 
             OnPlayerExpChanged?.Invoke(_currentExp);
-        }
-
-        public void ChangeAllModifiers()
-        {
-            movementComponent.IncreaseMoveSpeedModifier();
-            dashComponent.IncreaseDashSpeedModifier();
-            dashComponent.IncreaseDashDurationModifier();
         }
 
         public override void TakeDamage(float incomingDamage)
