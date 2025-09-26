@@ -18,3 +18,4 @@ MonoBehaviour:
   startExp: 0
   dashSpeed: 35
   dashDuration: 0.35
+  dashCooldown: 2

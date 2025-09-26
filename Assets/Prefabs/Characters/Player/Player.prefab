@@ -265,7 +265,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   movementComponent: {fileID: 7034329582900553992}
-  dashComponent: {fileID: 4479476291269109723}
+  playerDashComponent: {fileID: 4479476291269109723}
   playerAttack: {fileID: 2947505582540525192}
   levelsAmount: 5
   firstLevelExp: 200
@@ -284,8 +284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputController
   movementComponent: {fileID: 7034329582900553992}
-  lookComponent: {fileID: 1852613517252287293}
-  dashComponent: {fileID: 4479476291269109723}
+  playerDashComponent: {fileID: 4479476291269109723}
   cameraMover: {fileID: 1895004586295658128}
   playerAttack: {fileID: 2947505582540525192}
 --- !u!114 &7034329582900553992
@@ -300,7 +299,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9eb84488b2b6a3498332770bf0e47ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movement
-  controller: {fileID: 5195728474726094677}
 --- !u!114 &1852613517252287293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,7 +329,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6f5c51ec73f3b43a02448587fc5dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  controller: {fileID: 5195728474726094677}
+  _speed: 0
+  _duration: 0
+  _cooldown: 0
 --- !u!114 &2947505582540525192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,8 +361,8 @@ GameObject:
   - component: {fileID: 4777202230580161533}
   - component: {fileID: 7322992890147419008}
   - component: {fileID: 4025168963043340317}
-  - component: {fileID: 6223202108331506207}
   - component: {fileID: 3354885709007326852}
+  - component: {fileID: 6223202108331506207}
   m_Layer: 7
   m_Name: body
   m_TagString: Untagged
@@ -441,6 +441,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3354885709007326852
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365291058574766826}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6223202108331506207
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -468,27 +489,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &3354885709007326852
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7365291058574766826}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7653200180052231529
 GameObject:
   m_ObjectHideFlags: 0

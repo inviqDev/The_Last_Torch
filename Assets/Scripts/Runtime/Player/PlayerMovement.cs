@@ -1,62 +1,52 @@
 using UnityEngine;
 
-// ask for sealed recommendation
 namespace Runtime
 {
-    public sealed class PlayerMovement : MonoBehaviour
+    public sealed class PlayerMovement : Movement
     {
-        [SerializeField] private CharacterController controller;
-
+        private Rotation _playerRotation;
         private float _moveSpeed;
-        private float _moveSpeedModifier = 1.0f;
-    
-        private Vector3 _direction;
-        public Vector3 Direction => _direction;
 
-        private void Start()
+        protected override void Init()
         {
+            base.Init();
+            
+            _playerRotation ??= GetComponent<Rotation>();
+            MyAssertions.EnsureIsNotNull(_playerRotation);
+            
             enabled = false;
         }
 
-        private void Update()
+        public override void StartMovement(Vector3 dir)
         {
-            controller.Move(_direction * Time.deltaTime);
+            direction = dir * _moveSpeed;
+            _playerRotation.FaceDirection(direction);
+            enabled = true;
+        }
+
+        public override void Move(Vector3 dir)
+        {
+            if (dir == Vector3.zero) return;
+            direction = dir.normalized * _moveSpeed;
+            _playerRotation.FaceDirection(direction);
+        }
+
+        public override void StopMovement()
+        {
+            direction = Vector3.zero;
+            _playerRotation.StopFacing();
+            enabled = false;
         }
 
         public void SetMoveSettingsFromConfig(PlayerConfig config)
         {
-            _moveSpeed = config.moveSpeed * _moveSpeedModifier;
+            Init();
+            _moveSpeed = config.moveSpeed;
         }
 
         public void SetNewMoveSpeed(float speed)
         {
             _moveSpeed = speed;
-        }
-        
-        public void IncreaseMoveSpeedModifier()
-        {
-            _moveSpeed *= _moveSpeedModifier;
-            _moveSpeedModifier += 0.2f;
-        }
-
-        public void StartMovement(Vector3 direction)
-        {
-            if (direction == Vector3.zero) return;
-        
-            enabled = true;
-            _direction = direction.normalized * _moveSpeed;
-        }
-
-        public void MoveInDirection(Vector3 direction)
-        {
-            if (direction == Vector3.zero) return;
-            _direction = direction.normalized * _moveSpeed;
-        }
-
-        public void StopMovement()
-        {
-            enabled = false;
-            _direction = Vector3.zero;
         }
     }
 }
