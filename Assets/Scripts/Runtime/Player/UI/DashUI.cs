@@ -8,29 +8,44 @@ namespace Runtime
         [SerializeField] private Image fillingIcon;
         [SerializeField] private Slider progressBar;
 
+        private DashState _dashState;
+        
         private Timer _timer;
-        private float _abilityCooldown;
+        private float _dashCooldown;
+        private float _dashDuration;
 
-        public void InitDashAbilityUI(Timer timer, float cooldown)
+        public void InitDashAbilityUI(Timer timer, float cooldown, float duration)
         {
             fillingIcon.fillAmount = 0f;
             progressBar.value = 0f;
-            
+
             _timer = timer;
-            _abilityCooldown = cooldown;
+            _dashCooldown = cooldown;
+            _dashDuration = duration;
             
-            _timer.OnAnyValueChanged += ShowCooldownAbilityProgress;
+            _timer.OnAnyValueChanged += ShowCooldownProgress;
         }
 
-        private void ShowCooldownAbilityProgress(float value)
+        private void ShowCooldownProgress(float value)
         {
-            fillingIcon.fillAmount = value / _abilityCooldown;
-            progressBar.value = value / _abilityCooldown;
+            switch (_dashState)
+            {
+                case DashState.InProgress:
+                    fillingIcon.fillAmount = value / _dashDuration;
+                    progressBar.value = value / _dashDuration;
+                    break;
+                case DashState.OnCooldown:
+                    fillingIcon.fillAmount = value / _dashCooldown;
+                    progressBar.value = value / _dashCooldown;
+                    break;
+            }
         }
+
+        public void UpdateDashState(DashState dashState) => _dashState = dashState;
 
         private void OnDisable()
         {
-            _timer.OnAnyValueChanged -= ShowCooldownAbilityProgress;
+            _timer.OnAnyValueChanged -= ShowCooldownProgress;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Runtime
 
         private void MoveIsStarted(InputAction.CallbackContext ctx)
         {
-            if (playerDashComponent.dashState == PlayerDash.DashState.InProgress) return;
+            if (playerDashComponent.dashState == DashState.InProgress) return;
             
             var input = ctx.ReadValue<Vector2>();
             if (input == Vector2.zero) return;
@@ -48,7 +48,7 @@ namespace Runtime
 
         private void MoveIsPerformed(InputAction.CallbackContext ctx)
         {
-            if (playerDashComponent.dashState == PlayerDash.DashState.InProgress) return;
+            if (playerDashComponent.dashState == DashState.InProgress) return;
             
             var input = ctx.ReadValue<Vector2>();
             if (input == Vector2.zero) return;
@@ -59,14 +59,14 @@ namespace Runtime
 
         private void MoveIsCanceled(InputAction.CallbackContext ctx)
         {
-            if (playerDashComponent.dashState == PlayerDash.DashState.InProgress) return;
+            if (playerDashComponent.dashState == DashState.InProgress) return;
             
             movementComponent.StopMovement();
         }
 
         private void PerformDash(InputAction.CallbackContext ctx)
         {
-            if (playerDashComponent.dashState != PlayerDash.DashState.Ready) return;
+            if (playerDashComponent.dashState != DashState.Ready) return;
             
             var input = _inputActions.Gameplay.Move.ReadValue<Vector2>();
             if (input == Vector2.zero) return;
