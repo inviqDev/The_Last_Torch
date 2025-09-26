@@ -24,26 +24,27 @@ namespace Runtime
         
         public DashState dashState { get; private set; }
 
-        protected override void Init()
+        protected override void InitMovement()
         {
-            base.Init();
+            base.InitMovement();
             enabled = false;
+        }
+
+        public void SetDashSettingsFromConfig(PlayerConfig config, DashUI dashUI)
+        {
+            _speed = config.dashSpeed;
+            _duration = config.dashDuration;
+            _cooldown = config.dashCooldown;
+            
             
             _timer = new Timer(this);
             _timer.TimerIsOver += ChangeDashState;
             
+            InitMovement();
+            dashUI.InitDashAbilityUI(_timer, _cooldown);
+            
             dashState = DashState.OnCooldown;
-            
             _timer.StartFromToTimer(0f, _cooldown, TimerType.Increasing);
-        }
-
-        public void SetDashSettingsFromConfig(PlayerConfig config)
-        {
-            Init();
-            
-            _speed = config.dashSpeed;
-            _duration = config.dashDuration;
-            _cooldown = config.dashCooldown;
         }
 
         private void ChangeDashState()
@@ -56,7 +57,10 @@ namespace Runtime
                     _timer.StartFromToTimer(0, _cooldown, TimerType.Increasing);
                     OnDashFinished?.Invoke();
                     break;
-                case DashState.OnCooldown: dashState = DashState.Ready; break;
+                
+                case DashState.OnCooldown: 
+                    dashState = DashState.Ready; 
+                    break;
             }
         }
 
@@ -71,7 +75,7 @@ namespace Runtime
             
             _timer.TimerIsOver -= ChangeDashState;
             _timer.TimerIsOver += ChangeDashState;
-            _timer.StartFromToTimer(0f, _duration, TimerType.Increasing);
+            _timer.StartFromToTimer(0f, _duration, TimerType.Increasing, false);
             
             enabled = true;
         }

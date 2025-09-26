@@ -175,9 +175,10 @@ GameObject:
   - component: {fileID: 1895004586295658128}
   - component: {fileID: 2555167345274003748}
   - component: {fileID: 2052228038588309076}
-  - component: {fileID: 7034329582900553992}
   - component: {fileID: 1852613517252287293}
+  - component: {fileID: 7034329582900553992}
   - component: {fileID: 4479476291269109723}
+  - component: {fileID: 3818093633366407341}
   - component: {fileID: 2947505582540525192}
   m_Layer: 7
   m_Name: Player
@@ -266,6 +267,7 @@ MonoBehaviour:
     m_Bits: 128
   movementComponent: {fileID: 7034329582900553992}
   playerDashComponent: {fileID: 4479476291269109723}
+  dashUIComponent: {fileID: 3818093633366407341}
   playerAttack: {fileID: 2947505582540525192}
   levelsAmount: 5
   firstLevelExp: 200
@@ -287,18 +289,6 @@ MonoBehaviour:
   playerDashComponent: {fileID: 4479476291269109723}
   cameraMover: {fileID: 1895004586295658128}
   playerAttack: {fileID: 2947505582540525192}
---- !u!114 &7034329582900553992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6432256446531588187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9eb84488b2b6a3498332770bf0e47ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!114 &1852613517252287293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317,6 +307,18 @@ MonoBehaviour:
   smoothTime: 0.08
   deadZoneDeg: 0.25
   upAxis: {x: 0, y: 1, z: 0}
+--- !u!114 &7034329582900553992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432256446531588187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9eb84488b2b6a3498332770bf0e47ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!114 &4479476291269109723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,9 +331,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6f5c51ec73f3b43a02448587fc5dad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  _speed: 0
-  _duration: 0
-  _cooldown: 0
+--- !u!114 &3818093633366407341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6432256446531588187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2cfed9aa7f48e088b6dec492fd558f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.DashUI
+  fillingIcon: {fileID: 2312699029539773959}
+  progressBar: {fileID: 6558926053752681275}
 --- !u!114 &2947505582540525192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,6 +546,10 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 785436536851850765, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_FillAmount
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1613656497059686946, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.079
@@ -617,6 +634,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5174002880724388942, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174002880724388942, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174002880724388942, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5174002880724388942, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6077172610219313209, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -629,6 +662,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: special_skill_UI
       objectReference: {fileID: 0}
+    - target: {fileID: 8213380047512963889, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+      propertyPath: m_Value
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -639,6 +676,28 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3675059105466192204, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
   m_PrefabInstance: {fileID: 3097972820415690762}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2312699029539773959 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 785436536851850765, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+  m_PrefabInstance: {fileID: 3097972820415690762}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &6558926053752681275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8213380047512963889, guid: aea2ecd266d6caf49ae4866f0c0b89be, type: 3}
+  m_PrefabInstance: {fileID: 3097972820415690762}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &6153127384450682493
 PrefabInstance:
   m_ObjectHideFlags: 0

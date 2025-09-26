@@ -9,7 +9,7 @@ namespace Runtime
         protected Rotation playerRotation;
         protected Vector3 direction;
 
-        protected virtual void Init()
+        protected virtual void InitMovement()
         {
             _controller ??= GetComponent<CharacterController>();
             MyAssertions.EnsureIsNotNull(_controller);

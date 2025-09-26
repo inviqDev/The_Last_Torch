@@ -23,12 +23,12 @@ namespace Runtime
 
         public Timer(MonoBehaviour timerActivator) => _timerActivator = timerActivator;
 
-        public void StartFromToTimer(float from, float to, TimerType timerType)
+        public void StartFromToTimer(float from, float to, TimerType timerType, bool showProgress = true)
         {
             _timerRoutine = timerType switch
             {
-                TimerType.Increasing => IncreasingTimerRoutine(from, to),
-                TimerType.Decreasing => DecreasingTimerRoutine(from, to),
+                TimerType.Increasing => IncreasingTimerRoutine(from, to, showProgress),
+                TimerType.Decreasing => DecreasingTimerRoutine(from, to, showProgress),
                 _ => null
             };
 
@@ -36,26 +36,34 @@ namespace Runtime
             _timerActivator.StartCoroutine(_timerRoutine);
         }
 
-        private IEnumerator IncreasingTimerRoutine(float from, float to)
+        private IEnumerator IncreasingTimerRoutine(float from, float to, bool showProgress)
         {
             var timerValue = from;
             while (timerValue <= to)
             {
                 timerValue += Time.deltaTime;
-                OnAnyValueChanged?.Invoke(timerValue);
+                if (showProgress)
+                {
+                    OnAnyValueChanged?.Invoke(timerValue);
+                }
+                
                 yield return null;
             }
         
             TimerIsOver?.Invoke();
         }
-
-        private IEnumerator DecreasingTimerRoutine(float from, float to)
+        
+        private IEnumerator DecreasingTimerRoutine(float from, float to, bool showProgress)
         {
             var timerValue = from;
             while (timerValue >= to)
             {
                 timerValue -= Time.deltaTime;
-                OnAnyValueChanged?.Invoke(timerValue);
+                if (showProgress)
+                {
+                    OnAnyValueChanged?.Invoke(timerValue);
+                }
+                
                 yield return null;
             }
         

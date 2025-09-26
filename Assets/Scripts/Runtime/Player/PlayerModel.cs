@@ -16,7 +16,8 @@ namespace Runtime
 
         [SerializeField] private PlayerMovement movementComponent;
         [SerializeField] private PlayerDash playerDashComponent;
-
+        [SerializeField] private DashUI dashUIComponent;
+        
         [SerializeField] private PlayerAttack playerAttack;
 
         [SerializeField] private int levelsAmount;
@@ -79,7 +80,7 @@ namespace Runtime
             healthBar.Init(this);
             
             movementComponent.SetMoveSettingsFromConfig(config);
-            playerDashComponent.SetDashSettingsFromConfig(config);
+            playerDashComponent.SetDashSettingsFromConfig(config, dashUIComponent);
             
             OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);

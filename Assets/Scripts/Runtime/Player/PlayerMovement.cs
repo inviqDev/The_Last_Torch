@@ -7,9 +7,9 @@ namespace Runtime
         private Rotation _playerRotation;
         private float _moveSpeed;
 
-        protected override void Init()
+        protected override void InitMovement()
         {
-            base.Init();
+            base.InitMovement();
             
             _playerRotation ??= GetComponent<Rotation>();
             MyAssertions.EnsureIsNotNull(_playerRotation);
@@ -40,7 +40,7 @@ namespace Runtime
 
         public void SetMoveSettingsFromConfig(PlayerConfig config)
         {
-            Init();
+            InitMovement();
             _moveSpeed = config.moveSpeed;
         }
 
