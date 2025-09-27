@@ -33,7 +33,7 @@ namespace Runtime
         
         public AbilityVFX AbilityVFX { get; private set; }
         
-        public Ability(AbilityConfig config) //, AbilitySlot abilitySlot)
+        public Ability(AbilityConfig config) 
         {
             Name = config.abilityName;
             Icon = config.abilityIcon;

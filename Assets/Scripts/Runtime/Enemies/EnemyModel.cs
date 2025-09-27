@@ -11,51 +11,61 @@ namespace Runtime
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
 
-        [SerializeField] private MeshRenderer meshRenderer;
-        [SerializeField] private EnemyMovement mover;
-
-        private EnemyDropConfig dropConfig;
-        private EnemyDrop dropGO;
-        private Material dropMaterial;
+        protected float damage;
         
+        [SerializeField] private MeshRenderer meshRenderer;
+
         private float _angularSpeed;
         private float _acceleration;
         private float stoppingDistance;
         
-        protected float damage;
+        private EnemyDropConfig dropConfig;
+        private EnemyDrop dropGO;
         
-        public EnemyMovement Mover => mover;
+        private EnemyMovement _mover;
+        public EnemyMovement Mover => _mover;
 
         private void Start()
         {
             MyAssertions.EnsureIsNotNull(GameManager.Instance);
         }
 
-        public void SetConfig(EnemyConfig config)
+        public void SetEnemyConfig(EnemyConfig config, float multiplier = 1f)
         {
             var player = GameManager.Instance?.Player;
+            MyAssertions.EnsureIsNotNull(player);
             
-            maxHealth = config.maxHealth;
-            currentHealth = maxHealth;
+            if (!player)
+            {
+                print("Player is missing");
+                
+                _mover?.StopAndReset();
+                return;
+            }
+            
+            maxHealth = config.maxHealth * multiplier;
+            currentHealth = maxHealth * multiplier;
+            
             moveSpeed = config.moveSpeed;
-            
-            dropConfig = config.dropConfig;
-            dropGO = config.dropConfig.dropGO;
-            dropMaterial = config.material;
-            meshRenderer.sharedMaterial = dropMaterial;
-            
-            transform.localScale = Vector3.one * config.scaleModifier;
-            
             _angularSpeed = config.angularSpeed;
             _acceleration = config.acceleration;
             stoppingDistance = config.stoppingDistance;
 
-            damage = config.damage;
+            damage = config.damage * multiplier;
+            
+            meshRenderer.material = config.material;
+            transform.localScale = Vector3.one * config.scaleModifier;
+            
+            dropConfig = config.dropConfig;
+            dropGO = config.dropConfig.dropGO;
 
             healthBar.Init(this);
-            mover.ApplyMovementConfig(player,
-                moveSpeed, _angularSpeed, _acceleration, stoppingDistance);
-            
+
+            _mover ??= GetComponent<EnemyMovement>();
+            MyAssertions.EnsureIsNotNull(_mover);
+            _mover.ApplyMovementConfig(player, moveSpeed, 
+                _angularSpeed, _acceleration, stoppingDistance);
+                
             OnConfigLoaded?.Invoke(config);
         }
 
@@ -64,21 +74,34 @@ namespace Runtime
             base.TakeDamage(incomingDamage);
             if (currentHealth > 0) return;
             
-            LaunchOnEnemyDeathLogic();
+            LaunchOnCharacterDeathLogic();
             OnCharacterDeath?.Invoke(this);
         }
 
-        protected virtual void LaunchOnEnemyDeathLogic()
+        public override void LaunchOnCharacterDeathLogic()
         {
-            mover.StopAndReset();
-
             var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
-            UnityEngine.Assertions.Assert.IsNotNull(drop, "drop object not found");
+            MyAssertions.EnsureIsNotNull(drop);
+            if (!drop) return;
             
-            drop.transform.position = new Vector3(transform.position.x, 0.65f, transform.position.z);;
-            drop.MeshRenderer.material = dropMaterial;
-            drop.SetUpConfigValues(dropConfig);
+            var dropPos = new Vector3(transform.position.x, 1f, transform.position.z);
+            drop.SetUpDropFromConfig(dropConfig, dropPos);
+            _mover.StopAndReset();
+            
+            base.LaunchOnCharacterDeathLogic();
+            OnCharacterDeath?.Invoke(this);
         }
+
+        // public virtual void LaunchOnEnemyDeathLogic()
+        // {
+        //     var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
+        //     MyAssertions.EnsureIsNotNull(drop);
+        //     if (!drop) return;
+        //     
+        //     var dropPos = new Vector3(transform.position.x, 1f, transform.position.z);
+        //     drop.SetUpDropFromConfig(dropConfig, dropPos);
+        //     _mover.StopAndReset();
+        // }
 
         protected virtual void PerformAttack(Character target)
         {
@@ -93,7 +116,7 @@ namespace Runtime
         public void OnReturnToPool()
         {
             transform.SetParent(Pool.Instance?.EnemiesRoot);
-            mover.StopAndReset();
+            _mover.StopAndReset();
             gameObject.SetActive(false);
         }
     }

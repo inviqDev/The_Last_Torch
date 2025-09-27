@@ -9,7 +9,7 @@ namespace Runtime
         [SerializeField] private Projectile projectile;
         [SerializeField] private float cooldown = 2.0f;
 
-        private PlayerModel _player;
+        private Player _player;
         private Coroutine _attackLoop;
 
         private void OnEnable()
@@ -21,7 +21,7 @@ namespace Runtime
             attackTrigger.OnPlayerExit += OnPlayerExit;
         }
 
-        private void OnPlayerEnter(PlayerModel player)
+        private void OnPlayerEnter(Player player)
         {
             _player = player;
 
@@ -42,7 +42,7 @@ namespace Runtime
             StopAttackLoop();
         }
 
-        private void OnPlayerExit(PlayerModel player)
+        private void OnPlayerExit(Player player)
         {
             _player = null;
             StopAttackLoop();
@@ -101,7 +101,7 @@ namespace Runtime
             proj.LaunchProjectile(origin, targetPos);
         }
 
-        private void OnPlayerDamaged(PlayerModel player)
+        private void OnPlayerDamaged(Player player)
         {
             player.TakeDamage(damage);
         }

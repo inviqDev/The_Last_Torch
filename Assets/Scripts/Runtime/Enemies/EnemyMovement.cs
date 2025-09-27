@@ -35,7 +35,7 @@ namespace Runtime
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
         }
 
-        public void ApplyMovementConfig(PlayerModel player, float moveSpeed,
+        public void ApplyMovementConfig(Player player, float moveSpeed,
             float angularSpeed, float acceleration, float stoppingDistance)
         {
             Debug.Assert(player, "Player is not found");

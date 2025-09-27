@@ -8,9 +8,9 @@ namespace Runtime
         [SerializeField] private TextMeshProUGUI health;
         [SerializeField] private TextMeshProUGUI moveSpeed;
 
-        private PlayerModel _player;
+        private Player _player;
         
-        public void Init(PlayerModel player)
+        public void Init(Player player)
         {
             _player = player;
             

@@ -17,7 +17,7 @@ namespace Runtime
 
         private Timer _timer;
         
-        public void InitLevelUI(PlayerModel player)
+        public void InitLevelUI(Player player)
         {
             abilitySlotsController.ResetAbilitySlots();
             playerStatsInfo.Init(player);

@@ -31,7 +31,7 @@ namespace Runtime
         public ParticlesManager ParticlesManager => _particlesManager;
         
         public Camera CameraMain { get; private set; }
-        public PlayerModel Player { get; private set; }
+        public Player Player { get; private set; }
         
         private SuperBoss _superBoss;
         private Timer _timer;
@@ -75,6 +75,7 @@ namespace Runtime
 
         private void OnPlayerDeath(Character player)    
         {
+            Spawner.StopSpawningEnemies();
             UIManager.TurnOnGameOverPanel();
         }
     }

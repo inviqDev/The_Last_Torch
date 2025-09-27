@@ -5,12 +5,12 @@ namespace Runtime
     [DefaultExecutionOrder(-999)]
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] private PlayerModel playerPrefab;
+        [SerializeField] private Player playerPrefab;
         [SerializeField] private PlayerConfig playerConfig;
         
-        private PlayerModel _player;
+        private Player _player;
         
-        public PlayerModel SpawnPlayer(Vector3 spawnPoint)
+        public Player SpawnPlayer(Vector3 spawnPoint)
         {
             var cameraMain = GameManager.Instance?.CameraMain;
             _player = Instantiate(playerPrefab, spawnPoint, Quaternion.identity, null);

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: yellow_drop
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyDropConfig
   dropGO: {fileID: 3483562175034757215, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
-  expGained: 15
+  dropMaterial: {fileID: 2100000, guid: aee708c0c115ebe45bfcb2d60800f9ef, type: 2}
+  expGained: 10
   healthBoost: 0
   moveSpeedBoost: 0
   damageBoost: 5

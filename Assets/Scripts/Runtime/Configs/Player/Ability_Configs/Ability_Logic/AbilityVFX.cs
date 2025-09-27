@@ -5,12 +5,12 @@ namespace Runtime
 {
     public readonly struct AbilityContext
     {
-        public readonly PlayerModel Player;
+        public readonly Player Player;
         public readonly EnemyModel InitialTarget;
         public readonly EnemiesCollector EnemiesCollector;
         public readonly Ability Ability;
 
-        public AbilityContext(PlayerModel player, EnemyModel initialTarget,
+        public AbilityContext(Player player, EnemyModel initialTarget,
             EnemiesCollector enemiesCollector, Ability ability)
         {
             Player = player;

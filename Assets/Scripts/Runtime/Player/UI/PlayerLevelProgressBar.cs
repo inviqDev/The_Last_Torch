@@ -10,10 +10,10 @@ namespace Runtime
         [SerializeField] private Slider expSlider;
         [SerializeField] private TextMeshProUGUI info;
         
-        private PlayerModel _player;
+        private Player _player;
         
         // TO KNOW: CURRENT MIN VALUE => MAX VALUE =>
-        public void Init(PlayerModel player)
+        public void Init(Player player)
         {
             _player = player;
             UnityEngine.Assertions.Assert.IsNotNull(_player, "Player is not set");

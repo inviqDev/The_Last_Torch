@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Runtime
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerModel : Character
+    public class Player : Character
     {
         public Action OnNextAbilityIsAvailable;
         
@@ -99,6 +99,8 @@ namespace Runtime
                 ++_currentLevel;
                 _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
                 
+                ChangeStats(20f, 1f, 10f);
+                
                 OnNextAbilityIsAvailable?.Invoke();
                 OnPlayerLevelChanged?.Invoke(_currentLevel, 0f, _currentLevelMaxExp);
             }
@@ -106,16 +108,14 @@ namespace Runtime
             OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
-        public override void TakeDamage(float incomingDamage)
-        {
-            base.TakeDamage(incomingDamage);
-            if (!(currentHealth <= 0)) return;
+        // public override void TakeDamage(float incomingDamage)
+        // {
+        //     base.TakeDamage(incomingDamage);
+        // }
 
-            LaunchOnPlayerDeathLogic();
-        }
-
-        private void LaunchOnPlayerDeathLogic()
+        public override void LaunchOnCharacterDeathLogic()
         {
+            base.LaunchOnCharacterDeathLogic();
             OnCharacterDeath?.Invoke(this);
         }
 

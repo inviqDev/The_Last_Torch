@@ -11,7 +11,7 @@ namespace Runtime
             _attackTrigger.OnPlayerEnter += OnPlayerTriggered;
         }
         
-        private void OnPlayerTriggered(PlayerModel player)
+        private void OnPlayerTriggered(Player player)
         {
             PerformAttack(player);
         }
@@ -23,7 +23,7 @@ namespace Runtime
         
         protected override void PerformAttack(Character target)
         {
-            if (target is not PlayerModel player) return;
+            if (target is not Player player) return;
             player.TakeDamage(damage);
         }
     }

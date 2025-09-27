@@ -29,4 +29,4 @@ MonoBehaviour:
   willSpawnSuperBoss: 1
   superBoss: {fileID: 11400000, guid: 9299a6ce627f1394d9126c96da8ac944, type: 2}
   willSpawnExtraWave: 0
-  spawningInterval: 2
+  spawningInterval: 0.5

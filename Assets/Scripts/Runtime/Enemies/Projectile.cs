@@ -6,7 +6,7 @@ namespace Runtime
 {
     public class Projectile : MonoBehaviour, IPoolable
     {
-        public Action<PlayerModel> OnPlayerDamaged;
+        public Action<Player> OnPlayerDamaged;
         public Action<Projectile> OnMoveToPool;
 
         [Header("Unique Key in pool dictionary")] 
