@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: boss_drop
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.EnemyDropConfig
   dropGO: {fileID: 3483562175034757215, guid: 90838f4353f3b1d459063f9754c9e66f, type: 3}
-  expGained: 25
+  dropMaterial: {fileID: 2100000, guid: 8242223d2a4e0094594d92d28ce5e67c, type: 2}
+  expGained: 20
   healthBoost: 20
-  moveSpeedBoost: 2
+  moveSpeedBoost: 0.35
   damageBoost: 10

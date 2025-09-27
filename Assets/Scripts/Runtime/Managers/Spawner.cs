@@ -25,6 +25,9 @@ namespace Runtime
         
         [SerializeField] private bool spawnWavesContinuously; 
         
+        [SerializeField] private float statsMultiplier;
+        [SerializeField] private float multiplierIncrement;
+        
         [SerializeField] private Transform[] nonBossPoints;
         [SerializeField] private Transform[] bossPoints;
         [SerializeField] private Transform superBossSpawnPoint;
@@ -116,6 +119,8 @@ namespace Runtime
             _bossWaveQueue.Clear();
 
             currentWaveIndex = 0;
+            _bossSpawnPointIndex = 0;
+            _extraWaveLocalBossIndex = 0;
 
             if (_timer == null) return;
             _timer.OnTicked -= SpawnEnemy;
@@ -135,6 +140,8 @@ namespace Runtime
             _timer.TimerIsOver -= WaveIsFullyReleased;
             
             currentWaveIndex++;
+            statsMultiplier += multiplierIncrement;
+            
             StartSpawningEnemies();
         }
 
@@ -160,7 +167,7 @@ namespace Runtime
             else if (IsNormalBossConfig(config))
             {
                 MyAsserts.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
-                MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point index is out of range");
+                // MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point index is out of range");
 
                 if (_currentWaveConfig.willSpawnExtraWave)
                 {
@@ -181,23 +188,19 @@ namespace Runtime
             
             var prefab = GetEnemyTypePrefab(config);
             MyAsserts.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
-
-            // if (prefab is SuperBoss superBoss)
-            // {
-            //     OnSuperBossSpawned?.Invoke(superBoss);
-            // }
             
             var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
             MyAsserts.IsNotNull(enemy, "enemy is not spawned");
+            enemy.SetEnemyConfig(config, statsMultiplier);
+            
             _spawnedEnemies.Add(enemy);
             
             MyAsserts.IsNotNull(spawnPoint, "point is not set properly");
             enemy.Mover.WarpTo(spawnPoint.position);
 
             enemy.OnCharacterDeath += MoveEnemyToPool;
-            enemy.SetConfig(config);
         }
-
+        
         private EnemyModel GetEnemyTypePrefab(EnemyConfig config)
         {
             if (!config) return null;
@@ -246,9 +249,15 @@ namespace Runtime
 
             // --- ОСТАЛЬНЫЕ ---
             EnqueueMany(currentConfig.basicEnemy, currentConfig.basicEnemiesAmount);
-            if (currentConfig.willSpawnRed)    EnqueueMany(currentConfig.redUnique,    currentConfig.redEnemiesAmount);
-            if (currentConfig.willSpawnBlue)   EnqueueMany(currentConfig.blueUnique,   currentConfig.blueEnemiesAmount);
-            if (currentConfig.willSpawnYellow) EnqueueMany(currentConfig.yellowUnique, currentConfig.yellowEnemiesAmount);
+            
+            if (currentConfig.willSpawnRed)
+                EnqueueMany(currentConfig.redUnique, currentConfig.redEnemiesAmount);
+            
+            if (currentConfig.willSpawnBlue)
+                EnqueueMany(currentConfig.blueUnique, currentConfig.blueEnemiesAmount);
+            
+            if (currentConfig.willSpawnYellow)
+                EnqueueMany(currentConfig.yellowUnique, currentConfig.yellowEnemiesAmount);
 
             ReshuffleWaveQueue(); // перемешиваем только «обычных» (не боссов)
         }

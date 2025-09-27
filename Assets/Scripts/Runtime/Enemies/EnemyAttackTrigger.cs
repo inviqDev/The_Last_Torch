@@ -5,8 +5,8 @@ namespace Runtime
 {
     public class EnemyAttackTrigger : MonoBehaviour
     {
-        public Action<PlayerModel> OnPlayerEnter;
-        public Action<PlayerModel> OnPlayerExit;
+        public Action<Player> OnPlayerEnter;
+        public Action<Player> OnPlayerExit;
         
         [Header("Layer masks")]
         [SerializeField] protected LayerMask playerLayerMask;
@@ -14,7 +14,7 @@ namespace Runtime
         [SerializeField] private EnemyModel enemyModel;
         [SerializeField] private Collider detectorCol;
 
-        private PlayerModel _player;
+        private Player _player;
         
         private void OnEnable()
         {

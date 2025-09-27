@@ -6,6 +6,8 @@ namespace Runtime
     public class EnemyDropConfig : ScriptableObject
     {
         public EnemyDrop dropGO;
+        public Material dropMaterial;
+        
         public float expGained;
 
         public float healthBoost;

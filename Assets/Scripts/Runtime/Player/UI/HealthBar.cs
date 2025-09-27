@@ -30,7 +30,7 @@ namespace Runtime
             slider.maxValue = _maxValue;
             slider.value = _character.CurrentHealth;
             
-            if (_character is PlayerModel player)
+            if (_character is Player player)
             {
                 player.OnPlayerMaxHealthChanged += OnPlayerMaxHealthChanged;
             }
@@ -43,7 +43,7 @@ namespace Runtime
 
         private void OnCharacterDeath(Character character)
         {
-            if (_character is PlayerModel player)
+            if (_character is Player player)
             {
                 player.OnPlayerMaxHealthChanged -= OnPlayerMaxHealthChanged;
             }

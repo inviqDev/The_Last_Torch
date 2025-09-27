@@ -6,7 +6,6 @@ namespace Runtime
 {
     public class AbilitySlot : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI abilityName;
         [SerializeField] private Image iconImage;
         [SerializeField] private Button activationButton;
         [SerializeField] private Slider cooldownProgress;
@@ -17,13 +16,12 @@ namespace Runtime
 
         public bool IsActive { get; private set; }
 
-        public void SetUpAbilityUI(Ability ability) //, bool isActive)
+        public void UpdateAbilityUI(Ability ability)
         {
             IsActive = ability.State != Ability.AbilityState.None;
 
             ability.OnDamageValueChanged += OnDamageValueChanged;
 
-            abilityName.text = ability.Name;
             iconImage.sprite = ability.Icon;
 
             _maxSliderValue = ability.Cooldown;

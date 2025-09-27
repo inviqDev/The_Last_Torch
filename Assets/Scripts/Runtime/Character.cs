@@ -12,7 +12,9 @@ namespace Runtime
         
         [Header("Layer masks")]
         [SerializeField] protected LayerMask playerLayerMask;
-        
+
+        public bool isAlive { get; private set; }
+
         protected float maxHealth;
         protected float currentHealth;
         protected float moveSpeed;
@@ -22,8 +24,16 @@ namespace Runtime
         
         public virtual void TakeDamage(float incomingDamage)
         {
-            currentHealth = Mathf.Clamp(CurrentHealth - incomingDamage, 0, maxHealth);
+            currentHealth = Mathf.Clamp(currentHealth - incomingDamage, 0, maxHealth);
             OnHealthChanged?.Invoke(currentHealth);
+            
+            if (currentHealth > 0f) return;
+            LaunchOnCharacterDeathLogic();
+        }
+
+        public virtual void LaunchOnCharacterDeathLogic()
+        {
+            isAlive = false;
         }
     }
 }

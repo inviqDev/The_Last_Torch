@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Runtime
@@ -9,14 +8,18 @@ namespace Runtime
         [SerializeField] private EnemiesCollector collector;
         [SerializeField] private AbilityConfig[] abilityConfigs;
         
+        private Player _player;
+        
         private List<Ability> _availableAbilities;
         private int _nextAbilityIndex;
         
         private List<Ability> _activeAbilities;
         private EnemyModel closestEnemy;
 
-        public void Init(PlayerModel player)
+        public void Init(Player player)
         {
+            _player = player;
+            
             _availableAbilities = new List<Ability>();
             _nextAbilityIndex = 0;
             
@@ -27,9 +30,17 @@ namespace Runtime
             }
             
             _activeAbilities = new List<Ability>();
-            // ActivateNextAbility();
             
-            player.OnNextAbilityIsAvailable += OnNextAbilityIsAvailable;
+            _player.OnNextAbilityIsAvailable += OnNextAbilityIsAvailable;
+            _player.OnCharacterDeath += OnCharacterDeath;
+        }
+
+        private void OnCharacterDeath(Character player)
+        {
+            _player.OnNextAbilityIsAvailable -= OnNextAbilityIsAvailable;
+            _player.OnCharacterDeath -= OnCharacterDeath;
+            
+            enabled = false;
         }
 
         private void Update()
@@ -90,7 +101,7 @@ namespace Runtime
             }
             
             ability.ActivateAbility(this, slot);
-            slot.SetUpAbilityUI(ability);
+            slot.UpdateAbilityUI(ability);
             
             _availableAbilities.Remove(ability);
             _activeAbilities.Add(ability);
@@ -98,8 +109,6 @@ namespace Runtime
 
         public void ChangeAbilitiesDamage(float increment)
         {
-            // print($"ACTIVE => BEFORE : Ability {a.Name} deals {a.Damage} damage");
-            
             foreach (var a in _activeAbilities)
             {
                 a.ChangeDamageValue(increment);

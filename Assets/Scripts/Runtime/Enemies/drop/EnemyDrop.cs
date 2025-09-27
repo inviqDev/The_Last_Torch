@@ -9,10 +9,10 @@ namespace Runtime
         public string UniquePoolKey => uniquePoolKey;
 
         [SerializeField] private LayerMask playerLayerMask;
-
-        private MeshRenderer meshRenderer;
-        public MeshRenderer MeshRenderer => meshRenderer;
+        public MeshRenderer MeshRenderer { get; private set; }
         
+        private DropAnimation dropAnimation;
+
         private float _expGained;
         private float _healthBoost;
         private float _damageBoost;
@@ -20,7 +20,7 @@ namespace Runtime
 
         private void Awake()
         {
-            meshRenderer = GetComponent<MeshRenderer>();
+            MeshRenderer = GetComponent<MeshRenderer>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -35,15 +35,23 @@ namespace Runtime
             Pool.Instance?.ReturnToPool(this);
         }
         
-        public void SetUpConfigValues(EnemyDropConfig dropConfig)
+        public void SetUpDropFromConfig(EnemyDropConfig dropConfig, Vector3 initPos)
         {
+            MeshRenderer ??= GetComponent<MeshRenderer>();
+            MyAssertions.EnsureIsNotNull(MeshRenderer);
+            MeshRenderer.material = dropConfig.dropMaterial;
+            
+            dropAnimation ??= GetComponent<DropAnimation>();
+            MyAssertions.EnsureIsNotNull(dropAnimation);
+            dropAnimation.StartAnimation(initPos);
+            
             _expGained = dropConfig.expGained;
             _healthBoost = dropConfig.healthBoost;
             _moveSpeed = dropConfig.moveSpeedBoost;
             _damageBoost = dropConfig.damageBoost;
         }
 
-        private bool OtherIsNotPlayer(Collider other, out PlayerModel player)
+        private bool OtherIsNotPlayer(Collider other, out Player player)
         {
             if ((playerLayerMask.value & 1 << other.gameObject.layer) != 0)
             {
