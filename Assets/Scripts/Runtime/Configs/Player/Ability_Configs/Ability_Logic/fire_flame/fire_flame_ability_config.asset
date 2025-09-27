@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ea28685e72e70644b1790b127868b5c, type: 3}
-  m_Name: impale_ability_config
+  m_Name: fire_flame_ability_config
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
-  abilityName: IMPALE
+  abilityName: FIRE FLAME
   abilityIcon: {fileID: 21300000, guid: 886372dd6bfab314a8c842d84ff7a69f, type: 3}
-  cooldown: 1
-  abilityPrefab: {fileID: 0}
-  damage: 10
+  progressTime: 0
+  cooldownTime: 1
+  abilityVFX: {fileID: 7767819657361809355, guid: 63e26e6d9eee41e41a6e0b9bec33c927, type: 3}
+  minAttackDistance: 18
+  damage: 5

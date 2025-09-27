@@ -359,8 +359,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerAttack
   collector: {fileID: 6055564229998812072}
   abilityConfigs:
-  - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}
   - {fileID: 11400000, guid: ed3e9665351d7fb4ca4a6e4d126d8245, type: 2}
+  - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}
   - {fileID: 11400000, guid: 474360a21aa250f4f88ff75fc56a80a7, type: 2}
   - {fileID: 11400000, guid: 401a7e26e7127994a9123ff9e20e9a32, type: 2}
 --- !u!1 &7365291058574766826
