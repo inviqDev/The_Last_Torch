@@ -90,7 +90,7 @@ namespace Runtime
             }
             
             ability.ActivateAbility(this, slot);
-            slot.SetUpAbilityUI(ability);
+            slot.UpdateAbilityUI(ability);
             
             _availableAbilities.Remove(ability);
             _activeAbilities.Add(ability);

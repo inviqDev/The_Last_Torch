@@ -59,21 +59,20 @@ namespace Runtime
 
         public void TurnOffGameOverPanel()
         {
+            Time.timeScale = 1f;
             gameOverPanel.SetActive(false);
-            Time.timeScale = 0f;
         }
 
         public void TurnOnGameOverPanel()
         {
-            Time.timeScale = 0f;
             gameOverPanel.SetActive(true);
+            Time.timeScale = 0f;
         }
 
         public void ShowWinGamePanel()
         {
             winGamePanel.SetActive(true);
+            Time.timeScale = 0f;
         }
-
-        
     }
 }

@@ -18,16 +18,13 @@ namespace Runtime
         
         private void OnDisable()
         {
-            _attackTrigger.OnPlayerEnter += OnPlayerTriggered;
+            _attackTrigger.OnPlayerEnter -= OnPlayerTriggered;
         }
         
         protected override void PerformAttack(Character target)
         {
-            // play anim, particles, etc
-            if (target is PlayerModel player)
-            {
-                player.TakeDamage(damage);
-            }
+            if (target is not PlayerModel player) return;
+            player.TakeDamage(damage);
         }
     }
 }

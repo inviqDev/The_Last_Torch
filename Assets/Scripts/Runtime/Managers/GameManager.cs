@@ -75,12 +75,7 @@ namespace Runtime
 
         private void OnPlayerDeath(Character player)    
         {
-            print("PLAYER IS DEAD !");
-            
             UIManager.TurnOnGameOverPanel();
-            gameObject.SetActive(false);
-            
-            Time.timeScale = 0f;
         }
     }
 }

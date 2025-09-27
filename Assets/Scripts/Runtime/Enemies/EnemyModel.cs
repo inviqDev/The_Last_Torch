@@ -20,7 +20,7 @@ namespace Runtime
         
         private float _angularSpeed;
         private float _acceleration;
-        protected float stoppingDistance;
+        private float stoppingDistance;
         
         protected float damage;
         
@@ -28,13 +28,13 @@ namespace Runtime
 
         private void Start()
         {
-            Debug.Assert(GameManager.Instance, "GameManager has not been found");
+            MyAssertions.EnsureIsNotNull(GameManager.Instance);
         }
-        
+
         public void SetConfig(EnemyConfig config)
         {
             var player = GameManager.Instance?.Player;
-
+            
             maxHealth = config.maxHealth;
             currentHealth = maxHealth;
             moveSpeed = config.moveSpeed;
@@ -62,7 +62,7 @@ namespace Runtime
         public override void TakeDamage(float incomingDamage)
         {
             base.TakeDamage(incomingDamage);
-            if (!(currentHealth <= 0)) return;
+            if (currentHealth > 0) return;
             
             LaunchOnEnemyDeathLogic();
             OnCharacterDeath?.Invoke(this);

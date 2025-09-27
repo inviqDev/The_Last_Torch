@@ -22,7 +22,7 @@ namespace Runtime
         
         public virtual void TakeDamage(float incomingDamage)
         {
-            currentHealth = Mathf.Clamp(CurrentHealth - incomingDamage, 0, maxHealth);
+            currentHealth = Mathf.Clamp(currentHealth - incomingDamage, 0, maxHealth);
             OnHealthChanged?.Invoke(currentHealth);
         }
     }
