@@ -27,6 +27,9 @@ namespace Runtime
         public string Name { get; private set; }
         public Sprite Icon { get; private set; }
         
+        public string SoundPoolKey { get; private set; }
+        public string ParticlesPoolKey { get; private set; }
+        
         public float MinAttackDistance { get; private set; }
         public float Cooldown { get; private set; }
         public float Damage { get; private set; }
@@ -37,6 +40,9 @@ namespace Runtime
         {
             Name = config.abilityName;
             Icon = config.abilityIcon;
+
+            SoundPoolKey = config.SoundUniquePoolKey;
+            ParticlesPoolKey = config.ParticlesUniquePoolKey;
             
             MinAttackDistance = config.minAttackDistance;
             Cooldown = config.cooldownTime;
