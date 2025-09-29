@@ -167,8 +167,6 @@ namespace Runtime
             else if (IsNormalBossConfig(config))
             {
                 MyAsserts.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
-                // MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point index is out of range");
-
                 if (_currentWaveConfig.willSpawnExtraWave)
                 {
                     spawnPoint = bossPoints[_extraWaveLocalBossIndex % bossPoints.Length];
@@ -183,7 +181,9 @@ namespace Runtime
             else
             {
                 MyAsserts.IsTrue(nonBossPoints.Length > 0, "nonBossPoints array is not set");
-                spawnPoint = nonBossPoints[Random.Range(0, nonBossPoints.Length)];
+                spawnPoint = currentWaveIndex == 0 
+                    ? nonBossPoints[Random.Range(8, nonBossPoints.Length)]
+                    : nonBossPoints[Random.Range(0, nonBossPoints.Length)];
             }
             
             var prefab = GetEnemyTypePrefab(config);

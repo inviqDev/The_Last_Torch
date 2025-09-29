@@ -12,24 +12,17 @@ namespace Runtime
         
         private Player _player;
         
-        // TO KNOW: CURRENT MIN VALUE => MAX VALUE =>
         public void Init(Player player)
         {
             _player = player;
             UnityEngine.Assertions.Assert.IsNotNull(_player, "Player is not set");
             
-            // _player.OnPlayerStatsChanged += OnPlayerStatsChanged;
             _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
             _player.OnPlayerExpChanged += OnPlayerExpChanged;
             
             _player.OnCharacterDeath += OnPlayerDeath;
         }
-
-        private void OnPlayerStatsChanged(float arg1, float arg2)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         private void OnPlayerDeath(Character player)
         {
             _player.OnCharacterDeath -= OnPlayerDeath;
@@ -38,12 +31,12 @@ namespace Runtime
             _player.OnPlayerExpChanged -= OnPlayerExpChanged;
         }
 
-        private void OnPlayerLevelChanged(int newLevel, float levelMinExpValue, float levelMaxExpValue)
+        private void OnPlayerLevelChanged(Player player)
         {
-            expSlider.minValue = levelMinExpValue;
-            expSlider.maxValue = levelMaxExpValue;
+            expSlider.minValue = 0f;
+            expSlider.maxValue = player.CurrentLevelMaxExp;
             
-            levelInfo.text = $"LEVEL {newLevel.ToString()}";
+            levelInfo.text = $"LEVEL {player.CurrentLevel.ToString()}";
         }
 
         private void OnPlayerExpChanged(float currentExp)

@@ -13,7 +13,7 @@ namespace Runtime
             OnCooldown,
         }
         
-        public Action<float> OnDamageValueChanged;
+        public Action<Ability> OnDamageValueChanged;
 
         private AbilityState state;
         
@@ -44,7 +44,7 @@ namespace Runtime
             SoundPoolKey = config.SoundUniquePoolKey;
             ParticlesPoolKey = config.ParticlesUniquePoolKey;
             
-            MinAttackDistance = config.minAttackDistance;
+            MinAttackDistance = config.maxAttackDistance;
             Cooldown = config.cooldownTime;
             Damage = config.damage;
 
@@ -87,6 +87,7 @@ namespace Runtime
                     break;
                 case AbilityState.InProgress:
                     _abilitySlot.SetInProgressUIState(true, false);
+                    // _timer.StartFromToTimer(0f, _progressTime, TimerType.Increasing);
                     break;
                 
                 case AbilityState.OnCooldown:
@@ -96,10 +97,12 @@ namespace Runtime
             }
         }
         
-        public void ChangeDamageValue(float increment)
+        public void UpdateAbility(float increment, float decrement)
         {
             Damage += increment;
-            OnDamageValueChanged?.Invoke(Damage);
+            Cooldown /= decrement;
+            
+            OnDamageValueChanged?.Invoke(this);
         }
     }
 }

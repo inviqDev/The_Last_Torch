@@ -27,10 +27,9 @@ namespace Runtime
         {
             if (OtherIsNotPlayer(other, out var player)) return;
 
-            player.CollectExp(_expGained);
-            
             /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/
             player.ChangeStats(_healthBoost, _moveSpeed, _damageBoost);
+            player.CollectExp(_expGained);
             
             Pool.Instance?.ReturnToPool(this);
         }

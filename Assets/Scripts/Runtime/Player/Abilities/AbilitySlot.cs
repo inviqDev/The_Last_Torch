@@ -6,10 +6,14 @@ namespace Runtime
 {
     public class AbilitySlot : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI damage;
+        
         [SerializeField] private Image iconImage;
         [SerializeField] private Button activationButton;
+        
         [SerializeField] private Slider cooldownProgress;
-        [SerializeField] private TextMeshProUGUI damage;
+
+        [SerializeField] private TextMeshProUGUI cooldownText;
 
         private readonly float _minSliderValue = 0f;
         private float _maxSliderValue;
@@ -20,7 +24,7 @@ namespace Runtime
         {
             IsActive = ability.State != Ability.AbilityState.None;
 
-            ability.OnDamageValueChanged += OnDamageValueChanged;
+            ability.OnDamageValueChanged += OnAbilityStatsChanged;
 
             iconImage.sprite = ability.Icon;
 
@@ -29,17 +33,19 @@ namespace Runtime
             cooldownProgress.maxValue = _maxSliderValue;
 
             activationButton.interactable = IsActive;
-
+            
             if (IsActive)
             {
-                OnDamageValueChanged(ability.Damage);
-                // ShowCooldownProgress(_minSliderValue);
+                OnAbilityStatsChanged(ability);
             }
         }
 
-        private void OnDamageValueChanged(float newDamageValue)
+        private void OnAbilityStatsChanged(Ability ability)
         {
-            damage.text = $"{newDamageValue} DMG";
+            damage.text = $"{ability.Damage:F0} DMG";
+            
+            cooldownProgress.maxValue = ability.Cooldown;
+            cooldownText.text = $"{ability.Cooldown:F2} SEC";
         }
 
         public void ShowCooldownProgress(float progress)

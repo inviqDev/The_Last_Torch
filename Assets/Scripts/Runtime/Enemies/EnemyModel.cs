@@ -69,15 +69,6 @@ namespace Runtime
             OnConfigLoaded?.Invoke(config);
         }
 
-        public override void TakeDamage(float incomingDamage)
-        {
-            base.TakeDamage(incomingDamage);
-            if (currentHealth > 0) return;
-            
-            LaunchOnCharacterDeathLogic();
-            OnCharacterDeath?.Invoke(this);
-        }
-
         public override void LaunchOnCharacterDeathLogic()
         {
             var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
@@ -86,22 +77,9 @@ namespace Runtime
             
             var dropPos = new Vector3(transform.position.x, 1f, transform.position.z);
             drop.SetUpDropFromConfig(dropConfig, dropPos);
-            _mover.StopAndReset();
             
             base.LaunchOnCharacterDeathLogic();
-            OnCharacterDeath?.Invoke(this);
         }
-
-        // public virtual void LaunchOnEnemyDeathLogic()
-        // {
-        //     var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
-        //     MyAssertions.EnsureIsNotNull(drop);
-        //     if (!drop) return;
-        //     
-        //     var dropPos = new Vector3(transform.position.x, 1f, transform.position.z);
-        //     drop.SetUpDropFromConfig(dropConfig, dropPos);
-        //     _mover.StopAndReset();
-        // }
 
         protected virtual void PerformAttack(Character target)
         {
@@ -115,8 +93,9 @@ namespace Runtime
         
         public void OnReturnToPool()
         {
-            transform.SetParent(Pool.Instance?.EnemiesRoot);
             _mover.StopAndReset();
+            transform.SetParent(Pool.Instance?.EnemiesRoot);
+            
             gameObject.SetActive(false);
         }
     }

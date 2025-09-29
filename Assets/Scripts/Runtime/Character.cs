@@ -34,6 +34,7 @@ namespace Runtime
         public virtual void LaunchOnCharacterDeathLogic()
         {
             isAlive = false;
+            OnCharacterDeath?.Invoke(this);
         }
     }
 }

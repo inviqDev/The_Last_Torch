@@ -15,7 +15,7 @@ namespace Runtime
         public float cooldownTime;
         
         public AbilityVFX abilityVFX;
-        public float minAttackDistance;
+        public float maxAttackDistance;
 
         public float damage;
     }

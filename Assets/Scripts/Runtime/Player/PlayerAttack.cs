@@ -31,14 +31,23 @@ namespace Runtime
             
             _activeAbilities = new List<Ability>();
             
-            _player.OnNextAbilityIsAvailable += OnNextAbilityIsAvailable;
+            _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
             _player.OnCharacterDeath += OnCharacterDeath;
+        }
+
+        private void OnPlayerLevelChanged(Player player)
+        {
+            ActivateNextAbility();
+            
+            if (player.CurrentLevel == 1) return;
+            OnLevelChangedUpdateAbilitiesStats(); // (10f, 1.25f);
         }
 
         private void OnCharacterDeath(Character player)
         {
-            _player.OnNextAbilityIsAvailable -= OnNextAbilityIsAvailable;
             _player.OnCharacterDeath -= OnCharacterDeath;
+            // _player.OnNextAbilityIsAvailable -= OnNextAbilityIsAvailable;
+            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
             
             enabled = false;
         }
@@ -91,6 +100,9 @@ namespace Runtime
 
         private void ActivateNextAbility()
         {
+            MyAssertions.EnsureIsTrue(_nextAbilityIndex == _availableAbilities.Count);
+            if (_nextAbilityIndex == _availableAbilities.Count) return;
+            
             var ability = _availableAbilities[_nextAbilityIndex];
             var slot = GameManager.Instance?.UIManager.GetAvailableAbilitySlot();
 
@@ -107,16 +119,39 @@ namespace Runtime
             _activeAbilities.Add(ability);
         }
 
-        public void ChangeAbilitiesDamage(float increment)
+        private void OnLevelChangedUpdateAbilitiesStats()
         {
             foreach (var a in _activeAbilities)
             {
-                a.ChangeDamageValue(increment);
+                if (a.AbilityVFX is LightningChain chain)
+                {
+                    chain.IncreaseBouncesAmount();
+                }
+                
+                a.UpdateAbility(5f, 1.05f);
             }
 
             foreach (var a in _availableAbilities)
             {
-                a.ChangeDamageValue(increment);
+                if (a.AbilityVFX is LightningChain chain)
+                {
+                    chain.IncreaseBouncesAmount();
+                }
+                
+                a.UpdateAbility(5f, 1.05f);
+            }
+        }
+        
+        public void UpdateAbilitiesStats(float damageIncrement, float attackSpeedDivider = 1f)
+        {
+            foreach (var a in _activeAbilities)
+            {
+                a.UpdateAbility(damageIncrement, attackSpeedDivider);
+            }
+
+            foreach (var a in _availableAbilities)
+            {
+                a.UpdateAbility(damageIncrement, attackSpeedDivider);
             }
         } 
     }

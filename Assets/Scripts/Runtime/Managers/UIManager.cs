@@ -19,9 +19,20 @@ namespace Runtime
         
         public void InitLevelUI(Player player)
         {
+            if (gameOverPanel.activeSelf)
+            {
+                gameOverPanel.SetActive(false);
+            }
+
+            if (winGamePanel.activeSelf)
+            {
+                winGamePanel.SetActive(false);
+            }
+            
             abilitySlotsController.ResetAbilitySlots();
             playerStatsInfo.Init(player);
             playerLevelSlider.Init(player);
+            
             StartGameTimer();
         }
 
