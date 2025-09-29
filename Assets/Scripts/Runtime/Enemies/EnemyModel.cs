@@ -44,7 +44,7 @@ namespace Runtime
             }
             
             maxHealth = config.maxHealth * multiplier;
-            currentHealth = maxHealth * multiplier;
+            currentHealth = maxHealth;
             
             moveSpeed = config.moveSpeed;
             _angularSpeed = config.angularSpeed;
