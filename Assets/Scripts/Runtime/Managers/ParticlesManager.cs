@@ -27,7 +27,7 @@ namespace Runtime
                 return;
             }
 
-            var particle = Pool.Instance?.TryGetObjectFromPool(p);
+            var particle = Pool.Instance?.TryGet(p);
             particle?.PlayParticleEffect(owner);
         }
     }

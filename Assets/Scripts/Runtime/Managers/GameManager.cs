@@ -1,9 +1,4 @@
-#region usings
-
 using UnityEngine;
-using MyAsserts = UnityEngine.Assertions.Assert;
-
-#endregion
 
 namespace Runtime
 {
@@ -11,6 +6,7 @@ namespace Runtime
     {
         [SerializeField] private PlayerManager playerManager;
         [SerializeField] private Spawner spawner;
+        [SerializeField] private Pool pool;
         [SerializeField] private UIManager UI_Manager;
         [SerializeField] private SoundManager soundManager;
         [SerializeField] private ParticlesManager particlesManager;
@@ -19,6 +15,7 @@ namespace Runtime
 
         private PlayerManager _playerManager;
         private Spawner _spawner;
+        private Pool _pool;
         private UIManager _uiManager;
         private SoundManager _soundManager;
         private ParticlesManager _particlesManager;
@@ -26,9 +23,11 @@ namespace Runtime
 
         public PlayerManager PlayerManager => _playerManager;
         public Spawner Spawner => _spawner;
+        public Pool Pool => _pool;
         public UIManager UIManager => _uiManager;
         public SoundManager SoundManager => _soundManager;
         public ParticlesManager ParticlesManager => _particlesManager;
+        public LevelEnvironment LevelEnv => _levelEnv;
         
         public Camera CameraMain { get; private set; }
         public Player Player { get; private set; }
@@ -40,6 +39,7 @@ namespace Runtime
         {
             _playerManager ??= Instantiate(playerManager, transform);
             _spawner ??= Instantiate(spawner, transform);
+            _pool = Instantiate(pool, null);
             _uiManager ??= Instantiate(UI_Manager, transform);
             _soundManager ??= Instantiate(soundManager, transform);
             _particlesManager ??= Instantiate(particlesManager, transform);
@@ -59,11 +59,19 @@ namespace Runtime
             _levelEnv.RebakeNavMeshSurface();
             _levelEnv.gameObject.SetActive(true);
             
+            if (Player)
+            {
+                print("Player exists before the start");
+                Destroy(Player.gameObject);
+            }
+            
             var playerSpawnPoint = levelEnv.PlayerSpawnPoint;
             Player = _playerManager.SpawnPlayer(playerSpawnPoint);
-            MyAsserts.IsNotNull(Player, "Player is null");
-
+            UnityEngine.Assertions.Assert.IsNotNull(Player, "Player is null");
+            
             _uiManager.InitLevelUI(Player);
+            
+            Player.InitPlayerComponents();
             _playerManager.LoadPlayerConfig();
             
             _soundManager.Init();
@@ -72,7 +80,7 @@ namespace Runtime
             
             Player.OnCharacterDeath += OnPlayerDeath;
         }
-
+        
         private void OnPlayerDeath(Character player)    
         {
             Spawner.StopSpawningEnemies();

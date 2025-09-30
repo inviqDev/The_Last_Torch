@@ -4,8 +4,6 @@ namespace Runtime
 {
     public class DropAnimation : MonoBehaviour
     {
-        public float spawnPosY;
-        
         [SerializeField] private bool isRotating;
         [SerializeField] private Vector3 rotationAxis;
         [SerializeField] private float rotationSpeed = 90f; // Degrees per second
@@ -55,10 +53,9 @@ namespace Runtime
             }
         }
 
-        public void StartAnimation(Vector3 initialPos, 
-            bool rotating = true, bool floating = true, bool scaling = true)
+        public void StartAnimation(bool rotating = true, bool floating = true, bool scaling = true)
         {
-            _initialPosition = initialPos;
+            _initialPosition = transform.position;
             
             isRotating = rotating;
             isFloating = floating;

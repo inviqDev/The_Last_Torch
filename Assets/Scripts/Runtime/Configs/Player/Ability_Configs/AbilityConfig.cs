@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(fileName = "AbilityConfig", menuName = "Player/Abilities/AbilityConfig")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Characters/Player/Ability Config", fileName = "player_ability")]
     public class AbilityConfig : ScriptableObject
     {
         public string abilityName;

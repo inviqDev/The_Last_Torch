@@ -6,16 +6,16 @@ namespace Runtime
     public readonly struct AbilityContext
     {
         public readonly Player Player;
-        public readonly EnemyModel InitialTarget;
-        public readonly EnemiesCollector EnemiesCollector;
+        public readonly Enemy InitialTarget;
+        public readonly EnemiesDetector EnemiesDetector;
         public readonly Ability Ability;
 
-        public AbilityContext(Player player, EnemyModel initialTarget,
-            EnemiesCollector enemiesCollector, Ability ability)
+        public AbilityContext(Player player, Enemy initialTarget,
+            EnemiesDetector enemiesDetector, Ability ability)
         {
             Player = player;
             InitialTarget = initialTarget;
-            EnemiesCollector = enemiesCollector;
+            EnemiesDetector = enemiesDetector;
             Ability = ability;
         }
     }
@@ -48,8 +48,10 @@ namespace Runtime
         public void OnReturnToPool()
         {
             StopAllCoroutines();
+            Finished = null;
+            
             gameObject.SetActive(false);
-            transform.SetParent(Pool.Instance?.transform);
+            transform.SetParent(Pool.Instance?.VFXRoot);
         }
     }
 }

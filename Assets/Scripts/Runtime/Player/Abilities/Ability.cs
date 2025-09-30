@@ -5,20 +5,21 @@ namespace Runtime
 {
     public enum AbilityState
     {
-        None,
-        Ready,
+        Disable,
         InProgress,
         OnCooldown,
+        Ready,
     }
     
     public class Ability
     {
+        public Action<AbilityState> OnAbilityStateChange;
         public Action<Ability> OnAbilityStatsChanged;
 
         private AbilityState state;
         
-        private AbilitySlot _abilitySlot;
-        private Timer _timer;
+        // private AbilitySlot _abilitySlot;
+        
         
         private float _progressTime;
         
@@ -33,11 +34,14 @@ namespace Runtime
         public float MinAttackDistance { get; private set; }
         public float Cooldown { get; private set; }
         public float Damage { get; private set; }
-        
+
+        public Timer Timer { get; private set; }
         public AbilityVFX AbilityVFX { get; private set; }
         
         public Ability(AbilityConfig config) 
         {
+            SetAbilityState(AbilityState.Disable);
+            
             Name = config.abilityName;
             Icon = config.abilityIcon;
 
@@ -50,31 +54,19 @@ namespace Runtime
 
             AbilityVFX = config.abilityVFX;
             _progressTime = config.progressTime;
-            
-            SetAbilityState(AbilityState.None);
         }
 
-        public void ActivateAbility(MonoBehaviour owner, AbilitySlot slot)
+        public void ActivateAbility(MonoBehaviour owner)
         {
-            _abilitySlot = slot;
+            Timer = new Timer(owner);
             
-            _timer = new Timer(owner);
-            _timer.OnAnyValueChanged += OnCooldownValueChanged;
-            
-            _timer.TimerIsOver += () =>
+            Timer.TimerIsOver += () =>
             {
-                if (state == AbilityState.OnCooldown)
-                {
-                    state = AbilityState.Ready;
-                }
+                if (state != AbilityState.OnCooldown) return;
+                SetAbilityState(AbilityState.Ready);
             };
 
             SetAbilityState(AbilityState.OnCooldown);
-        }
-        
-        private void OnCooldownValueChanged(float currentCooldown)
-        {
-            _abilitySlot.ShowCooldownProgress(currentCooldown);
         }
 
         public void SetAbilityState(AbilityState newState)
@@ -83,16 +75,20 @@ namespace Runtime
 
             switch (state)
             {
-                case AbilityState.None:
+                case AbilityState.Disable:
                     break;
+                
                 case AbilityState.InProgress:
-                    _abilitySlot.SetInProgressUIState(true, false);
-                    // _timer.StartFromToTimer(0f, _progressTime, TimerType.Increasing);
+                    OnAbilityStateChange?.Invoke(AbilityState.InProgress);
                     break;
                 
                 case AbilityState.OnCooldown:
-                    _abilitySlot.SetInProgressUIState(false, true);
-                    _timer?.StartFromToTimer(0f, Cooldown, TimerType.Increasing);
+                    OnAbilityStateChange?.Invoke(AbilityState.OnCooldown);
+                    Timer?.StartFromToTimer(0f, Cooldown, TimerType.Increasing);
+                    break;
+                
+                case AbilityState.Ready:
+                    OnAbilityStateChange?.Invoke(AbilityState.Ready);
                     break;
             }
         }

@@ -11,14 +11,14 @@ namespace Runtime
         [Header("Layer masks")]
         [SerializeField] protected LayerMask playerLayerMask;
 
-        [SerializeField] private EnemyModel enemyModel;
+        [SerializeField] private Enemy enemy;
         [SerializeField] private Collider detectorCol;
 
         private Player _player;
         
         private void OnEnable()
         {
-            enemyModel.OnConfigLoaded += OnConfigLoaded;
+            enemy.OnConfigLoaded += OnConfigLoaded;
         }
 
         private void OnConfigLoaded(EnemyConfig config)

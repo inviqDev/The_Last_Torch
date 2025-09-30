@@ -21,6 +21,8 @@ namespace Runtime
                 Destroy(gameManager.LevelEnv.gameObject);
             }
             
+            Pool.Instance?.RestartPool();
+            
             gameManager.Spawner?.StopSpawningEnemies();
             gameManager.UIManager?.LaunchStopGameLogic();
         }

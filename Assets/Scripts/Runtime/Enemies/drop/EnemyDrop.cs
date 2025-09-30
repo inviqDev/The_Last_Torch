@@ -9,8 +9,8 @@ namespace Runtime
         public string UniquePoolKey => uniquePoolKey;
 
         [SerializeField] private LayerMask playerLayerMask;
-        public MeshRenderer MeshRenderer { get; private set; }
         
+        private MeshRenderer _meshRenderer;
         private DropAnimation dropAnimation;
 
         private float _expGained;
@@ -20,13 +20,33 @@ namespace Runtime
 
         private void Awake()
         {
-            MeshRenderer = GetComponent<MeshRenderer>();
+            _meshRenderer = GetComponent<MeshRenderer>();
         }
-
+        
+        public void SetUpDropFromConfig(EnemyDropConfig dropConfig, Vector3 initPos)
+        {
+            transform.position = initPos;
+            
+            _meshRenderer ??= GetComponent<MeshRenderer>();
+            UnityEngine.Assertions.Assert.IsNotNull(_meshRenderer,
+                "mesh renderer component is missing");
+            _meshRenderer.material = dropConfig.dropMaterial;
+            
+            dropAnimation ??= GetComponent<DropAnimation>();
+            UnityEngine.Assertions.Assert.IsNotNull(dropAnimation,
+                "drop animation renderer component is missing");
+            dropAnimation.StartAnimation(true, true);
+            
+            _expGained = dropConfig.expGained;
+            _healthBoost = dropConfig.healthBoost;
+            _moveSpeed = dropConfig.moveSpeedBoost;
+            _damageBoost = dropConfig.damageBoost;
+        }
+        
         private void OnTriggerEnter(Collider other)
         {
             if (OtherIsNotPlayer(other, out var player)) return;
-
+            
             /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/ /*OMG DECISION*/
             player.ChangeStats(_healthBoost, _moveSpeed, _damageBoost);
             player.CollectExp(_expGained);
@@ -34,22 +54,6 @@ namespace Runtime
             Pool.Instance?.ReturnToPool(this);
         }
         
-        public void SetUpDropFromConfig(EnemyDropConfig dropConfig, Vector3 initPos)
-        {
-            MeshRenderer ??= GetComponent<MeshRenderer>();
-            MyAssertions.EnsureIsNotNull(MeshRenderer);
-            MeshRenderer.material = dropConfig.dropMaterial;
-            
-            dropAnimation ??= GetComponent<DropAnimation>();
-            MyAssertions.EnsureIsNotNull(dropAnimation);
-            dropAnimation.StartAnimation(initPos);
-            
-            _expGained = dropConfig.expGained;
-            _healthBoost = dropConfig.healthBoost;
-            _moveSpeed = dropConfig.moveSpeedBoost;
-            _damageBoost = dropConfig.damageBoost;
-        }
-
         private bool OtherIsNotPlayer(Collider other, out Player player)
         {
             if ((playerLayerMask.value & 1 << other.gameObject.layer) != 0)
@@ -60,7 +64,8 @@ namespace Runtime
             player = null;
             return true;
         }
-
+        
+        private int _counter;
         public void OnGetFromPool()
         {
             transform.SetParent(null);
@@ -69,8 +74,8 @@ namespace Runtime
 
         public void OnReturnToPool()
         {
+            transform.SetParent(Pool.Instance?.DropRoot);
             gameObject.SetActive(false);
-            transform.SetParent(Pool.Instance?.transform);
         }
     }
 }

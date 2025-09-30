@@ -104,8 +104,8 @@ namespace Runtime
             }
             
             
-            ability.ActivateAbility(this, slot);
-            slot.ActivateAbilityUI(ability);
+            ability.ActivateAbility(this);
+            slot.SetAbilitySlotUI(ability);
             
             _availableAbilities.Remove(ability);
             _activeAbilities.Add(ability);
@@ -184,6 +184,21 @@ namespace Runtime
             }
         }
 
-        private void OnDestroy() => UnsubscribeAll();
+        private void OnDestroy()
+        {
+            UnsubscribeAll();
+
+            if (_availableAbilities != null)
+            {
+                _availableAbilities?.Clear();
+                _availableAbilities = null;
+            }
+            
+            if (_activeAbilities != null)
+            {
+                _activeAbilities?.Clear();
+                _activeAbilities = null;
+            }
+        }
     }
 }

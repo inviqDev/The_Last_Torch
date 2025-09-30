@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.LightningChain
   uniquePoolKey: lightning_chain_vfx
-  bouncesAmount: 5
+  bouncesAmount: 3
   maxBounceDistance: 12
   boltPrefab: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}
   boltAnimDuration: 0.75

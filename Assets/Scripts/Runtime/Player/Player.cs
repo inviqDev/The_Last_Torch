@@ -34,19 +34,19 @@ namespace Runtime
 
         public void InitPlayerComponents()
         {
-            _movementComponent ??= GetComponent<PlayerMovement>();
+            _movementComponent = GetComponent<PlayerMovement>();
             UnityEngine.Assertions.Assert.IsNotNull(_movementComponent,
                 "player movement component is missing");
 
-            _playerDashComponent ??= GetComponent<PlayerDash>();
+            _playerDashComponent = GetComponent<PlayerDash>();
             UnityEngine.Assertions.Assert.IsNotNull(_playerDashComponent,
                 "player dash component is missing");
 
-            _dashUIComponent ??= GetComponent<DashUI>();
+            _dashUIComponent = GetComponent<DashUI>();
             UnityEngine.Assertions.Assert.IsNotNull(_dashUIComponent,
                 "player dash component UI [slider] is missing");
 
-            _cameraMover ??= GetComponent<CameraMover>();
+            _cameraMover = GetComponent<CameraMover>();
             UnityEngine.Assertions.Assert.IsNotNull(_cameraMover,
                 "player camera mover component is missing");
             _cameraMover?.Init(GameManager.Instance.CameraMain, transform);
@@ -55,7 +55,7 @@ namespace Runtime
                 "enemies detector component is missing");
             detector?.Init();
 
-            _playerAttack ??= GetComponent<PlayerAttack>();
+            _playerAttack = GetComponent<PlayerAttack>();
             UnityEngine.Assertions.Assert.IsNotNull(_playerAttack,
                 "player attack component is missing");
             _playerAttack?.Init(this);

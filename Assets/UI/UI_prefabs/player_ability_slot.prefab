@@ -583,11 +583,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5803889196064ef19fea0b5dd27b1154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityUI
-  damage: {fileID: 5316378658872813107}
+  damageInfo: {fileID: 5316378658872813107}
   iconImage: {fileID: 4704044316195865577}
   activationButton: {fileID: 3282663340580028860}
   cooldownProgress: {fileID: 1107938578783714816}
-  cooldownText: {fileID: 2899305468940563870}
+  cooldownInfo: {fileID: 2899305468940563870}
 --- !u!1 &8029641931174035774
 GameObject:
   m_ObjectHideFlags: 0

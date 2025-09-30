@@ -18,7 +18,7 @@ namespace Runtime
         [SerializeField] private float prewarmTime;
         [SerializeField] private bool waitPrewarmTime;
         
-        private readonly List<EnemyModel> affected = new();
+        private readonly List<Enemy> affected = new();
 
         protected override void OnPlay(AbilityContext ctx)
         {
@@ -47,7 +47,7 @@ namespace Runtime
 
             while (currentEnemy && bouncesLeft > 0)
             {
-                var bolt = Pool.Instance?.TryGetObjectFromPool(boltPrefab);
+                var bolt = Pool.Instance?.TryGet(boltPrefab);
                 UnityEngine.Assertions.Assert.IsNotNull(bolt, "[Lightning Bolt] is not spawned");
 
                 float duration;
@@ -76,7 +76,7 @@ namespace Runtime
                 bouncesLeft--;
                 if (bouncesLeft <= 0) break;
 
-                var nextTarget = FindClosestEnemy(currentEnemy, ctx.EnemiesCollector.AttackableEnemies);
+                var nextTarget = FindClosestEnemy(currentEnemy, ctx.EnemiesDetector.AvailableEnemies);
                 if (!nextTarget) break;
 
                 from = currentEnemy.transform;
@@ -92,11 +92,11 @@ namespace Runtime
             RaiseFinished(ctx.Ability);
         }
 
-        private EnemyModel FindClosestEnemy(EnemyModel from, List<EnemyModel> attackableEnemies)
+        private Enemy FindClosestEnemy(Enemy from, List<Enemy> attackableEnemies)
         {
             if (attackableEnemies == null || attackableEnemies.Count == 0) return null;
 
-            EnemyModel closestEnemy = null;
+            Enemy closestEnemy = null;
             var maxSqrMag = maxBounceDistance * maxBounceDistance;
 
             foreach (var e in attackableEnemies)
@@ -111,6 +111,12 @@ namespace Runtime
             }
 
             return closestEnemy;
+        }
+
+        public void IncreaseBouncesAmount()
+        {
+            var increment = 2;
+            bouncesAmount += increment;
         }
     }
 }
