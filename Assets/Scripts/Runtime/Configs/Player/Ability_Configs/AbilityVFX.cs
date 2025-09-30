@@ -29,7 +29,7 @@ namespace Runtime
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
 
-        public void Play(AbilityContext ctx)
+        public void LaunchAblilityVFX(AbilityContext ctx)
         {
             OnPlay(ctx);
         }

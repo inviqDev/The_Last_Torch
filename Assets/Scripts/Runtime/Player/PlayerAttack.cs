@@ -12,9 +12,8 @@ namespace Runtime
 
         // Master registry of all created abilities (for unsubscribing)
         private readonly List<Ability> _allCreatedAbilities = new();
-
         // Abilities that are not yet unlocked (activated on level up)
-        private List<Ability> _allAbilities;
+        private List<Ability> _availableAbilities;
 
         // Queue of ready-to-use abilities + HashSet for O(1) "already in queue?" check
         private Queue<Ability> _readyQueue;
@@ -26,39 +25,94 @@ namespace Runtime
         public void Init(Player player)
         {
             if (_isInitialized) return;
-            _isInitialized = true;
 
-            _player ??= player;
-            _detector ??= _player.Detector;
-
-            _allAbilities ??= new List<Ability>();
-            _allAbilities.Clear();
+            InitializeFields(player);
 
             // Create all abilities once, subscribe, and put into two lists:
-            // - _allAbilities: not yet activated (to unlock in order)
-            // - _allCreatedAbilities: master registry for unsubscribing later
+            // - allCreatedAbilities: master registry for unsubscribing later
+            // - availableAbilities: not yet activated (to unlock in order)
             foreach (var cfg in abilityConfigs)
             {
                 var ability = new Ability(cfg);
                 ability.OnAbilityReady += AddAbilityToReadyList;
 
-                _allAbilities.Add(ability);
-                _allCreatedAbilities.Add(ability);
+                _allCreatedAbilities?.Add(ability);
+                _availableAbilities?.Add(ability);
             }
 
+            SubscribeOnComponentsEvents();
+            RecomputeEnabled();
+        }
+
+        private void Update()
+        {
+            
+#if UNITY_EDITOR
+            // var peek = _readyQueue.Peek();
+            // print(peek.Name);
+#endif
+            
+            if (!_detector.EnemyExists || _readyQueue.Count == 0) return;
+
+            // Loop at most queue length (no infinite loop)
+            var spins = _readyQueue.Count;
+            while (spins-- > 0)
+            {
+                var ability = _readyQueue.Peek();
+                if (ValidateAbilityIsAbleToAttackThisFrame(ability) == false) continue;
+                if (ValidateAbilityIsAbleToLaunch(ability, out var visual) == false) continue;
+
+                // Ready to start: remove from queue and from HashSet
+                _readyQueue.Dequeue();
+                _readySet.Remove(ability);
+
+                visual.Finished += OnFinished;
+                var context = new AbilityContext(
+                    player: GameManager.Instance?.Player,
+                    initialTarget: _closestEnemy,
+                    enemiesDetector: _detector,
+                    ability: ability
+                );
+
+                ability.SetAbilityState(AbilityState.InProgress);
+                visual.LaunchAblilityVFX(context);
+
+                RecomputeEnabled();
+                return; // only one ability per tick
+
+                void OnFinished(Ability a)
+                {
+                    visual.Finished -= OnFinished;
+                    a.SetAbilityState(AbilityState.OnCooldown);
+                    Pool.Instance?.ReturnToPool(visual);
+
+                    RecomputeEnabled();
+                }
+            }
+
+            RecomputeEnabled();
+        }
+        
+        private void InitializeFields(Player player)
+        {
+            _player ??= player;
+            UnityEngine.Assertions.Assert.IsNotNull(_player, 
+                "player component is missing");
+            
+            _detector ??= _player.Detector;
+            UnityEngine.Assertions.Assert.IsNotNull(_detector, 
+                "detector component is missing");
+
+            _availableAbilities ??= new List<Ability>();
+            _availableAbilities.Clear();
+            
             _readyQueue ??= new Queue<Ability>();
             _readyQueue.Clear();
 
             _readySet ??= new HashSet<Ability>();
             _readySet.Clear();
-
-            _detector.OnEnemyDetected += RecomputeEnabled;
-            _detector.OnEnemiesListIsEmpty += RecomputeEnabled;
-
-            _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
-            _player.OnCharacterDeath += OnCharacterDeath;
-
-            RecomputeEnabled();
+            
+            _isInitialized = true;
         }
 
         private void AddAbilityToReadyList(Ability a)
@@ -78,83 +132,38 @@ namespace Runtime
             enabled = _detector.EnemyExists && _readyQueue.Count > 0;
         }
 
-        private void Update()
+        private bool ValidateAbilityIsAbleToAttackThisFrame(Ability ability)
         {
+            _closestEnemy = _detector.GetClosestEnemy(out var distance);
+            if (_closestEnemy && distance <= ability.MinAttackDistance) return true;
             
-#if UNITY_EDITOR
-            var peek = _readyQueue.Peek();
-            print(peek.Name);
-#endif
-            
-            if (!_detector.EnemyExists || _readyQueue.Count == 0) return;
-
-            // Loop at most queue length (no infinite loop)
-            var spins = _readyQueue.Count;
-            while (spins-- > 0)
-            {
-                var ability = _readyQueue.Peek();
-
-                _closestEnemy = _detector.GetClosestEnemy(out var distance);
-                if (!_closestEnemy || distance > ability.MinAttackDistance)
-                {
-                    // If check failed => rotate head to tail, try next
-                    _readyQueue.Enqueue(_readyQueue.Dequeue());
-                    continue;
-                }
-
-                var vfx = Pool.Instance?.TryGet(ability.AbilityVFX);
-                UnityEngine.Assertions.Assert.IsNotNull(vfx, "ability VFX is missing");
-                if (!vfx)
-                {
-                    // If check failed => rotate head to tail, try next
-                    _readyQueue.Enqueue(_readyQueue.Dequeue());
-                    continue;
-                }
-
-                // Ready to start: remove from queue and from HashSet
-                _readyQueue.Dequeue();
-                _readySet.Remove(ability);
-
-                vfx.Finished += OnFinished;
-
-                var ctx = new AbilityContext(
-                    player: GameManager.Instance?.Player,
-                    initialTarget: _closestEnemy,
-                    enemiesDetector: _detector,
-                    ability: ability
-                );
-
-                ability.SetAbilityState(AbilityState.InProgress);
-                vfx.Play(ctx);
-
-                RecomputeEnabled();
-                return; // only one ability per tick
-
-                void OnFinished(Ability a)
-                {
-                    vfx.Finished -= OnFinished;
-
-                    a.SetAbilityState(AbilityState.OnCooldown);
-                    Pool.Instance?.ReturnToPool(vfx);
-
-                    RecomputeEnabled();
-                }
-            }
-
-            RecomputeEnabled();
+            // If check failed => rotate head to tail, try next
+            _readyQueue.Enqueue(_readyQueue.Dequeue());
+            return false;
         }
-
+        
+        private bool ValidateAbilityIsAbleToLaunch(Ability ability, out AbilityVFX vfx)
+        {
+            vfx = Pool.Instance?.TryGet(ability.AbilityVFX);
+            UnityEngine.Assertions.Assert.IsNotNull(vfx, "ability VFX is missing");
+            if (vfx) return true;
+            
+            // If check failed => rotate head to tail, try next
+            _readyQueue.Enqueue(_readyQueue.Dequeue());
+            return false;
+        }
 
         private void ActivateNextAbility()
         {
-            if (_allAbilities == null || _allAbilities.Count == 0) return;
+            if (_availableAbilities == null || _availableAbilities.Count == 0) return;
 
             // Take the first "not yet unlocked" // Add Random ??
-            var ability = _allAbilities[0];
+            var ability = _availableAbilities[0];
             var slot = GameManager.Instance?.UIManager.GetAvailableAbilitySlot();
             if (!slot)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(slot, $"slot for {ability.Name} is not found");
+                UnityEngine.Assertions.Assert.IsNotNull(slot, 
+                    $"slot for {ability.Name} is not found");
                 return;
             }
 
@@ -162,20 +171,19 @@ namespace Runtime
             slot.SetAbilitySlotUI(ability);
 
             // Remove from "not yet unlocked" list
-            _allAbilities.RemoveAt(0);
+            _availableAbilities.RemoveAt(0);
         }
 
         private void OnPlayerLevelChanged(Player player)
         {
             ActivateNextAbility();
-
             if (player.CurrentLevel == 1) return;
             OnLevelChangedUpdateAbilitiesStats();
         }
 
         private void OnLevelChangedUpdateAbilitiesStats()
         {
-            foreach (var a in _allAbilities)
+            foreach (var a in _availableAbilities)
             {
                 if (a.AbilityVFX is LightningChain chain)
                     chain.IncreaseBouncesAmount();
@@ -196,7 +204,7 @@ namespace Runtime
 
         public void ChangeAbilitiesStats(float damageIncrement)
         {
-            foreach (var a in _allAbilities)
+            foreach (var a in _availableAbilities)
             {
                 a.ChangeAbilityDamage(StatChangeMode.SimpleAdd, damageIncrement);
                 a.ChangeAbilityCooldown(StatChangeMode.SimpleAdd, -0.005f);
@@ -208,8 +216,23 @@ namespace Runtime
                 a.ChangeAbilityCooldown(StatChangeMode.SimpleAdd, -0.005f);
             }
         }
+        
+        private void SubscribeOnComponentsEvents()
+        {
+            if (_player)
+            {
+                _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
+                _player.OnCharacterDeath += OnCharacterDeath;
+            }
+            
+            if (_detector)
+            {
+                _detector.OnEnemyDetected += RecomputeEnabled;
+                _detector.OnEnemiesListIsEmpty += RecomputeEnabled;
+            }
+        }
 
-        private void UnsubscribeComponents()
+        private void UnsubscribeOnComponentsEvents()
         {
             if (_detector)
             {
@@ -224,12 +247,6 @@ namespace Runtime
             }
         }
 
-        private void UnsubscribeAbilities()
-        {
-            foreach (var a in _allCreatedAbilities)
-                a.OnAbilityReady -= AddAbilityToReadyList;
-        }
-
         private void OnCharacterDeath(Character player)
         {
             _player.OnCharacterDeath -= OnCharacterDeath;
@@ -237,16 +254,25 @@ namespace Runtime
 
             enabled = false;
         }
+        private void UnsubscribeAbilities()
+        {
+            foreach (var a in _allCreatedAbilities)
+                a.OnAbilityReady -= AddAbilityToReadyList;
+        }
+        
+        private void ClearCollections()
+        {
+            _allCreatedAbilities?.Clear();
+            _availableAbilities?.Clear();
+            _readyQueue?.Clear();
+            _readySet?.Clear();
+        }
 
         private void OnDestroy()
         {
-            UnsubscribeComponents();
+            UnsubscribeOnComponentsEvents();
             UnsubscribeAbilities();
-
-            _allAbilities?.Clear();
-            _readyQueue?.Clear();
-            _readySet?.Clear();
-            _allCreatedAbilities?.Clear();
+            ClearCollections();
         }
     }
 }
