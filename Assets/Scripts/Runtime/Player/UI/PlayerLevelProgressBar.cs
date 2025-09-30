@@ -15,23 +15,17 @@ namespace Runtime
         public void Init(Player player)
         {
             _player = player;
-            UnityEngine.Assertions.Assert.IsNotNull(_player, "Player is not set");
+            UnityEngine.Assertions.Assert.IsNotNull(
+                _player, "Player is not set");
+
+            UpdateLevelExpProgressBar(_player);
             
-            _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
+            _player.OnPlayerLevelChanged += UpdateLevelExpProgressBar;
             _player.OnPlayerExpChanged += OnPlayerExpChanged;
-            
             _player.OnCharacterDeath += OnPlayerDeath;
         }
-        
-        private void OnPlayerDeath(Character player)
-        {
-            _player.OnCharacterDeath -= OnPlayerDeath;
-            
-            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
-            _player.OnPlayerExpChanged -= OnPlayerExpChanged;
-        }
 
-        private void OnPlayerLevelChanged(Player player)
+        private void UpdateLevelExpProgressBar(Player player)
         {
             expSlider.minValue = 0f;
             expSlider.maxValue = player.CurrentLevelMaxExp;
@@ -43,6 +37,14 @@ namespace Runtime
         {
             expSlider.value = currentExp;
             info.text = $"{currentExp} / {expSlider.maxValue}";
+        }
+        
+        private void OnPlayerDeath(Character player)
+        {
+            _player.OnCharacterDeath -= OnPlayerDeath;
+            
+            _player.OnPlayerLevelChanged -= UpdateLevelExpProgressBar;
+            _player.OnPlayerExpChanged -= OnPlayerExpChanged;
         }
     }
 }

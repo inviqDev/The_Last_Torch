@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Loading Level/Transition", fileName = "Transition")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Async Scene Loading/Transition", fileName = "Transition")]
     public class TransitionAsset : ScriptableObject
     {
         [Header("Target")]

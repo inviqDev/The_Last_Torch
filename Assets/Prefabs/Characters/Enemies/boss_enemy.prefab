@@ -92,7 +92,6 @@ MonoBehaviour:
     m_Bits: 128
   uniquePoolKey: boss_enemy
   meshRenderer: {fileID: 535704433151859898}
-  mover: {fileID: 9176691546186717458}
   projectileSettings:
     sizeMultiplier: 3
     moveSpeed: 35
@@ -226,7 +225,7 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  enemyModel: {fileID: 4092661514222853395}
+  enemy: {fileID: 4092661514222853395}
   detectorCol: {fileID: 1090595330033799847}
 --- !u!1001 &9085307835473741681
 PrefabInstance:

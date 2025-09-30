@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace Runtime
 {
+    public enum AbilityState
+    {
+        None,
+        Ready,
+        InProgress,
+        OnCooldown,
+    }
+    
     public class Ability
     {
-        public enum AbilityState
-        {
-            None,
-            Ready,
-            InProgress,
-            OnCooldown,
-        }
-        
-        public Action<Ability> OnDamageValueChanged;
+        public Action<Ability> OnAbilityStatsChanged;
 
         private AbilityState state;
         
@@ -102,7 +102,7 @@ namespace Runtime
             Damage += increment;
             Cooldown /= decrement;
             
-            OnDamageValueChanged?.Invoke(this);
+            OnAbilityStatsChanged?.Invoke(this);
         }
     }
 }

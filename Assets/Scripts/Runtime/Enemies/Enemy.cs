@@ -71,6 +71,8 @@ namespace Runtime
 
         public override void LaunchOnCharacterDeathLogic()
         {
+            GameManager.Instance?.PrintEnemyDeathCounter();
+            
             var drop = Pool.Instance?.TryGetObjectFromPool(dropGO);
             MyAssertions.EnsureIsNotNull(drop);
             if (!drop) return;

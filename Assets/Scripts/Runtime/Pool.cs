@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,18 +8,22 @@ namespace Runtime
     public class Pool : Singleton<Pool>
     {
         [SerializeField] private Transform enemiesRoot;
+        [SerializeField] private Transform dropRoot;
         [SerializeField] private Transform soundsRoot;
         [SerializeField] private Transform particlesRoot;
-
+        [SerializeField] private Transform vfxRoot;
         
         private readonly Dictionary<string, Stack<IPoolable>> _pool = new();
+        private readonly List<IPoolable> _activeItems = new();
         
         public Transform EnemiesRoot => enemiesRoot;
+        public Transform DropRoot => dropRoot;
         public Transform ParticlesRoot => particlesRoot;
         public Transform SoundsRoot => soundsRoot;
+        public Transform VFXRoot => vfxRoot;
 
         
-        public T TryGetObjectFromPool<T>(T prefab) where T : MonoBehaviour, IPoolable
+        public T TryGet<T>(T prefab) where T : MonoBehaviour, IPoolable
         {
             var uniquePoolKey = prefab.UniquePoolKey;
             EnsureBucket(uniquePoolKey);
@@ -30,6 +35,8 @@ namespace Runtime
             
             var poolableObject = stack?.Count > 0 ? stack.Pop() : Instantiate(prefab);
             var item = (T)poolableObject;
+            
+            _activeItems.Add(item);
             item.OnGetFromPool();
             
             return item;
@@ -39,11 +46,21 @@ namespace Runtime
         {
             if (item == null) return;
         
-            var uniquePoolKey = item.UniquePoolKey;
-            EnsureBucket(uniquePoolKey);
+            EnsureBucket(item.UniquePoolKey);
+            _activeItems.Remove(item);
             item.OnReturnToPool();
             
-            _pool[uniquePoolKey].Push(item);
+            _pool[item.UniquePoolKey].Push(item);
+        }
+
+        public void RestartPool()
+        {
+            if (_activeItems.Count == 0) return;
+            
+            foreach (var p in _activeItems)
+            {
+                ReturnToPool(p);
+            }
         }
         
         private void EnsureBucket(string key)

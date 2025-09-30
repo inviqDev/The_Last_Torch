@@ -49,6 +49,8 @@ namespace Runtime
         public void LaunchStopGameLogic()
         {
             _timer?.StopTimer();
+            
+            abilitySlotsController.ResetAbilitySlots();
             killsBarInfo.ResetKillBarInfo();
         }
 

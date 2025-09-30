@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(fileName = "DropConfig", menuName = "Enemy/Drop")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Characters/Enemy/Drop Config", fileName = "enemy_drop")]
     public class EnemyDropConfig : ScriptableObject
     {
         public EnemyDrop dropGO;

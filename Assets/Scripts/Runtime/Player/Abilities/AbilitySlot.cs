@@ -10,9 +10,7 @@ namespace Runtime
         
         [SerializeField] private Image iconImage;
         [SerializeField] private Button activationButton;
-        
         [SerializeField] private Slider cooldownProgress;
-
         [SerializeField] private TextMeshProUGUI cooldownText;
 
         private readonly float _minSliderValue = 0f;
@@ -20,11 +18,9 @@ namespace Runtime
 
         public bool IsActive { get; private set; }
 
-        public void UpdateAbilityUI(Ability ability)
+        public void ActivateAbilityUI(Ability ability)
         {
-            IsActive = ability.State != Ability.AbilityState.None;
-
-            ability.OnDamageValueChanged += OnAbilityStatsChanged;
+            IsActive = ability.State != AbilityState.None;
 
             iconImage.sprite = ability.Icon;
 
@@ -34,13 +30,15 @@ namespace Runtime
 
             activationButton.interactable = IsActive;
             
+            ability.OnAbilityStatsChanged += UpdateAbilityUI;
+            
             if (IsActive)
             {
-                OnAbilityStatsChanged(ability);
+                UpdateAbilityUI(ability);
             }
         }
 
-        private void OnAbilityStatsChanged(Ability ability)
+        private void UpdateAbilityUI(Ability ability)
         {
             damage.text = $"{ability.Damage:F0} DMG";
             

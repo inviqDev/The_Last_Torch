@@ -92,7 +92,6 @@ MonoBehaviour:
     m_Bits: 128
   uniquePoolKey: red_unique_enemy
   meshRenderer: {fileID: 535704433151859898}
-  mover: {fileID: 9176691546186717458}
   attackTrigger: {fileID: 1900771864123513942}
   projectile: {fileID: 6696566908028617965, guid: a4e21c3b556ba0949a0e70b8defd5370, type: 3}
   cooldown: 2
@@ -223,7 +222,7 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  enemyModel: {fileID: 4054929471304086045}
+  enemy: {fileID: 4054929471304086045}
   detectorCol: {fileID: 1090595330033799847}
 --- !u!1001 &9085307835473741681
 PrefabInstance:

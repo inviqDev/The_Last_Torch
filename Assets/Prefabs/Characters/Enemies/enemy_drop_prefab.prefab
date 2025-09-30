@@ -143,16 +143,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 845c415f3181b4840ab566c40e714752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Benjathemaker.SimpleGemsAnim
-  spawnPosY: 0
   isRotating: 1
   rotationAxis: {x: 0, y: 1, z: 0}
   rotationSpeed: 90
   isScaling: 1
-  startScale: {x: 0.35, y: 0.35, z: 0.35}
-  endScale: {x: 0.5, y: 0.5, z: 0.5}
+  startScale: {x: 0.3, y: 0.3, z: 0.3}
+  endScale: {x: 0.4, y: 0.4, z: 0.4}
   useEasingForScaling: 0
   scaleLerpSpeed: 1
   isFloating: 1
   useEasingForFloating: 0
   floatHeight: 0.25
-  floatSpeed: 0.25
+  floatSpeed: 0.5

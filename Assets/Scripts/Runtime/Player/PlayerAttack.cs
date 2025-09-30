@@ -5,22 +5,30 @@ namespace Runtime
 {
     public class PlayerAttack : MonoBehaviour
     {
-        [SerializeField] private EnemiesCollector collector;
         [SerializeField] private AbilityConfig[] abilityConfigs;
         
         private Player _player;
+        private EnemiesDetector _detector;
         
         private List<Ability> _availableAbilities;
         private int _nextAbilityIndex;
         
         private List<Ability> _activeAbilities;
-        private EnemyModel closestEnemy;
+        private Enemy closestEnemy;
+        
+        private bool _isInitialized;
 
         public void Init(Player player)
         {
-            _player = player;
+            if (_isInitialized) return;
+            _isInitialized = true;
             
-            _availableAbilities = new List<Ability>();
+            _player ??= player;
+            _detector ??= _player.Detector;
+            enabled = _detector.EnemyExists;
+            
+            _availableAbilities ??= new List<Ability>();
+            _availableAbilities.Clear();
             _nextAbilityIndex = 0;
             
             foreach (var a in abilityConfigs)
@@ -29,78 +37,60 @@ namespace Runtime
                 _availableAbilities.Add(ability);
             }
             
-            _activeAbilities = new List<Ability>();
-            
+            _activeAbilities ??= new List<Ability>();
+            _activeAbilities.Clear();
+
+            _detector.OnEnemyDetected += ActivateUpdate;
+            _detector.OnEnemiesListIsEmpty += DeactivateUpdate;
+
             _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
             _player.OnCharacterDeath += OnCharacterDeath;
         }
 
-        private void OnPlayerLevelChanged(Player player)
-        {
-            ActivateNextAbility();
-            
-            if (player.CurrentLevel == 1) return;
-            OnLevelChangedUpdateAbilitiesStats(); // (10f, 1.25f);
-        }
-
-        private void OnCharacterDeath(Character player)
-        {
-            _player.OnCharacterDeath -= OnCharacterDeath;
-            // _player.OnNextAbilityIsAvailable -= OnNextAbilityIsAvailable;
-            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
-            
-            enabled = false;
-        }
-
         private void Update()
         {
-            if (!collector.EnemyExists) return;
+            if (!_detector.EnemyExists) return;
 
-            foreach (var ability in _activeAbilities)
+            for (var i = 0; i < _activeAbilities.Count; i++)
             {
-                if (ability.State != Ability.AbilityState.Ready) continue;
+                var ability = _activeAbilities[i];
+                if (ability.State != AbilityState.Ready) continue;
 
-                closestEnemy = collector.GetClosestEnemyFromList(out var distanceToClosestEnemy);
-                if (!closestEnemy || distanceToClosestEnemy > ability.MinAttackDistance) continue;
+                closestEnemy = _detector.GetClosestEnemy(out var distanceToEnemy);
+                if (!closestEnemy || distanceToEnemy > ability.MinAttackDistance) continue;
 
-                var abilityVFX = Pool.Instance?.TryGetObjectFromPool(ability.AbilityVFX);
-                if (!abilityVFX)
-                {
-                    return;
-                }
-                
-                void OnFinished(Ability a)
-                {
-                    abilityVFX.Finished -= OnFinished;
-                    
-                    Pool.Instance?.ReturnToPool(abilityVFX);
-                    a.SetAbilityState(Ability.AbilityState.OnCooldown);
-                }
-                
-                abilityVFX.Finished += OnFinished;
+                var vfx = Pool.Instance?.TryGet(ability.AbilityVFX);
+                UnityEngine.Assertions.Assert.IsNotNull(vfx, "ability VFX is missing");
+                if (!vfx) continue;
 
-                // 3) Контекст — общая точка расширения для любых VFX
-                var ctx = new AbilityContext(
-                    player: GameManager.Instance.Player,
+                vfx.Finished += OnFinished;
+
+                var context = new AbilityContext(
+                    player: GameManager.Instance?.Player,
                     initialTarget: closestEnemy,
-                    enemiesCollector: collector,
+                    enemiesDetector: _detector,
                     ability: ability
                 );
 
-                ability.SetAbilityState(Ability.AbilityState.InProgress);
-                abilityVFX.Play(ctx);
+                ability.SetAbilityState(AbilityState.InProgress);
+                vfx.Play(context);
                 break;
+
+                void OnFinished(Ability a)
+                {
+                    vfx.Finished -= OnFinished;
+
+                    a.SetAbilityState(AbilityState.OnCooldown);
+                    Pool.Instance?.ReturnToPool(vfx);
+                }
             }
-        }
-        
-        private void OnNextAbilityIsAvailable()
-        {
-            ActivateNextAbility();
         }
 
         private void ActivateNextAbility()
         {
-            MyAssertions.EnsureIsTrue(_nextAbilityIndex == _availableAbilities.Count);
+            UnityEngine.Assertions.Assert.IsTrue(
+                _nextAbilityIndex < _availableAbilities.Count, 
+                "index is out of \"_availableAbilities\" range");
             if (_nextAbilityIndex == _availableAbilities.Count) return;
             
             var ability = _availableAbilities[_nextAbilityIndex];
@@ -108,15 +98,43 @@ namespace Runtime
 
             if (!slot)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(slot, $"slot for {ability.Name} is not found");
+                UnityEngine.Assertions.Assert.IsNotNull(
+                    slot, $"slot for {ability.Name} is not found");
                 return;
             }
             
+            
             ability.ActivateAbility(this, slot);
-            slot.UpdateAbilityUI(ability);
+            slot.ActivateAbilityUI(ability);
             
             _availableAbilities.Remove(ability);
             _activeAbilities.Add(ability);
+        }
+        
+        private void ActivateUpdate()
+        {
+            enabled = true;
+        }
+        
+        private void DeactivateUpdate()
+        {
+            enabled = false;
+        }
+        
+        private void OnPlayerLevelChanged(Player player)
+        {
+            ActivateNextAbility();
+            
+            if (player.CurrentLevel == 1) return;
+            OnLevelChangedUpdateAbilitiesStats();
+        }
+
+        private void OnCharacterDeath(Character player)
+        {
+            _player.OnCharacterDeath -= OnCharacterDeath;
+            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
+            
+            enabled = false;
         }
 
         private void OnLevelChangedUpdateAbilitiesStats()
@@ -124,9 +142,7 @@ namespace Runtime
             foreach (var a in _activeAbilities)
             {
                 if (a.AbilityVFX is LightningChain chain)
-                {
                     chain.IncreaseBouncesAmount();
-                }
                 
                 a.UpdateAbility(5f, 1.05f);
             }
@@ -134,9 +150,7 @@ namespace Runtime
             foreach (var a in _availableAbilities)
             {
                 if (a.AbilityVFX is LightningChain chain)
-                {
                     chain.IncreaseBouncesAmount();
-                }
                 
                 a.UpdateAbility(5f, 1.05f);
             }
@@ -153,6 +167,23 @@ namespace Runtime
             {
                 a.UpdateAbility(damageIncrement, attackSpeedDivider);
             }
-        } 
+        }
+        
+        private void UnsubscribeAll()
+        {
+            if (_detector)
+            {
+                _detector.OnEnemyDetected -= ActivateUpdate;
+                _detector.OnEnemiesListIsEmpty -= DeactivateUpdate;
+            }
+
+            if (_player)
+            {
+                _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
+                _player.OnCharacterDeath -= OnCharacterDeath;
+            }
+        }
+
+        private void OnDestroy() => UnsubscribeAll();
     }
 }

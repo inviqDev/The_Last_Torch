@@ -92,7 +92,6 @@ MonoBehaviour:
     m_Bits: 128
   uniquePoolKey: basic_enemy
   meshRenderer: {fileID: 535704433151859898}
-  mover: {fileID: 9176691546186717458}
   _attackTrigger: {fileID: 3211811251929178177}
 --- !u!1 &8461540215610863759
 GameObject:
@@ -221,7 +220,7 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  enemyModel: {fileID: 8114587345889946756}
+  enemy: {fileID: 8114587345889946756}
   detectorCol: {fileID: 9076429800120288587}
 --- !u!1001 &9085307835473741681
 PrefabInstance:

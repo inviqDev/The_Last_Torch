@@ -11,90 +11,139 @@ namespace Runtime
         public Action<Player> OnPlayerLevelChanged;
         public Action<float> OnPlayerExpChanged;
 
-        [SerializeField] private PlayerMovement movementComponent;
-        [SerializeField] private PlayerDash playerDashComponent;
-        [SerializeField] private DashUI dashUIComponent;
-        
-        [SerializeField] private PlayerAttack playerAttack;
+        [SerializeField] private EnemiesDetector detector;
 
         [SerializeField] private int levelsAmount;
         [SerializeField] private float firstLevelExp;
-        [SerializeField] private float multiplier = 1.5f;
+        [SerializeField] private float A;
+        [SerializeField] private float B;
+
+        private PlayerMovement _movementComponent;
+        private PlayerDash _playerDashComponent;
+        private DashUI _dashUIComponent;
+        private PlayerAttack _playerAttack;
+        private CameraMover _cameraMover;
+
         private float _currentExp;
 
-        public PlayerAttack PlayerAttack => playerAttack;
-
-        public int CurrentLevel { get; private set; } = 1;
+        public EnemiesDetector Detector => detector;
+        public int CurrentLevel { get; private set; }
         public float CurrentLevelMaxExp { get; private set; }
-        
+
         public float[] levelsExp;
+
+        public void InitPlayerComponents()
+        {
+            _movementComponent ??= GetComponent<PlayerMovement>();
+            UnityEngine.Assertions.Assert.IsNotNull(_movementComponent,
+                "player movement component is missing");
+
+            _playerDashComponent ??= GetComponent<PlayerDash>();
+            UnityEngine.Assertions.Assert.IsNotNull(_playerDashComponent,
+                "player dash component is missing");
+
+            _dashUIComponent ??= GetComponent<DashUI>();
+            UnityEngine.Assertions.Assert.IsNotNull(_dashUIComponent,
+                "player dash component UI [slider] is missing");
+
+            _cameraMover ??= GetComponent<CameraMover>();
+            UnityEngine.Assertions.Assert.IsNotNull(_cameraMover,
+                "player camera mover component is missing");
+            _cameraMover?.Init(GameManager.Instance.CameraMain, transform);
+
+            UnityEngine.Assertions.Assert.IsNotNull(detector,
+                "enemies detector component is missing");
+            detector?.Init();
+
+            _playerAttack ??= GetComponent<PlayerAttack>();
+            UnityEngine.Assertions.Assert.IsNotNull(_playerAttack,
+                "player attack component is missing");
+            _playerAttack?.Init(this);
+            
+            SetUpLevelsExpArray();
+        }
 
         private int GetCurrentLevelExpIndex()
         {
-            return CurrentLevel - 1;
+            return Mathf.Clamp(CurrentLevel - 1, 0, Mathf.Max(0, levelsAmount - 1));
         }
 
         private void SetUpLevelsExpArray()
         {
+            levelsAmount = Mathf.Max(1, levelsAmount);
             levelsExp = new float[levelsAmount];
-            levelsExp[GetCurrentLevelExpIndex()] = firstLevelExp;
 
-            _currentExp = 0f;
-            // _totalCollectedExp = 0f;
-            CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
-
-            var currentValue = firstLevelExp;
-            for (var i = 1; i < levelsAmount; i++)
+            levelsExp[0] = firstLevelExp;
+            for (var n = 1; n < levelsAmount; n++)
             {
-                levelsExp[i] = currentValue * multiplier;
-                currentValue = levelsExp[i];
+                var d = firstLevelExp + A * n + B * n * n;
+                levelsExp[n] = Mathf.Round(d);
             }
             
+            CurrentLevel = 1;
+            _currentExp = 0f;
+            CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+
             OnPlayerLevelChanged?.Invoke(this);
         }
 
         public void SetUpPlayerConfig(PlayerConfig config)
         {
-            SetUpLevelsExpArray();
-            OnPlayerExpChanged?.Invoke(_currentExp);
-            
             maxHealth = config.maxHealth;
             currentHealth = maxHealth;
-            
+
             moveSpeed = config.moveSpeed;
-            movementComponent.SetMoveSettingsFromConfig(config);
-            playerDashComponent.SetDashSettingsFromConfig(config, dashUIComponent);
-            
+            _movementComponent.SetMoveSettingsFromConfig(config);
+            _playerDashComponent.SetDashSettingsFromConfig(config, _dashUIComponent);
+
             healthBar.Init(this);
-            
+
             OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
+            OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
         public void CollectExp(float pickedExpAmount)
         {
             _currentExp += pickedExpAmount;
 
-            if (_currentExp >= CurrentLevelMaxExp)
+            if (CurrentLevel >= levelsAmount)
+            {
+                _currentExp = Mathf.Min(_currentExp, CurrentLevelMaxExp);
+                OnPlayerExpChanged?.Invoke(_currentExp);
+                return;
+            }
+
+            while (CurrentLevel < levelsAmount && _currentExp >= CurrentLevelMaxExp)
             {
                 _currentExp -= CurrentLevelMaxExp;
-                
                 ++CurrentLevel;
+
+                if (CurrentLevel >= levelsAmount)
+                {
+                    // add extra credits or something
+                    CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+                    _currentExp = Mathf.Min(_currentExp, CurrentLevelMaxExp);
+
+                    OnPlayerLevelChanged?.Invoke(this);
+                    OnPlayerExpChanged?.Invoke(_currentExp);
+
+                    return;
+                }
+
                 CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
-                
-                ChangeStats(20f, 1f, 10f);
-                
                 OnPlayerLevelChanged?.Invoke(this);
             }
 
             OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
-        public override void LaunchOnCharacterDeathLogic()
+
+        protected override void LaunchOnCharacterDeathLogic()
         {
             // player "unique player" anim, sound, etc
             print(gameObject.name + " IS DEAD");
-            
+
             base.LaunchOnCharacterDeathLogic();
         }
 
@@ -104,21 +153,21 @@ namespace Runtime
             {
                 maxHealth += healthBoost;
                 currentHealth += healthBoost;
-                
+
                 OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             }
 
             if (moveSpeedBoost != 0f)
             {
                 moveSpeed += moveSpeedBoost;
-                movementComponent.SetNewMoveSpeed(moveSpeed);
-                
+                _movementComponent.SetNewMoveSpeed(moveSpeed);
+
                 OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
             }
 
             if (damageBoost != 0f)
             {
-                playerAttack.UpdateAbilitiesStats(damageBoost);
+                _playerAttack.UpdateAbilitiesStats(damageBoost);
             }
         }
     }

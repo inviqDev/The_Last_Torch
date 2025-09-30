@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Ability_Configs/Characters/Player", fileName = "PlayerConfig")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Characters/Player/Base Config", fileName = "player_config")]
     public class PlayerConfig : CharacterBaseConfig
     {
         public float startExp;

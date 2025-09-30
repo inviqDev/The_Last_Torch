@@ -12,7 +12,8 @@ namespace Runtime
             base.InitMovement();
             
             _playerRotation ??= GetComponent<Rotation>();
-            MyAssertions.EnsureIsNotNull(_playerRotation);
+            UnityEngine.Assertions.Assert.IsNotNull(_playerRotation,
+                "player rotation component is missing");
             
             enabled = false;
         }
