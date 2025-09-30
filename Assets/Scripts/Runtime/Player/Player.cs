@@ -143,7 +143,6 @@ namespace Runtime
         {
             // player "unique player" anim, sound, etc
             print(gameObject.name + " IS DEAD");
-
             base.LaunchOnCharacterDeathLogic();
         }
 
@@ -167,7 +166,7 @@ namespace Runtime
 
             if (damageBoost != 0f)
             {
-                _playerAttack.UpdateAbilitiesStats(damageBoost);
+                _playerAttack.ChangeAbilitiesStats(damageBoost);
             }
         }
     }

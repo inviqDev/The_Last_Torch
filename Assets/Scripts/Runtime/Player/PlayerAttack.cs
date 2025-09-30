@@ -6,75 +6,129 @@ namespace Runtime
     public class PlayerAttack : MonoBehaviour
     {
         [SerializeField] private AbilityConfig[] abilityConfigs;
-        
+
         private Player _player;
         private EnemiesDetector _detector;
-        
-        private List<Ability> _availableAbilities;
-        private int _nextAbilityIndex;
-        
-        private List<Ability> _activeAbilities;
-        private Enemy closestEnemy;
-        
+
+        // Master registry of all created abilities (for unsubscribing)
+        private readonly List<Ability> _allCreatedAbilities = new();
+
+        // Abilities that are not yet unlocked (activated on level up)
+        private List<Ability> _allAbilities;
+
+        // Queue of ready-to-use abilities + HashSet for O(1) "already in queue?" check
+        private Queue<Ability> _readyQueue;
+        private HashSet<Ability> _readySet;
+
+        private Enemy _closestEnemy;
         private bool _isInitialized;
 
         public void Init(Player player)
         {
             if (_isInitialized) return;
             _isInitialized = true;
-            
+
             _player ??= player;
             _detector ??= _player.Detector;
-            enabled = _detector.EnemyExists;
-            
-            _availableAbilities ??= new List<Ability>();
-            _availableAbilities.Clear();
-            _nextAbilityIndex = 0;
-            
-            foreach (var a in abilityConfigs)
-            {
-                var ability = new Ability(a);
-                _availableAbilities.Add(ability);
-            }
-            
-            _activeAbilities ??= new List<Ability>();
-            _activeAbilities.Clear();
 
-            _detector.OnEnemyDetected += ActivateUpdate;
-            _detector.OnEnemiesListIsEmpty += DeactivateUpdate;
+            _allAbilities ??= new List<Ability>();
+            _allAbilities.Clear();
+
+            // Create all abilities once, subscribe, and put into two lists:
+            // - _allAbilities: not yet activated (to unlock in order)
+            // - _allCreatedAbilities: master registry for unsubscribing later
+            foreach (var cfg in abilityConfigs)
+            {
+                var ability = new Ability(cfg);
+                ability.OnAbilityReady += AddAbilityToReadyList;
+
+                _allAbilities.Add(ability);
+                _allCreatedAbilities.Add(ability);
+            }
+
+            _readyQueue ??= new Queue<Ability>();
+            _readyQueue.Clear();
+
+            _readySet ??= new HashSet<Ability>();
+            _readySet.Clear();
+
+            _detector.OnEnemyDetected += RecomputeEnabled;
+            _detector.OnEnemiesListIsEmpty += RecomputeEnabled;
 
             _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
             _player.OnCharacterDeath += OnCharacterDeath;
+
+            RecomputeEnabled();
+        }
+
+        private void AddAbilityToReadyList(Ability a)
+        {
+            UnityEngine.Assertions.Assert.IsTrue(a.State == AbilityState.Ready,
+                $"Ability {a.Name} enqueued while not Ready");
+
+            // HashSet guarantees uniqueness
+            if (_readySet.Add(a))
+                _readyQueue.Enqueue(a);
+
+            RecomputeEnabled();
+        }
+
+        private void RecomputeEnabled()
+        {
+            enabled = _detector.EnemyExists && _readyQueue.Count > 0;
         }
 
         private void Update()
         {
-            if (!_detector.EnemyExists) return;
+            
+#if UNITY_EDITOR
+            var peek = _readyQueue.Peek();
+            print(peek.Name);
+#endif
+            
+            if (!_detector.EnemyExists || _readyQueue.Count == 0) return;
 
-            for (var i = 0; i < _activeAbilities.Count; i++)
+            // Loop at most queue length (no infinite loop)
+            var spins = _readyQueue.Count;
+            while (spins-- > 0)
             {
-                var ability = _activeAbilities[i];
-                if (ability.State != AbilityState.Ready) continue;
+                var ability = _readyQueue.Peek();
 
-                closestEnemy = _detector.GetClosestEnemy(out var distanceToEnemy);
-                if (!closestEnemy || distanceToEnemy > ability.MinAttackDistance) continue;
+                _closestEnemy = _detector.GetClosestEnemy(out var distance);
+                if (!_closestEnemy || distance > ability.MinAttackDistance)
+                {
+                    // If check failed => rotate head to tail, try next
+                    _readyQueue.Enqueue(_readyQueue.Dequeue());
+                    continue;
+                }
 
                 var vfx = Pool.Instance?.TryGet(ability.AbilityVFX);
                 UnityEngine.Assertions.Assert.IsNotNull(vfx, "ability VFX is missing");
-                if (!vfx) continue;
+                if (!vfx)
+                {
+                    // If check failed => rotate head to tail, try next
+                    _readyQueue.Enqueue(_readyQueue.Dequeue());
+                    continue;
+                }
+
+                // Ready to start: remove from queue and from HashSet
+                _readyQueue.Dequeue();
+                _readySet.Remove(ability);
 
                 vfx.Finished += OnFinished;
 
-                var context = new AbilityContext(
+                var ctx = new AbilityContext(
                     player: GameManager.Instance?.Player,
-                    initialTarget: closestEnemy,
+                    initialTarget: _closestEnemy,
                     enemiesDetector: _detector,
                     ability: ability
                 );
 
                 ability.SetAbilityState(AbilityState.InProgress);
-                vfx.Play(context);
-                break;
+                vfx.Play(ctx);
+
+                RecomputeEnabled();
+                return; // only one ability per tick
 
                 void OnFinished(Ability a)
                 {
@@ -82,99 +136,85 @@ namespace Runtime
 
                     a.SetAbilityState(AbilityState.OnCooldown);
                     Pool.Instance?.ReturnToPool(vfx);
+
+                    RecomputeEnabled();
                 }
             }
+
+            RecomputeEnabled();
         }
+
 
         private void ActivateNextAbility()
         {
-            UnityEngine.Assertions.Assert.IsTrue(
-                _nextAbilityIndex < _availableAbilities.Count, 
-                "index is out of \"_availableAbilities\" range");
-            if (_nextAbilityIndex == _availableAbilities.Count) return;
-            
-            var ability = _availableAbilities[_nextAbilityIndex];
-            var slot = GameManager.Instance?.UIManager.GetAvailableAbilitySlot();
+            if (_allAbilities == null || _allAbilities.Count == 0) return;
 
+            // Take the first "not yet unlocked" // Add Random ??
+            var ability = _allAbilities[0];
+            var slot = GameManager.Instance?.UIManager.GetAvailableAbilitySlot();
             if (!slot)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(
-                    slot, $"slot for {ability.Name} is not found");
+                UnityEngine.Assertions.Assert.IsNotNull(slot, $"slot for {ability.Name} is not found");
                 return;
             }
-            
-            
+
             ability.ActivateAbility(this);
             slot.SetAbilitySlotUI(ability);
-            
-            _availableAbilities.Remove(ability);
-            _activeAbilities.Add(ability);
+
+            // Remove from "not yet unlocked" list
+            _allAbilities.RemoveAt(0);
         }
-        
-        private void ActivateUpdate()
-        {
-            enabled = true;
-        }
-        
-        private void DeactivateUpdate()
-        {
-            enabled = false;
-        }
-        
+
         private void OnPlayerLevelChanged(Player player)
         {
             ActivateNextAbility();
-            
+
             if (player.CurrentLevel == 1) return;
             OnLevelChangedUpdateAbilitiesStats();
         }
 
-        private void OnCharacterDeath(Character player)
-        {
-            _player.OnCharacterDeath -= OnCharacterDeath;
-            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
-            
-            enabled = false;
-        }
-
         private void OnLevelChangedUpdateAbilitiesStats()
         {
-            foreach (var a in _activeAbilities)
+            foreach (var a in _allAbilities)
             {
                 if (a.AbilityVFX is LightningChain chain)
                     chain.IncreaseBouncesAmount();
-                
-                a.UpdateAbility(5f, 1.05f);
+
+                a.ChangeAbilityDamage(StatChangeMode.Percent, 5f);
+                a.ChangeAbilityCooldown(StatChangeMode.Percent, -5f);
             }
 
-            foreach (var a in _availableAbilities)
+            foreach (var a in _readyQueue)
             {
                 if (a.AbilityVFX is LightningChain chain)
                     chain.IncreaseBouncesAmount();
-                
-                a.UpdateAbility(5f, 1.05f);
+
+                a.ChangeAbilityDamage(StatChangeMode.Percent, 5f);
+                a.ChangeAbilityCooldown(StatChangeMode.Percent, -5f);
             }
         }
-        
-        public void UpdateAbilitiesStats(float damageIncrement, float attackSpeedDivider = 1f)
+
+        public void ChangeAbilitiesStats(float damageIncrement)
         {
-            foreach (var a in _activeAbilities)
+            foreach (var a in _allAbilities)
             {
-                a.UpdateAbility(damageIncrement, attackSpeedDivider);
+                a.ChangeAbilityDamage(StatChangeMode.SimpleAdd, damageIncrement);
+                a.ChangeAbilityCooldown(StatChangeMode.SimpleAdd, -0.005f);
             }
 
-            foreach (var a in _availableAbilities)
+            foreach (var a in _readyQueue)
             {
-                a.UpdateAbility(damageIncrement, attackSpeedDivider);
+                a.ChangeAbilityDamage(StatChangeMode.SimpleAdd, damageIncrement);
+                a.ChangeAbilityCooldown(StatChangeMode.SimpleAdd, -0.005f);
             }
         }
-        
-        private void UnsubscribeAll()
+
+        private void UnsubscribeComponents()
         {
             if (_detector)
             {
-                _detector.OnEnemyDetected -= ActivateUpdate;
-                _detector.OnEnemiesListIsEmpty -= DeactivateUpdate;
+                _detector.OnEnemyDetected -= RecomputeEnabled;
+                _detector.OnEnemiesListIsEmpty -= RecomputeEnabled;
             }
 
             if (_player)
@@ -184,21 +224,29 @@ namespace Runtime
             }
         }
 
+        private void UnsubscribeAbilities()
+        {
+            foreach (var a in _allCreatedAbilities)
+                a.OnAbilityReady -= AddAbilityToReadyList;
+        }
+
+        private void OnCharacterDeath(Character player)
+        {
+            _player.OnCharacterDeath -= OnCharacterDeath;
+            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
+
+            enabled = false;
+        }
+
         private void OnDestroy()
         {
-            UnsubscribeAll();
+            UnsubscribeComponents();
+            UnsubscribeAbilities();
 
-            if (_availableAbilities != null)
-            {
-                _availableAbilities?.Clear();
-                _availableAbilities = null;
-            }
-            
-            if (_activeAbilities != null)
-            {
-                _activeAbilities?.Clear();
-                _activeAbilities = null;
-            }
+            _allAbilities?.Clear();
+            _readyQueue?.Clear();
+            _readySet?.Clear();
+            _allCreatedAbilities?.Clear();
         }
     }
 }
