@@ -70,12 +70,11 @@ namespace Runtime
                 var context = new AbilityContext(
                     player: GameManager.Instance?.Player,
                     initialTarget: _closestEnemy,
-                    enemiesDetector: _detector,
                     ability: ability
                 );
 
                 ability.SetAbilityState(AbilityState.InProgress);
-                visual.LaunchAblilityVFX(context);
+                visual.LaunchAbilityVFX(context);
 
                 RecomputeEnabled();
                 return; // only one ability per tick

@@ -11,7 +11,7 @@ namespace Runtime
         [SerializeField] private LayerMask playerLayerMask;
         
         private MeshRenderer _meshRenderer;
-        private DropAnimation dropAnimation;
+        private RotateFloatScaleAnim _rotateFloatScaleAnim;
 
         private float _expGained;
         private float _healthBoost;
@@ -32,10 +32,10 @@ namespace Runtime
                 "mesh renderer component is missing");
             _meshRenderer.material = dropConfig.dropMaterial;
             
-            dropAnimation ??= GetComponent<DropAnimation>();
-            UnityEngine.Assertions.Assert.IsNotNull(dropAnimation,
+            _rotateFloatScaleAnim ??= GetComponent<RotateFloatScaleAnim>();
+            UnityEngine.Assertions.Assert.IsNotNull(_rotateFloatScaleAnim,
                 "drop animation renderer component is missing");
-            dropAnimation.StartAnimation(true, true);
+            _rotateFloatScaleAnim.StartAnimation(true, true);
             
             _expGained = dropConfig.expGained;
             _healthBoost = dropConfig.healthBoost;

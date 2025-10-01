@@ -49,7 +49,8 @@ namespace Runtime
 
         public Enemy GetClosestEnemy(out float distance)
         {
-            UnityEngine.Assertions.Assert.IsTrue(AvailableEnemies.Count > 0, "attackable enemies list is empty");
+            UnityEngine.Assertions.Assert.IsTrue(AvailableEnemies.Count > 0, 
+                "attackable enemies list is empty");
             
             if (AvailableEnemies.Count == 0)
             {

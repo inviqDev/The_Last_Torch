@@ -19,16 +19,20 @@ namespace Runtime
             }
         }
 
-        public void PlayParticle(string uniquePoolKey, Character owner)
+        public Particle PlayParticle(string uniquePoolKey, Character owner = null)
         {
-            if (!_particlesDictionary.TryGetValue(uniquePoolKey, out var p))
+            if (!_particlesDictionary.TryGetValue(uniquePoolKey, out var prefab))
             {
-                UnityEngine.Assertions.Assert.IsNotNull(p, $"particle {uniquePoolKey} is not found");
-                return;
+                UnityEngine.Assertions.Assert.IsNotNull(
+                    prefab, $"particle {uniquePoolKey} is not found");
+                
+                return null;
             }
 
-            var particle = Pool.Instance?.TryGet(p);
+            var particle = Pool.Instance?.TryGet(prefab);
             particle?.PlayParticleEffect(owner);
+            
+            return particle;
         }
     }
 }

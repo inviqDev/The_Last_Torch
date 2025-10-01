@@ -64,7 +64,7 @@ namespace Runtime
 
         private void UpdateAbilityUI(Ability ability)
         {
-            damageInfo.text = $"{ability.Damage:F0} DMG";
+            damageInfo.text = $"{ability.Damage:F2} DMG";
 
             cooldownProgress.maxValue = ability.Cooldown;
             cooldownInfo.text = $"{ability.Cooldown:F2} SEC";

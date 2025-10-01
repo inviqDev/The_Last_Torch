@@ -2,10 +2,11 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class DropAnimation : MonoBehaviour
+    public class RotateFloatScaleAnim : MonoBehaviour
     {
         [SerializeField] private bool isRotating;
         [SerializeField] private Vector3 rotationAxis;
+        [SerializeField] private bool useWorldRotation;
         [SerializeField] private float rotationSpeed = 90f; // Degrees per second
 
         [SerializeField] private bool isScaling;
@@ -25,10 +26,8 @@ namespace Runtime
 
         private void Update()
         {
-            if (isRotating)
-            {
-                transform.Rotate(rotationAxis * (rotationSpeed * Time.deltaTime));
-            }
+            transform.Rotate(rotationAxis * (rotationSpeed * Time.deltaTime),
+                useWorldRotation ? Space.World : Space.Self);
 
             if (isFloating)
             {

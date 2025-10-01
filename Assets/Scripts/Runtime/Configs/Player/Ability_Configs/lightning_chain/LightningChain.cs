@@ -19,6 +19,7 @@ namespace Runtime
         [SerializeField] private bool waitPrewarmTime;
         
         private readonly List<Enemy> affected = new();
+        private EnemiesDetector _detector;
 
         protected override void OnPlay(AbilityContext ctx)
         {
@@ -34,7 +35,8 @@ namespace Runtime
 
             if (!boltPrefab)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(boltPrefab, "[LightningChain] boltPrefab not set");
+                UnityEngine.Assertions.Assert.IsNotNull(boltPrefab, 
+                    "[LightningChain] boltPrefab not set");
 
                 RaiseFinished(ability);
                 yield break;
@@ -48,7 +50,8 @@ namespace Runtime
             while (currentEnemy && bouncesLeft > 0)
             {
                 var bolt = Pool.Instance?.TryGet(boltPrefab);
-                UnityEngine.Assertions.Assert.IsNotNull(bolt, "[Lightning Bolt] is not spawned");
+                UnityEngine.Assertions.Assert.IsNotNull(bolt, 
+                    "[Lightning Bolt] is not spawned");
 
                 float duration;
                 bool needToFollow;
@@ -76,7 +79,7 @@ namespace Runtime
                 bouncesLeft--;
                 if (bouncesLeft <= 0) break;
 
-                var nextTarget = FindClosestEnemy(currentEnemy, ctx.EnemiesDetector.AvailableEnemies);
+                var nextTarget = FindClosestEnemy(currentEnemy, player.Detector.AvailableEnemies);
                 if (!nextTarget) break;
 
                 from = currentEnemy.transform;
@@ -91,7 +94,6 @@ namespace Runtime
             affected.Clear();
             RaiseFinished(ctx.Ability);
         }
-
         private Enemy FindClosestEnemy(Enemy from, List<Enemy> attackableEnemies)
         {
             if (attackableEnemies == null || attackableEnemies.Count == 0) return null;
@@ -99,14 +101,15 @@ namespace Runtime
             Enemy closestEnemy = null;
             var maxSqrMag = maxBounceDistance * maxBounceDistance;
 
-            foreach (var e in attackableEnemies)
+            for (var i = 0; i < attackableEnemies.Count; i++)
             {
+                var e = attackableEnemies[i];
                 if (!e || ReferenceEquals(e, from) || affected.Contains(e)) continue;
                 if (!e.gameObject.activeInHierarchy || e.CurrentHealth <= 0) continue;
 
                 var sqr = (e.transform.position - from.transform.position).sqrMagnitude;
                 if (sqr > maxSqrMag) continue;
-                
+
                 closestEnemy = e;
             }
 
