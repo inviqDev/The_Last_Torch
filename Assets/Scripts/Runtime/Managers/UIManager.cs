@@ -5,6 +5,8 @@ namespace Runtime
 {
     public class UIManager : MonoBehaviour
     {
+        [SerializeField] private GameObject gameplayUI;
+        
         [SerializeField] private TextMeshProUGUI timer;
         [SerializeField] private KillsBarInfo killsBarInfo;
         
@@ -17,21 +19,23 @@ namespace Runtime
 
         private Timer _timer;
         
-        public void InitLevelUI(Player player)
+        public void InitializeLevelUI(Player player)
         {
-            if (gameOverPanel.activeSelf)
+            ShowGameplayUI(true);
+            
+            if (gameOverPanel.gameObject.activeInHierarchy)
             {
                 gameOverPanel.SetActive(false);
             }
 
-            if (winGamePanel.activeSelf)
+            if (winGamePanel.gameObject.activeInHierarchy)
             {
                 winGamePanel.SetActive(false);
             }
             
             abilitySlotsController.ResetAbilitySlots();
-            playerStatsInfo.Init(player);
-            playerLevelSlider.Init(player);
+            playerStatsInfo.Initialize(player);
+            playerLevelSlider.Initialize(player);
             
             StartGameTimer();
         }
@@ -70,20 +74,21 @@ namespace Runtime
             killsBarInfo.ChangeKillBarInfo(enemy);
         }
 
-        public void TurnOffGameOverPanel()
+        private void ShowGameplayUI(bool show)
         {
-            Time.timeScale = 1f;
-            gameOverPanel.SetActive(false);
+            gameplayUI.SetActive(show);
         }
 
-        public void TurnOnGameOverPanel()
+        public void ShowGameOverUI()
         {
+            ShowGameplayUI(false);
             gameOverPanel.SetActive(true);
             Time.timeScale = 0f;
         }
 
-        public void ShowWinGamePanel()
+        public void ShowWinGameUI()
         {
+            ShowGameplayUI(false);
             winGamePanel.SetActive(true);
             Time.timeScale = 0f;
         }

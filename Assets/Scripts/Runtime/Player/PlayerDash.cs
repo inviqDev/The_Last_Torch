@@ -24,9 +24,9 @@ namespace Runtime
         
         public DashState dashState { get; private set; }
 
-        protected override void InitMovement()
+        protected override void Initialize()
         {
-            base.InitMovement();
+            base.Initialize();
             enabled = false;
         }
 
@@ -40,9 +40,9 @@ namespace Runtime
             _timer = new Timer(this);
             _timer.TimerIsOver += ChangeDashState;
             
-            InitMovement();
+            Initialize();
             _dashUI = dashUI;
-            _dashUI.InitDashAbilityUI(_timer, _cooldown, _duration);
+            _dashUI.InitializeAbilityUI(_timer, _cooldown, _duration);
             
             dashState = DashState.OnCooldown;
             _dashUI.UpdateDashState(dashState);

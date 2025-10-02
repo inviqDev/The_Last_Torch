@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5886726765700127663}
   - component: {fileID: 4790814588375080067}
   m_Layer: 0
-  m_Name: fire_flame_sound
+  m_Name: fire_flame_hit_sound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

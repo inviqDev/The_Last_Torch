@@ -17,7 +17,7 @@ namespace Runtime
         public List<Enemy> AvailableEnemies { get; private set; }
         public bool EnemyExists => AvailableEnemies.Count > 0;
 
-        public void Init()
+        public void Initialize()
         {
             AvailableEnemies ??= new List<Enemy>();
             AvailableEnemies?.Clear();

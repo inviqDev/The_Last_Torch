@@ -12,7 +12,7 @@ namespace Runtime
         
         private Player _player;
         
-        public void Init(Player player)
+        public void Initialize(Player player)
         {
             _player = player;
             UnityEngine.Assertions.Assert.IsNotNull(

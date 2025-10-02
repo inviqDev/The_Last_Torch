@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8825833957594170732}
   - component: {fileID: 3579021516814992675}
   m_Layer: 0
-  m_Name: lightning_chain_vfx
+  m_Name: lightning_chain_ability_vfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5698b8d4ba0a46c781e9031fd6f90cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.LightningChain
-  uniquePoolKey: lightning_chain_vfx
+  uniquePoolKey: lightning_chain_ability_vfx
   bouncesAmount: 3
   maxBounceDistance: 12
   boltPrefab: {fileID: 7472218550322752599, guid: 4bee371ae2a621341b50002dcab1452c, type: 3}

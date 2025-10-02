@@ -27,12 +27,12 @@ namespace Runtime
         private Vector3 _currentOffset;
         private Vector3 _smoothVel;
 
-        public void Init(Camera movingCamera, Transform targetToFollow)
+        public void Initialize(Camera movingCamera, Transform targetToFollow)
         {
             _target = targetToFollow;
             _camera = movingCamera;
             
-            InitAssertions();
+            InitializeAssertions();
 
             _camera.transform.position = targetToFollow.position + defaultOffsetFromTarget;
             _camera.transform.LookAt(targetToFollow.position);
@@ -41,7 +41,7 @@ namespace Runtime
             _currentOffset = _offsetDir * offsetDistance;
         }
 
-        private void InitAssertions()
+        private void InitializeAssertions()
         {
             UnityEngine.Assertions.Assert.IsNotNull(_target, "_target is null");
             UnityEngine.Assertions.Assert.IsNotNull(_camera, "_camera is null");

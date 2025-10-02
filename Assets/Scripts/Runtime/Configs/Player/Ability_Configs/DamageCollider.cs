@@ -15,13 +15,13 @@ namespace Runtime
             if ((enemyLayerMask.value & 1 << other.gameObject.layer) == 0) return;
             if (other.transform.root.TryGetComponent<Enemy>(out var enemy))
             {
-                print($"triggered with {enemy.name}");
                 OnTriggerDetected?.Invoke(enemy);
                 return;
             }
-            
+
+            other.gameObject.transform.name = "unexpectedCollision";
             UnityEngine.Assertions.Assert.IsNotNull(enemy,
-                $"{gameObject.name} collided with {other.gameObject.name}");
+                $"{gameObject.transform.root.name} has collided with {other.gameObject.transform.name}");
         }
     }
 }

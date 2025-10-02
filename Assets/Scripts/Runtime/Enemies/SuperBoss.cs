@@ -7,7 +7,7 @@ namespace Runtime
         protected override void LaunchOnCharacterDeathLogic()
         {
             base.LaunchOnCharacterDeathLogic();
-            GameManager.Instance?.UIManager.ShowWinGamePanel();
+            GameManager.Instance?.UIManager.ShowWinGameUI();
         }
     }
 }

@@ -51,7 +51,6 @@ namespace Runtime
         private void StartAttackingProcess()
         {
             if (_attackLoop != null) return;
-            
             _attackLoop = StartCoroutine(AttackLoop());
         }
 

@@ -7,8 +7,8 @@ namespace Runtime
             var ability = ctx.Ability;
             var enemy = ctx.InitialTarget;
 
-            GameManager.Instance?.SoundManager?.PlaySound(ability.SoundPoolKey, transform.position);
-            GameManager.Instance?.ParticlesManager?.PlayParticle(ability.ParticlesPoolKey, enemy);
+            GameManager.Instance?.SoundManager?.PlaySound(ability.AbilityHitSoundPoolKey, transform.position);
+            GameManager.Instance?.ParticlesManager?.PlayParticle(ability.HitParticlePoolKey, enemy);
             
             enemy.TakeDamage(ability.Damage);
             RaiseFinished(ctx.Ability);

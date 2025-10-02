@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3714883557849830017}
   - component: {fileID: 1962205281349832667}
   m_Layer: 0
-  m_Name: fire_flame_vfx
+  m_Name: fire_flame_ability_vfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3b8b32e12d4c0287af29bb6c8cfdfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.FireFlame
-  uniquePoolKey: fire_flame_vfx
+  uniquePoolKey: fire_flame_ability_vfx

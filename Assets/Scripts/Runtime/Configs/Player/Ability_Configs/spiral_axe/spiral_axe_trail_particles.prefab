@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5969951286846241796}
   - component: {fileID: -2141157693128232790}
   m_Layer: 0
-  m_Name: axe_trail_particles
+  m_Name: spiral_axe_trail_particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4861,5 +4861,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168a965fd4d04c0a9e933de7eba51293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.Particle
-  uniquePoolKey: axe_trail_particles
+  uniquePoolKey: spiral_axe_trail_particles
   scaleMultiplier: 1

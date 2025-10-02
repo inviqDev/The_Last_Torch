@@ -22,7 +22,7 @@ namespace Runtime
         private Enemy _closestEnemy;
         private bool _isInitialized;
 
-        public void Init(Player player)
+        public void Initialize(Player player)
         {
             if (_isInitialized) return;
 
@@ -72,7 +72,7 @@ namespace Runtime
                     initialTarget: _closestEnemy,
                     ability: ability
                 );
-
+                
                 ability.SetAbilityState(AbilityState.InProgress);
                 visual.LaunchAbilityVFX(context);
 

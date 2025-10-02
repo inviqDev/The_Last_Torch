@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
   abilityName: FIRE FLAME
   abilityIcon: {fileID: 21300000, guid: 886372dd6bfab314a8c842d84ff7a69f, type: 3}
-  SoundUniquePoolKey: fire_flame_sound
-  ParticlesUniquePoolKey: fire_flame_particles
+  HitParticlePoolKey: fire_flame_hit_particle
+  HitSoundPoolKey: fire_flame_hit_sound
   progressTime: 0
   cooldownTime: 1
   abilityVFX: {fileID: 1962205281349832667, guid: 358c5cf53b6e49348bfbe3a284c60f7c, type: 3}

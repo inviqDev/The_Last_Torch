@@ -68,8 +68,8 @@ namespace Runtime
 
                 bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
                 
-                GameManager.Instance?.SoundManager?.PlaySound(ability.SoundPoolKey, transform.position);
-                GameManager.Instance?.ParticlesManager?.PlayParticle(ability.ParticlesPoolKey, currentEnemy);
+                GameManager.Instance?.SoundManager?.PlaySound(ability.AbilityHitSoundPoolKey, transform.position);
+                GameManager.Instance?.ParticlesManager?.PlayParticle(ability.HitParticlePoolKey, currentEnemy);
 
                 currentEnemy.TakeDamage(ability.Damage);
                 affected.Add(currentEnemy);

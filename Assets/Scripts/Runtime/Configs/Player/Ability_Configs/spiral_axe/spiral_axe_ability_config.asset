@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
   abilityName: SPIRAL AXE
   abilityIcon: {fileID: 3436914362765528371, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
-  SoundUniquePoolKey: spiral_axe_sound
-  ParticlesUniquePoolKey: spiral_axe_particles
+  HitParticlePoolKey: spiral_axe_hit_particles
+  HitSoundPoolKey: spiral_axe_hit_sound
   progressTime: 0
   cooldownTime: 1
   abilityVFX: {fileID: 7376221340239735651, guid: 86c04c603fa322f48ac93bfb34de57d3, type: 3}

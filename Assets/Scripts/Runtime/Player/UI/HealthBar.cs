@@ -19,7 +19,7 @@ namespace Runtime
         private readonly float _minValue = 0f;
         private float _maxValue;
         
-        public void Init(Character character)
+        public void Initialize(Character character)
         {
             _character = character;
             MyAssert.IsNotNull(_character, "character is not set properly");

@@ -32,7 +32,7 @@ namespace Runtime
 
         public float[] levelsExp;
 
-        public void InitPlayerComponents()
+        public void InitializePlayerComponents()
         {
             _movementComponent = GetComponent<PlayerMovement>();
             UnityEngine.Assertions.Assert.IsNotNull(_movementComponent,
@@ -49,16 +49,16 @@ namespace Runtime
             _cameraMover = GetComponent<CameraMover>();
             UnityEngine.Assertions.Assert.IsNotNull(_cameraMover,
                 "player camera mover component is missing");
-            _cameraMover?.Init(GameManager.Instance.CameraMain, transform);
+            _cameraMover?.Initialize(GameManager.Instance.CameraMain, transform);
 
             UnityEngine.Assertions.Assert.IsNotNull(detector,
                 "enemies detector component is missing");
-            detector?.Init();
+            detector?.Initialize();
 
             _playerAttack = GetComponent<PlayerAttack>();
             UnityEngine.Assertions.Assert.IsNotNull(_playerAttack,
                 "player attack component is missing");
-            _playerAttack?.Init(this);
+            _playerAttack?.Initialize(this);
             
             SetUpLevelsExpArray();
         }
@@ -96,7 +96,7 @@ namespace Runtime
             _movementComponent.SetMoveSettingsFromConfig(config);
             _playerDashComponent.SetDashSettingsFromConfig(config, _dashUIComponent);
 
-            healthBar.Init(this);
+            healthBar.Initialize(this);
 
             OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
@@ -137,7 +137,6 @@ namespace Runtime
 
             OnPlayerExpChanged?.Invoke(_currentExp);
         }
-
 
         protected override void LaunchOnCharacterDeathLogic()
         {

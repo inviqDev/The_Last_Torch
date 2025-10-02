@@ -16,7 +16,6 @@ namespace Runtime
         [SerializeField] private bool useLocalForward = true;
 
         [SerializeField] private Particle trailParticles;
-        [SerializeField] private Particle hitParticle;
 
         private Player _player;
         private Ability _ability;
@@ -28,8 +27,11 @@ namespace Runtime
         {
             if (!enemy) return;
             
-            UnityEngine.Assertions.Assert.IsNotNull(hitParticle, $"particles {hitParticle} is missing");
-            GameManager.Instance?.ParticlesManager?.PlayParticle(hitParticle.UniquePoolKey, enemy);
+            UnityEngine.Assertions.Assert.IsNotNull(_ability.HitParticlePoolKey, $"{_ability.HitParticlePoolKey} is missing");
+            GameManager.Instance?.ParticlesManager?.PlayParticle(_ability.HitParticlePoolKey, enemy);
+            
+            UnityEngine.Assertions.Assert.IsNotNull(_ability.AbilityHitSoundPoolKey, $"{_ability.AbilityHitSoundPoolKey} is missing");
+            GameManager.Instance?.SoundManager.PlaySound(_ability.AbilityHitSoundPoolKey, transform.position);
             
             enemy.TakeDamage(_ability.Damage);
         }
@@ -47,8 +49,8 @@ namespace Runtime
 
         private IEnumerator SpiralRoutine(AbilityContext ctx)
         {
-            _player ??= ctx.Player;
-            _ability ??= ctx.Ability;
+            _player = ctx.Player;
+            _ability = ctx.Ability;
 
             if (!_player)
             {
@@ -72,6 +74,7 @@ namespace Runtime
                 var mainModule = _pooledTrail.ParticleSystem.main;
                 mainModule.stopAction = ParticleSystemStopAction.Callback;
                 mainModule.startLifetime = lifeTime;
+                mainModule.useUnscaledTime = true;
                 mainModule.loop = true;
             }
             
@@ -118,9 +121,6 @@ namespace Runtime
         
         private void OnEnable()
         {
-            UnityEngine.Assertions.Assert.IsNotNull(trailParticles, $"particles {trailParticles} is missing");
-            UnityEngine.Assertions.Assert.IsNotNull(hitParticle, $"particles {hitParticle} is missing");
-
             if (!_hitCollider) return;
             
             _hitCollider.OnTriggerDetected -= OnTriggerDetected;
@@ -133,6 +133,14 @@ namespace Runtime
             {
                 StopCoroutine(_trailCoroutine);
                 _trailCoroutine = null;
+            }
+            
+            if (_pooledTrail)
+            {
+                var mainModule = _pooledTrail.ParticleSystem.main;
+                mainModule.loop = false;
+                _pooledTrail.ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                _pooledTrail = null;
             }
             
             if (!_hitCollider) return;

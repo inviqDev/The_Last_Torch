@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8121985691121295946}
   - component: {fileID: 7472218550322752599}
   m_Layer: 0
-  m_Name: lightning_bolt
+  m_Name: lightning_chain_bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

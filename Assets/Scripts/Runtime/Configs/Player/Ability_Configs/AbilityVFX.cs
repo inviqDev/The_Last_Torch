@@ -25,9 +25,21 @@ namespace Runtime
         [SerializeField] protected string uniquePoolKey;
         public string UniquePoolKey => uniquePoolKey;
 
+        private AbilityContext context;
         public void LaunchAbilityVFX(AbilityContext ctx)
         {
-            OnPlay(ctx);
+            context = ctx;
+            
+            var player = context.Player;
+            player.OnCharacterDeath += DeactivateSelfOnCharacterDeath;
+            
+            OnPlay(context);
+        }
+
+        private void DeactivateSelfOnCharacterDeath(Character character)
+        {
+            character.OnCharacterDeath -= DeactivateSelfOnCharacterDeath;
+            Finished?.Invoke(context.Ability);
         }
 
         protected void RaiseFinished(Ability a) => Finished?.Invoke(a);

@@ -93,6 +93,7 @@ namespace Runtime
         private void OnDisable()
         {
             if (_inputActions == null) return;
+            
             _inputActions.Gameplay.Move.started -= MoveIsStarted;
             _inputActions.Gameplay.Move.performed -= MoveIsPerformed;
             _inputActions.Gameplay.Move.canceled -= MoveIsCanceled;

@@ -51,7 +51,7 @@ namespace Runtime
             particlesManager.gameObject.SetActive(true);
         }
         
-        public void Init()
+        public void Initialize()
         {
             CameraMain = Camera.main;
             
@@ -69,22 +69,23 @@ namespace Runtime
             Player = _playerManager.SpawnPlayer(playerSpawnPoint);
             UnityEngine.Assertions.Assert.IsNotNull(Player, "Player is null");
             
-            _uiManager.InitLevelUI(Player);
+            _uiManager.InitializeLevelUI(Player);
             
-            Player.InitPlayerComponents();
+            Player.InitializePlayerComponents();
             _playerManager.LoadPlayerConfig();
             
-            _soundManager.Init();
-            _particlesManager.Init();
-            _spawner.Init();
+            _soundManager.Initialize();
+            _particlesManager.Initialize();
+            _spawner.Initialize(Player);
             
             Player.OnCharacterDeath += OnPlayerDeath;
         }
-        
+
         private void OnPlayerDeath(Character player)    
         {
             Spawner.StopSpawningEnemies();
-            UIManager.TurnOnGameOverPanel();
+            UIManager.ShowGameOverUI();
+            Destroy(player.gameObject);
         }
     }
 }

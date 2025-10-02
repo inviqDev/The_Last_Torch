@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Runtime
@@ -21,22 +22,13 @@ namespace Runtime
 
         private EnemyDropConfig dropConfig;
         private EnemyDrop dropGO;
+        
+        private List<Particle> _affectedParticles;
 
         public EnemyMovement Movement { get; private set; }
 
-        public void SetEnemyConfig(EnemyConfig config, float multiplier = 1f)
+        public void InitializeEnemyFromConfig(Player player, EnemyConfig config, float multiplier = 1f)
         {
-            var player = GameManager.Instance?.Player;
-            UnityEngine.Assertions.Assert.IsNotNull(player, "Player is not found");
-
-            if (!player)
-            {
-                print("Player is missing");
-
-                Movement?.StopAndReset();
-                return;
-            }
-
             maxHealth = config.maxHealth * multiplier;
             currentHealth = maxHealth;
 
@@ -53,13 +45,11 @@ namespace Runtime
             dropConfig = config.dropConfig;
             dropGO = config.dropConfig.dropGO;
 
-            healthBar.Init(this);
+            healthBar.Initialize(this);
 
             Movement ??= GetComponent<EnemyMovement>();
-            UnityEngine.Assertions.Assert.IsNotNull(Movement,
-                "enemy movement component is missing");
-            Movement.ApplyMovementConfig(player, moveSpeed,
-                _angularSpeed, _acceleration, stoppingDistance);
+            UnityEngine.Assertions.Assert.IsNotNull(Movement, "enemy movement component is missing");
+            Movement.ApplyMovementConfig(player, moveSpeed, _angularSpeed, _acceleration, stoppingDistance);
 
             OnConfigLoaded?.Invoke(config);
         }
@@ -82,6 +72,12 @@ namespace Runtime
         {
         }
 
+        public void AddAffectedParticle(Particle particle)
+        {
+            _affectedParticles ??= new List<Particle>();
+            _affectedParticles.Add(particle);
+        }
+
         public void OnGetFromPool()
         {
             transform.SetParent(null);
@@ -90,15 +86,38 @@ namespace Runtime
 
         public void OnReturnToPool()
         {
+            if (_affectedParticles is { Count: > 0 })
+            {
+                foreach (var p in _affectedParticles)
+                {
+                    p.ReturnParticleToPool();
+                }
+                
+                _affectedParticles.Clear();
+            }
+            
             Movement.StopAndReset();
             transform.SetParent(Pool.Instance?.EnemiesRoot);
-
+            
             gameObject.SetActive(false);
+        }
+
+        private void OnEnable()
+        {
+            _affectedParticles ??= new List<Particle>();
+            _affectedParticles.Clear();
         }
 
         private void OnDisable()
         {
             Movement?.StopAndReset();
+            _affectedParticles?.Clear();
+        }
+
+        private void OnDestroy()
+        {
+            Movement?.StopAndReset();
+            _affectedParticles?.Clear();
         }
     }
 }

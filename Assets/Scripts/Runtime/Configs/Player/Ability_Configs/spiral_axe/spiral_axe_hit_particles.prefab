@@ -4704,7 +4704,7 @@ GameObject:
   - component: {fileID: 5614011056667974086}
   - component: {fileID: 5598580546485184901}
   m_Layer: 0
-  m_Name: axe_hit_particles
+  m_Name: spiral_axe_hit_particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9563,5 +9563,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168a965fd4d04c0a9e933de7eba51293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.Particle
-  uniquePoolKey: axe_hit_particles
-  scaleMultiplier: 5
+  uniquePoolKey: spiral_axe_hit_particles
+  scaleMultiplier: 4

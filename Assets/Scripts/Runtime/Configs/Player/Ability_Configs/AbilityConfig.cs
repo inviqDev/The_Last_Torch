@@ -8,8 +8,8 @@ namespace Runtime
         public string abilityName;
         public Sprite abilityIcon;
 
-        public string SoundUniquePoolKey;
-        public string ParticlesUniquePoolKey;
+        public string HitParticlePoolKey;
+        public string HitSoundPoolKey;
 
         public float progressTime;
         public float cooldownTime;

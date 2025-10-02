@@ -9,7 +9,7 @@ namespace Runtime
         
         private Dictionary<string, Particle> _particlesDictionary;
 
-        public void Init()
+        public void Initialize()
         {
             _particlesDictionary = new Dictionary<string, Particle>();
             foreach (var p in particles)
