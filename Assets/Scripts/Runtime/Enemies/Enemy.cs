@@ -8,34 +8,25 @@ namespace Runtime
     {
         public Action<EnemyConfig> OnConfigLoaded;
 
-        [Header("Unique Key in pool dictionary")] [SerializeField]
-        protected string uniquePoolKey;
-        public string UniquePoolKey => uniquePoolKey;
+        [Header("Unique Key in pool dictionary")] 
+        [SerializeField] protected string uniquePoolKey;
 
         [SerializeField] private MeshRenderer meshRenderer;
 
         protected float damage;
-
-        private float _angularSpeed;
-        private float _acceleration;
-        private float stoppingDistance;
-
+        
         private EnemyDropConfig dropConfig;
         private EnemyDrop dropGO;
         
         private List<Particle> _affectedParticles;
 
+        public string UniquePoolKey => uniquePoolKey;
         public EnemyMovement Movement { get; private set; }
 
-        public void InitializeEnemyFromConfig(Player player, EnemyConfig config, float multiplier = 1f)
+        public void InitializeEnemy(Player player, EnemyConfig config, Vector3 startPoint, float multiplier = 1f)
         {
             maxHealth = config.maxHealth * multiplier;
             currentHealth = maxHealth;
-
-            moveSpeed = config.moveSpeed;
-            _angularSpeed = config.angularSpeed;
-            _acceleration = config.acceleration;
-            stoppingDistance = config.stoppingDistance;
 
             damage = config.damage * multiplier;
 
@@ -49,7 +40,7 @@ namespace Runtime
 
             Movement ??= GetComponent<EnemyMovement>();
             UnityEngine.Assertions.Assert.IsNotNull(Movement, "enemy movement component is missing");
-            Movement.ApplyMovementConfig(player, moveSpeed, _angularSpeed, _acceleration, stoppingDistance);
+            Movement.Initialize(player, startPoint, config);
 
             OnConfigLoaded?.Invoke(config);
         }
@@ -80,8 +71,9 @@ namespace Runtime
 
         public void OnGetFromPool()
         {
-            transform.SetParent(null);
             gameObject.SetActive(true);
+            transform.SetParent(null);
+            Movement?.ActivateNavMeshAgent();
         }
 
         public void OnReturnToPool()
@@ -96,7 +88,7 @@ namespace Runtime
                 _affectedParticles.Clear();
             }
             
-            Movement.StopAndReset();
+            Movement.DeactivateNavMeshAgent();
             transform.SetParent(Pool.Instance?.EnemiesRoot);
             
             gameObject.SetActive(false);
@@ -110,13 +102,11 @@ namespace Runtime
 
         private void OnDisable()
         {
-            Movement?.StopAndReset();
             _affectedParticles?.Clear();
         }
 
         private void OnDestroy()
         {
-            Movement?.StopAndReset();
             _affectedParticles?.Clear();
         }
     }

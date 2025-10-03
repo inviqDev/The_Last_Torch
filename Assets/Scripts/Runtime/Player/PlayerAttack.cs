@@ -59,7 +59,7 @@ namespace Runtime
             while (spins-- > 0)
             {
                 var ability = _readyQueue.Peek();
-                if (ValidateAbilityIsAbleToAttackThisFrame(ability) == false) continue;
+                if (ValidateAbilityDistanceAttack(ability) == false) continue;
                 if (ValidateAbilityIsAbleToLaunch(ability, out var visual) == false) continue;
 
                 // Ready to start: remove from queue and from HashSet
@@ -119,7 +119,6 @@ namespace Runtime
             UnityEngine.Assertions.Assert.IsTrue(a.State == AbilityState.Ready,
                 $"Ability {a.Name} enqueued while not Ready");
 
-            // HashSet guarantees uniqueness
             if (_readySet.Add(a))
                 _readyQueue.Enqueue(a);
 
@@ -131,10 +130,10 @@ namespace Runtime
             enabled = _detector.EnemyExists && _readyQueue.Count > 0;
         }
 
-        private bool ValidateAbilityIsAbleToAttackThisFrame(Ability ability)
+        private bool ValidateAbilityDistanceAttack(Ability ability)
         {
             _closestEnemy = _detector.GetClosestEnemy(out var distance);
-            if (_closestEnemy && distance <= ability.MinAttackDistance) return true;
+            if (_closestEnemy && distance <= ability.AttackRange) return true;
             
             // If check failed => rotate head to tail, try next
             _readyQueue.Enqueue(_readyQueue.Dequeue());

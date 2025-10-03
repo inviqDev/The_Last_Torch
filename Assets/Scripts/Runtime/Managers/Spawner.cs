@@ -50,7 +50,14 @@ namespace Runtime
         {
             UnityEngine.Assertions.Assert.IsNotNull(player, "Player is not found");
             _player = player;
-            
+
+            InitializeCollections();
+            ResetSpawnerSettings();
+            StartSpawning();
+        }
+
+        private void InitializeCollections()
+        {
             _enemyDictionary ??= new Dictionary<EnemyType, Enemy>(prefabBuilds.Length);
             foreach (var e in prefabBuilds)
             {
@@ -58,27 +65,19 @@ namespace Runtime
                 _enemyDictionary[e.enemyType] = e.enemyPrefab;
             }
 
-            currentWaveIndex = 0;
-            multiplierIncrement = 1;
-            
-            _bossWaveQueue = new Queue<EnemyConfig>();
             _waveQueue = new Queue<EnemyConfig>();
+            _bossWaveQueue = new Queue<EnemyConfig>();
             _spawnedEnemies = new List<Enemy>();
-            _bossSpawnPointIndex = 0;
-
-            _timer = new Timer(this);
-
-            StartSpawningEnemies();
         }
 
-        private void StartSpawningEnemies()
+        private void StartSpawning()
         {
             if (currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length)
             {
                 UnityEngine.Assertions.Assert.IsTrue(
                     currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length,
                     "messed up spawner configs logic");
-                
+
                 return;
             }
 
@@ -91,61 +90,83 @@ namespace Runtime
             }
 
             BuildWaveQueue(_currentWaveConfig);
-            
-            _timer.StopTimer();
-            _timer.OnTicked += SpawnEnemy;
-
-            if (spawnWavesContinuously)
-            {
-                _timer.TimerIsOver += WaveIsFullyReleased;
-            }
+            InitializeSpawnerTimer();
 
             var totalAmount = _waveQueue.Count + _bossWaveQueue.Count;
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
+        }
+
+        private void InitializeSpawnerTimer()
+        {
+            _timer ??= new Timer(this);
+            _timer.StopTimer();
+
+            _timer.OnTicked += SpawnEnemy;
+            if (spawnWavesContinuously)
+            {
+                _timer.TimerIsOver += SpawnNextWave;
+            }
         }
 
         public void StopSpawningEnemies()
         {
             if (_spawnedEnemies is { Count: > 0 })
             {
-                foreach (var e in _spawnedEnemies)
-                {
-                    e?.Movement?.StopAndReset();
-                    Pool.Instance?.ReturnToPool(e);
-                }
-                
-                _spawnedEnemies?.Clear();
+                MoveSpawnedEnemiesToPool();
             }
-            
+
+            ResetSpawnerSettings();
+            StopSpawnerTimer();
+        }
+
+        private void MoveSpawnedEnemiesToPool()
+        {
+            foreach (var e in _spawnedEnemies)
+            {
+                if (!e || !e.gameObject.activeInHierarchy) continue;
+
+                e.Movement?.DeactivateNavMeshAgent();
+                e.OnCharacterDeath -= MoveEnemyToPool;
+                Pool.Instance?.ReturnToPool(e);
+            }
+        }
+
+        private void ResetSpawnerSettings()
+        {
             _waveQueue?.Clear();
             _bossWaveQueue?.Clear();
+            _spawnedEnemies?.Clear();
 
             currentWaveIndex = 0;
             multiplierIncrement = 1;
             _bossSpawnPointIndex = 0;
             _extraWaveLocalBossIndex = 0;
+        }
 
+        private void StopSpawnerTimer()
+        {
             if (_timer == null) return;
             _timer.OnTicked -= SpawnEnemy;
-            _timer.TimerIsOver -= WaveIsFullyReleased;
+            _timer.TimerIsOver -= SpawnNextWave;
             _timer.StopTimer();
         }
 
-        private void WaveIsFullyReleased()
+        private void SpawnNextWave()
         {
             print($"[Spawner] Wave #{currentWaveIndex} released.");
+
+            _timer.TimerIsOver -= SpawnNextWave;
 
             _waveQueue.Clear();
             _bossWaveQueue.Clear();
 
             _timer.StopTimer();
             _timer.OnTicked -= SpawnEnemy;
-            _timer.TimerIsOver -= WaveIsFullyReleased;
 
             currentWaveIndex++;
             statsMultiplier += multiplierIncrement;
 
-            StartSpawningEnemies();
+            StartSpawning();
         }
 
         private void SpawnEnemy(int _)
@@ -161,32 +182,40 @@ namespace Runtime
                 UnityEngine.Assertions.Assert.IsNotNull(config, "invalid config");
             }
 
-            Transform spawnPoint;
+            Vector3 spawnPoint;
             if (IsSuperBossConfig(config))
             {
                 UnityEngine.Assertions.Assert.IsNotNull(superBossSpawnPoint, "super boss spawn point is not set");
-                spawnPoint = superBossSpawnPoint;
+                spawnPoint = superBossSpawnPoint.position;
             }
             else if (IsNormalBossConfig(config))
             {
                 UnityEngine.Assertions.Assert.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
                 if (_currentWaveConfig.willSpawnExtraWave)
                 {
-                    spawnPoint = bossPoints[_extraWaveLocalBossIndex % bossPoints.Length];
+                    spawnPoint = bossPoints[_extraWaveLocalBossIndex % bossPoints.Length].position;
                     _extraWaveLocalBossIndex++;
                 }
                 else
                 {
-                    spawnPoint = bossPoints[_bossSpawnPointIndex % bossPoints.Length];
+                    spawnPoint = bossPoints[_bossSpawnPointIndex % bossPoints.Length].position;
                     _bossSpawnPointIndex++;
                 }
             }
             else
             {
-                UnityEngine.Assertions.Assert.IsTrue(nonBossPoints.Length > 0, "nonBossPoints array is not set");
-                spawnPoint = currentWaveIndex == 0
-                    ? nonBossPoints[Random.Range(8, nonBossPoints.Length)]
-                    : nonBossPoints[Random.Range(0, nonBossPoints.Length)];
+                if (currentWaveIndex != 0)
+                {
+                    spawnPoint = nonBossPoints[Random.Range(0, nonBossPoints.Length)].position;
+                }
+                else
+                {
+                    var length = nonBossPoints.Length;
+                    UnityEngine.Assertions.Assert.IsTrue(length > 9, 
+                        $"nonBossPoints is not valid for wave 0: need at least 9 points, but got {length}");
+                    
+                    spawnPoint = nonBossPoints[Random.Range(8, nonBossPoints.Length)].position;
+                }
             }
 
             var prefab = GetEnemyTypePrefab(config);
@@ -194,12 +223,8 @@ namespace Runtime
 
             var enemy = Pool.Instance?.TryGet(prefab);
             UnityEngine.Assertions.Assert.IsNotNull(enemy, "enemy is not spawned");
-            enemy.InitializeEnemyFromConfig(_player, config, statsMultiplier);
-
+            enemy.InitializeEnemy(_player, config, spawnPoint, statsMultiplier);
             _spawnedEnemies.Add(enemy);
-
-            UnityEngine.Assertions.Assert.IsNotNull(spawnPoint, "point is not set properly");
-            enemy.Movement.WarpTo(spawnPoint.position);
 
             enemy.OnCharacterDeath += MoveEnemyToPool;
         }
@@ -214,6 +239,7 @@ namespace Runtime
         private void MoveEnemyToPool(Character enemy)
         {
             enemy.OnCharacterDeath -= MoveEnemyToPool;
+            _spawnedEnemies.Remove(enemy as Enemy);
             Pool.Instance?.ReturnToPool(enemy as Enemy);
         }
 
@@ -275,7 +301,8 @@ namespace Runtime
         private void ReshuffleWaveQueue()
         {
             var list = new List<EnemyConfig>(_waveQueue);
-            for (var i = list.Count - 1; i > 0; i--)
+            var amount = list.Count;
+            for (var i = amount - 1; i > 0; i--)
             {
                 var j = Random.Range(0, i + 1);
                 (list[i], list[j]) = (list[j], list[i]);
@@ -283,7 +310,7 @@ namespace Runtime
 
             _waveQueue ??= new Queue<EnemyConfig>();
             _waveQueue.Clear();
-            
+
             foreach (var c in list)
             {
                 _waveQueue.Enqueue(c);

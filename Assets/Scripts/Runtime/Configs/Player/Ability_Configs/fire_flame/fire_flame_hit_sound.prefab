@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc39c764e2c045fb88121cff836968bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.Sound
-  uniquePoolKey: fire_flame_sound
+  uniquePoolKey: fire_flame_hit_sound
   playablePartInPercents: 0.85
   peakHoldPercent: 0.25
   fadeCurve:

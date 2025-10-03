@@ -41,7 +41,7 @@ namespace Runtime
         public string AbilityHitSoundPoolKey { get; private set; }
         public string HitParticlePoolKey { get; private set; }
         
-        public float MinAttackDistance { get; private set; }
+        public float AttackRange { get; private set; }
         public float Damage { get; private set; }
         public float Cooldown { get; private set; }
 
@@ -67,7 +67,7 @@ namespace Runtime
             _progressTime = config.progressTime;
             
             AbilityVFX = config.abilityVFX;
-            MinAttackDistance = config.maxAttackDistance;
+            AttackRange = config.maxAttackDistance;
         }
 
         public void ActivateAbility(MonoBehaviour owner)

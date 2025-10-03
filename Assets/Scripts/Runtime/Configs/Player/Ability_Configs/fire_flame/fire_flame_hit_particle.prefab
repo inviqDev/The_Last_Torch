@@ -9620,5 +9620,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168a965fd4d04c0a9e933de7eba51293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.Particle
-  uniquePoolKey: fire_flame_particles
+  uniquePoolKey: fire_flame_hit_particle
   scaleMultiplier: 2

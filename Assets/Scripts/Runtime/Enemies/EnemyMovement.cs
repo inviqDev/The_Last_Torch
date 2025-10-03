@@ -5,99 +5,114 @@ namespace Runtime
 {
     public class EnemyMovement : MonoBehaviour
     {
-        [SerializeField] private NavMeshAgent agent;
-
-        [Header("Repath")] 
-        [SerializeField] private float repathInterval = 0.25f; // как часто обновляем цель
-
         [Header("Face while stopped (optional)")] 
         [SerializeField] private bool faceTargetWhenStopped = true;
         [SerializeField] private float faceTurnSpeed = 720f;
+        
+        [SerializeField] private ObstacleAvoidanceType obstacleAvoidanceType;
 
+        private NavMeshAgent _agent;
+        private readonly float _repathInterval = 0.25f;
+        
         private Transform _target;
         private float _nextRepath;
+        
+        private bool _activated;
 
-        private void Awake()
+        public void Initialize(Player player, Vector3 startPoint,EnemyConfig config)
         {
-            if (!agent) agent = GetComponent<NavMeshAgent>();
+            _agent = GetComponent<NavMeshAgent>();
+            
+            ActivateNavMeshAgent();
+            ApplyConfig(player, startPoint, config);
+        }
+        
+        public void ActivateNavMeshAgent()
+        {
+            _agent ??= GetComponent<NavMeshAgent>();
+            
+            if (!_agent.enabled) _agent.enabled = true;
+            _activated = true;
+            
+            _agent.updatePosition = true;
+            _agent.updateRotation = true;
+            _agent.updateUpAxis = true;
+            _agent.isStopped = false;
+            _agent.obstacleAvoidanceType = obstacleAvoidanceType;
+            
+            WarpTo(transform.position);
+            if (_agent.isOnNavMesh) _agent.ResetPath();
+            
+            if (!_target) return;
+            _agent.SetDestination(_target.position);
+            _nextRepath = Time.time + _repathInterval;
+        }
+        
+        public void DeactivateNavMeshAgent()
+        {
+            _activated = false;
+            
+            if (!_agent) return;
 
-            // Агент полностью рулит позицией и поворотом
-            agent.updatePosition = true;
-            agent.updateRotation = true;
-            agent.updateUpAxis = true; // обычная 3D сцена
-
-            // Базовые дефолты (при желании перенести в EnemyConfig_non_NavMesh)
-            agent.speed = 3.5f;
-            agent.angularSpeed = 720f; // град/сек: как быстро вертеться
-            agent.acceleration = 16f;
-            agent.stoppingDistance = 1.5f;
-            // agent.autoBraking = true; // плавная остановка около цели
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            if (!_agent.enabled) _agent.enabled = true;
+            if (_agent.isOnNavMesh) _agent.ResetPath();
+            
+            _agent.updatePosition = false;
+            _agent.updateRotation = false;
+            _agent.isStopped = true;
+            
+            _agent.enabled = false;
         }
 
-        public void ApplyMovementConfig(Player player, float moveSpeed,
-            float angularSpeed, float acceleration, float stoppingDistance)
+        private void ApplyConfig(Player player, Vector3 startPoint, EnemyConfig config)
         {
-            Debug.Assert(player, "Player is not found");
+            UnityEngine.Assertions.Assert.IsNotNull(player, "player is missing");
             _target = player.transform;
 
-            agent.speed = moveSpeed;
-            agent.angularSpeed = angularSpeed;
-            agent.acceleration = acceleration;
-            agent.stoppingDistance = stoppingDistance;
+            _agent.speed = config.moveSpeed;
+            _agent.angularSpeed = config.angularSpeed;
+            _agent.acceleration = config.acceleration;
+            _agent.stoppingDistance = config.stoppingDistance;
+            
+            _agent.enabled = true;
+            _agent.updatePosition = true;
+            _agent.isStopped = false;
+            WarpTo(startPoint);
 
-            if (_target && !agent.isStopped)
-            {
-                agent.SetDestination(_target.position);
-                _nextRepath = Time.time + repathInterval;
-            }
-            else
-            {
-                agent.ResetPath();
-            }
+            _agent.SetDestination(_target.position);
+            _nextRepath = Time.time + _repathInterval;
         }
 
         private void Update()
         {
-            if (!_target || agent.isStopped) return;
+            if (!_activated) return;
+            if (!_agent.isOnNavMesh) return;
+            if (!_target || _agent.isStopped) return;
 
-            if (Time.time >= _nextRepath)
-            {
-                agent.SetDestination(_target.position);
-                _nextRepath = Time.time + repathInterval;
-            }
+            if (Time.time < _nextRepath || _agent.pathPending) return;
+
+            _agent.SetDestination(_target.position);
+            _nextRepath = Time.time + _repathInterval;
         }
 
-        // Опционально: красиво повернуть лицом к игроку, когда агент стоит (например, в радиусе атаки)
         private void LateUpdate()
         {
-            if (!faceTargetWhenStopped || !agent.isStopped || !_target) return;
+            if (!_activated) return;
+            if (!_agent.isOnNavMesh) return;
+            if (!_target || !_agent.isStopped || !faceTargetWhenStopped) return;
 
-            var dir = _target.position - transform.position;
-            dir.y = 0f;
-            if (dir.sqrMagnitude < 1e-4f) return;
+            var lookDirection = _target.position - transform.position;
+            lookDirection.y = 0f;
 
-            var lookAt = Quaternion.LookRotation(dir);
+            var lookAt = Quaternion.LookRotation(lookDirection);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookAt, faceTurnSpeed * Time.deltaTime);
         }
 
-        // Безопасный телепорт на сетку при спауне / реюзе из пула
-        public void WarpTo(Vector3 spawnPos)
+        private void WarpTo(Vector3 spawnPos)
         {
-            if (NavMesh.SamplePosition(spawnPos, out var hit, 2f, NavMesh.AllAreas))
-                agent.Warp(hit.position); // телепорт без физ. рывков
-            else
-                agent.Warp(spawnPos);
-        }
-
-        // Вызывать при возврате в пул
-        public void StopAndReset()
-        {
-            if (!agent || !agent.gameObject.activeInHierarchy) return;
-            if (!agent.isOnNavMesh) return;
-            
-            agent.isStopped = true;
-            agent.ResetPath();
+            _agent.Warp(NavMesh.SamplePosition(spawnPos, out var hit, 2f, NavMesh.AllAreas)
+                ? hit.position
+                : spawnPos);
         }
     }
 }
