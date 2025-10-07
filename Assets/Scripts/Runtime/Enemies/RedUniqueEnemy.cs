@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class RedUniqueEnemy : EnemyModel
+    public class RedUniqueEnemy : Enemy
     {
         [SerializeField] private EnemyAttackTrigger attackTrigger;
         [SerializeField] private Projectile projectile;
@@ -51,7 +51,6 @@ namespace Runtime
         private void StartAttackingProcess()
         {
             if (_attackLoop != null) return;
-            
             _attackLoop = StartCoroutine(AttackLoop());
         }
 
@@ -87,7 +86,7 @@ namespace Runtime
 
         protected override void PerformAttack(Character target)
         {
-            var proj = Pool.Instance?.TryGetObjectFromPool(projectile);
+            var proj = Pool.Instance?.TryGet(projectile);
             UnityEngine.Assertions.Assert.IsNotNull(proj, "projectile is not spawned");
 
             proj.OnMoveToPool += OnMoveToPool;

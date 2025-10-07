@@ -202,6 +202,10 @@ PrefabInstance:
       value: game_manager
       objectReference: {fileID: 0}
     - target: {fileID: 554843581025358752, guid: da8e80000f61ac4448ee5cb4a365773e, type: 3}
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 2599347489361195527, guid: d3ac17f9566aede4087b50068c26bb1b, type: 3}
+    - target: {fileID: 554843581025358752, guid: da8e80000f61ac4448ee5cb4a365773e, type: 3}
       propertyPath: appRoot
       value: 
       objectReference: {fileID: 1327873071}

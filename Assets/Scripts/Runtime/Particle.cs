@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Runtime
@@ -6,84 +5,123 @@ namespace Runtime
     [RequireComponent(typeof(ParticleSystem))]
     public class Particle : MonoBehaviour, IPoolable
     {
-        [Header("Unique Key in pool dictionary")] 
-        [SerializeField] private string uniquePoolKey;
-        
-        private ParticleSystem _particleSystem;
+        [Header("Unique Key in pool dictionary")] [SerializeField]
+        private string uniquePoolKey;
+
+        [SerializeField] private float scaleMultiplier = 1f;
+
+        private Character _particleOwner;
 
         public string UniquePoolKey => uniquePoolKey;
+        public ParticleSystem ParticleSystem { get; private set; }
 
-        public void PlayStaticParticleEffect(Vector3 position)
+        public void PlayParticleEffect(Character owner = null)
         {
-            UnityEngine.Assertions.Assert.IsNotNull(_particleSystem, "particle system component is missing");
-            
-            transform.position = position;
-            _particleSystem.Play();
-        }
-        
-        public void PlayMovableParticleEffect(Character owner)
-        {
-            _particleSystem ??= GetComponent<ParticleSystem>();
-            
-            if (!_particleSystem)
+            ParticleSystem ??= GetComponent<ParticleSystem>();
+
+            if (!ParticleSystem)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(_particleSystem, 
-                    $"{uniquePoolKey} particle system is missing");
+                UnityEngine.Assertions.Assert.IsNotNull(ParticleSystem, $"{uniquePoolKey} particle system is missing");
+
                 Pool.Instance?.ReturnToPool(this);
                 return;
             }
-            
-            _particleSystem.gameObject.transform.SetParent(owner.transform);
-            transform.localPosition = Vector3.zero;
-            
-            owner.OnCharacterDeath -= OnCharacterDeath;
-            owner.OnCharacterDeath += OnCharacterDeath;
-            
-            _particleSystem.Play();
+
+            var mainModule = ParticleSystem.main;
+            mainModule.stopAction = ParticleSystemStopAction.Callback;
+
+            transform.SetParent(null);
+
+            if (owner)
+            {
+                _particleOwner = owner;
+
+                transform.SetParent(_particleOwner.transform);
+                transform.localPosition = Vector3.zero;
+                transform.localScale = _particleOwner.transform.localScale * scaleMultiplier;
+
+                if (_particleOwner is Enemy enemy)
+                {
+                    enemy.AddAffectedParticle(this);
+                }
+
+                _particleOwner.OnCharacterDeath -= UnparentParticleOnOwnerDeath;
+                _particleOwner.OnCharacterDeath += UnparentParticleOnOwnerDeath;
+            }
+            else
+            {
+                transform.localScale = Vector3.one * scaleMultiplier;
+            }
+
+            ParticleSystem.Play();
         }
 
-        private void OnCharacterDeath(Character owner)
+        private void UnparentParticleOnOwnerDeath(Character owner)
         {
-            Pool.Instance?.ReturnToPool(this);
-            owner.OnCharacterDeath -= OnCharacterDeath;
+            transform.SetParent(null);
         }
 
         private void OnParticleSystemStopped()
         {
+            ReturnParticleToPool();
             Pool.Instance?.ReturnToPool(this);
         }
-        
-        public void OnGetFromPool()
+
+        public void ReturnParticleToPool()
         {
-            _particleSystem ??= GetComponent<ParticleSystem>();
-            
-            if (!_particleSystem)
+            if (_particleOwner)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(_particleSystem, 
-                    $"{gameObject.name} : particle system {uniquePoolKey} is missing");
-                
-                Pool.Instance?.ReturnToPool(this);
+                _particleOwner.OnCharacterDeath -= UnparentParticleOnOwnerDeath;
+                _particleOwner = null;
+            }
+
+            var mainModule = ParticleSystem.main;
+            mainModule.stopAction = ParticleSystemStopAction.Callback;
+            mainModule.useUnscaledTime = true;
+            mainModule.loop = false;
+
+            if (ParticleSystem.isPlaying)
+            {
+                ParticleSystem.Stop(false, ParticleSystemStopBehavior.StopEmitting);
                 return;
             }
             
-            _particleSystem.Stop(withChildren: true, stopBehavior: ParticleSystemStopBehavior.StopEmittingAndClear);
-            _particleSystem.Clear(true);
-            
-            var main = _particleSystem.main;
-            main.stopAction = ParticleSystemStopAction.Callback;
-            main.loop = false;
-            
+            Pool.Instance?.ReturnToPool(this);;
+        }
+
+        public void OnGetFromPool()
+        {
+            ParticleSystem ??= GetComponent<ParticleSystem>();
+
+            if (!ParticleSystem)
+            {
+                UnityEngine.Assertions.Assert.IsNotNull(ParticleSystem,
+                    $"{gameObject.name}  :  particle system {uniquePoolKey} is missing");
+
+                Pool.Instance?.ReturnToPool(this);
+                return;
+            }
+
+            if (_particleOwner)
+            {
+                _particleOwner.OnCharacterDeath -= UnparentParticleOnOwnerDeath;
+                _particleOwner = null;
+            }
+
+            ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             gameObject.SetActive(true);
         }
 
         public void OnReturnToPool()
         {
-            UnityEngine.Assertions.Assert.IsNotNull(_particleSystem, 
+            UnityEngine.Assertions.Assert.IsNotNull(ParticleSystem,
                 $"{gameObject.name} : particle system {uniquePoolKey} is missing");
-            if (!_particleSystem) return;
-            
-            gameObject.SetActive(false);
+            if (!ParticleSystem) return;
+
+            ParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+
             transform.SetParent(Pool.Instance?.ParticlesRoot);
+            gameObject.SetActive(false);
         }
     }
 }

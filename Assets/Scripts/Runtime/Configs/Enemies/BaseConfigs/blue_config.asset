@@ -16,7 +16,7 @@ MonoBehaviour:
   moveSpeed: 12
   damage: 25
   EnemyType: 2
-  scaleModifier: 2
+  scaleModifier: 1
   material: {fileID: 2100000, guid: e908e028a339d4a4286633af7923a75d, type: 2}
   dropConfig: {fileID: 11400000, guid: 9019827c79815dd47acfc5ce3f770099, type: 2}
   angularSpeed: 720

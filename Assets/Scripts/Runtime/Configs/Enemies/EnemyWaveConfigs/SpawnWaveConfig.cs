@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Spawner", fileName = "wave_config")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Spawner Wave Config", fileName = "wave_config")]
     public class SpawnWaveConfig : ScriptableObject
     {
         public EnemyConfig basicEnemy;

@@ -10,7 +10,7 @@ namespace Runtime
 
         private Player _player;
         
-        public void Init(Player player)
+        public void Initialize(Player player)
         {
             _player = player;
             
@@ -20,7 +20,7 @@ namespace Runtime
 
         private void OnPlayerMoveSpeedChanged(float newMoveSpeed)
         {
-            moveSpeed.text = $"{newMoveSpeed} UNITS SPEED";
+            moveSpeed.text = $"{newMoveSpeed :F2} SPEED";
         }
 
         private void OnPlayerMaxHealthChanged(float newMaxHealth, float newCurrentHealth)

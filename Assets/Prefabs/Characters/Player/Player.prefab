@@ -97,7 +97,6 @@ MonoBehaviour:
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  playerAttackComponent: {fileID: 2947505582540525192}
 --- !u!1 &5704119700049189439
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,13 +264,11 @@ MonoBehaviour:
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  movementComponent: {fileID: 7034329582900553992}
-  playerDashComponent: {fileID: 4479476291269109723}
-  dashUIComponent: {fileID: 3818093633366407341}
-  playerAttack: {fileID: 2947505582540525192}
-  levelsAmount: 5
-  firstLevelExp: 200
-  multiplier: 2
+  detector: {fileID: 6055564229998812072}
+  levelsAmount: 25
+  firstLevelExp: 100
+  A: 50
+  B: 5
   levelsExp: []
 --- !u!114 &2052228038588309076
 MonoBehaviour:
@@ -357,12 +354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a25f4f113e409e249b0b8d6d6db967ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.PlayerAttack
-  collector: {fileID: 6055564229998812072}
   abilityConfigs:
-  - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}
+  - {fileID: 11400000, guid: edf9f2826b7f81c4c8d141d811824834, type: 2}
+  - {fileID: 11400000, guid: e069fe3abcd26bc4d8c55c4ae07d164d, type: 2}
   - {fileID: 11400000, guid: ed3e9665351d7fb4ca4a6e4d126d8245, type: 2}
+  - {fileID: 11400000, guid: 885bab1a75869c547a59bd56f040778d, type: 2}
   - {fileID: 11400000, guid: 474360a21aa250f4f88ff75fc56a80a7, type: 2}
-  - {fileID: 11400000, guid: 401a7e26e7127994a9123ff9e20e9a32, type: 2}
 --- !u!1 &7365291058574766826
 GameObject:
   m_ObjectHideFlags: 0

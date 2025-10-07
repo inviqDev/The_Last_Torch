@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,51 +7,82 @@ namespace Runtime
 {
     public class AbilitySlot : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI damageInfo;
+
         [SerializeField] private Image iconImage;
         [SerializeField] private Button activationButton;
         [SerializeField] private Slider cooldownProgress;
-        [SerializeField] private TextMeshProUGUI damage;
+        [SerializeField] private TextMeshProUGUI cooldownInfo;
 
         private readonly float _minSliderValue = 0f;
+
+        private Ability _ability;
         private float _maxSliderValue;
 
         public bool IsActive { get; private set; }
 
-        public void UpdateAbilityUI(Ability ability)
+        public void SetAbilitySlotUI(Ability ability)
         {
-            IsActive = ability.State != Ability.AbilityState.None;
+            _ability = ability;
 
-            ability.OnDamageValueChanged += OnDamageValueChanged;
-
+            IsActive = ability.State != AbilityState.Disable;
             iconImage.sprite = ability.Icon;
+            activationButton.interactable = false;
+            cooldownProgress.gameObject.SetActive(false);
+            
+            damageInfo.text = string.Empty;
+            cooldownInfo.text = string.Empty;
 
-            _maxSliderValue = ability.Cooldown;
-            cooldownProgress.minValue = _minSliderValue;
-            cooldownProgress.maxValue = _maxSliderValue;
-
-            activationButton.interactable = IsActive;
+            // _maxSliderValue = ability.Cooldown;
+            // cooldownProgress.minValue = _minSliderValue;
+            // cooldownProgress.maxValue = _maxSliderValue;
 
             if (IsActive)
             {
-                OnDamageValueChanged(ability.Damage);
-                // ShowCooldownProgress(_minSliderValue);
+                _maxSliderValue = ability.Cooldown;
+                cooldownProgress.minValue = _minSliderValue;
+                cooldownProgress.maxValue = _maxSliderValue;
+                
+                _ability.Timer.OnAnyValueChanged += UpdateAbilityProgressBar;
+                _ability.OnAbilityStateChange += OnAbilityStateChange;
+                _ability.OnAbilityStatsChanged += UpdateAbilityUI;
+                
+                UpdateAbilityUI(_ability);
             }
         }
 
-        private void OnDamageValueChanged(float newDamageValue)
+        private void OnAbilityStateChange(AbilityState state)
         {
-            damage.text = $"{newDamageValue} DMG";
+            activationButton.interactable = state == AbilityState.Ready;
+            cooldownProgress.gameObject.SetActive(state != AbilityState.InProgress);
         }
 
-        public void ShowCooldownProgress(float progress)
+        private void UpdateAbilityProgressBar(float timerValue)
         {
-            cooldownProgress.value = progress;
+            cooldownProgress.value = timerValue;
         }
 
-        public void SetInProgressUIState(bool isInteractable, bool isActive)
+        private void UpdateAbilityUI(Ability ability)
         {
-            activationButton.interactable = isInteractable;
-            cooldownProgress.gameObject.SetActive(isActive);
+            damageInfo.text = $"{ability.Damage:F2} DMG";
+
+            cooldownProgress.maxValue = ability.Cooldown;
+            cooldownInfo.text = $"{ability.Cooldown:F2} SEC";
+        }
+
+        private void OnDestroy()
+        {
+            if (_ability == null) return;
+
+            if (_ability.Timer != null)
+            {
+                _ability.Timer.OnAnyValueChanged -= UpdateAbilityProgressBar;
+            }
+
+            _ability.OnAbilityStateChange -= OnAbilityStateChange;
+            _ability.OnAbilityStatsChanged -= UpdateAbilityUI;
+
+            _ability = null;
         }
     }
 }

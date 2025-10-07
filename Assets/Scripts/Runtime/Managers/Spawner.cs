@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using MyAsserts = UnityEngine.Assertions.Assert;
 using Random = UnityEngine.Random;
 
 namespace Runtime
@@ -13,7 +11,7 @@ namespace Runtime
         public struct prefabBuild
         {
             public EnemyType enemyType;
-            public EnemyModel enemyPrefab;
+            public Enemy enemyPrefab;
         }
 
         // public Action OnSuperBossSpawned;
@@ -22,61 +20,64 @@ namespace Runtime
 
         [SerializeField] private bool testMode;
         [SerializeField] private int currentWaveIndex;
-        
-        [SerializeField] private bool spawnWavesContinuously; 
-        
+
+        [SerializeField] private bool spawnWavesContinuously;
+
         [SerializeField] private float statsMultiplier;
         [SerializeField] private float multiplierIncrement;
-        
+
         [SerializeField] private Transform[] nonBossPoints;
         [SerializeField] private Transform[] bossPoints;
         [SerializeField] private Transform superBossSpawnPoint;
-        
+
         [SerializeField] private prefabBuild[] prefabBuilds;
-        
-        private Dictionary<EnemyType, EnemyModel> _enemyDictionary;
+
+        private Dictionary<EnemyType, Enemy> _enemyDictionary;
         private Queue<EnemyConfig> _bossWaveQueue = new();
         private Queue<EnemyConfig> _waveQueue = new();
-        private List<EnemyModel> _spawnedEnemies;
+        private List<Enemy> _spawnedEnemies;
 
+        private Player _player;
         private EnemyType _enemyType;
         private Timer _timer;
-        
+
         private SpawnWaveConfig _currentWaveConfig;
         private float _spawnInterval;
         private int _bossSpawnPointIndex;
         private int _extraWaveLocalBossIndex;
 
-        public void Init()
+        public void Initialize(Player player)
         {
-            _enemyDictionary ??= new Dictionary<EnemyType, EnemyModel>(prefabBuilds.Length);
+            UnityEngine.Assertions.Assert.IsNotNull(player, "Player is not found");
+            _player = player;
+
+            InitializeCollections();
+            ResetSpawnerSettings();
+            StartSpawning();
+        }
+
+        private void InitializeCollections()
+        {
+            _enemyDictionary ??= new Dictionary<EnemyType, Enemy>(prefabBuilds.Length);
             foreach (var e in prefabBuilds)
             {
-                MyAsserts.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
+                UnityEngine.Assertions.Assert.IsNotNull(e.enemyPrefab, "Prefab build is invalid");
                 _enemyDictionary[e.enemyType] = e.enemyPrefab;
             }
 
-            if (testMode)
-            {
-                currentWaveIndex = 0;
-            }
-            
-            _bossWaveQueue = new Queue<EnemyConfig>();
             _waveQueue = new Queue<EnemyConfig>();
-            _spawnedEnemies = new List<EnemyModel>();
-            _bossSpawnPointIndex = 0;
-            
-            _timer = new Timer(this);
-
-            StartSpawningEnemies();
+            _bossWaveQueue = new Queue<EnemyConfig>();
+            _spawnedEnemies = new List<Enemy>();
         }
 
-        private void StartSpawningEnemies()
+        private void StartSpawning()
         {
             if (currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length)
             {
-                MyAsserts.IsTrue(currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length, 
+                UnityEngine.Assertions.Assert.IsTrue(
+                    currentWaveIndex < 0 || currentWaveIndex >= waveConfigs.Length,
                     "messed up spawner configs logic");
+
                 return;
             }
 
@@ -87,135 +88,161 @@ namespace Runtime
             {
                 _extraWaveLocalBossIndex = 0;
             }
-            
+
             BuildWaveQueue(_currentWaveConfig);
+            InitializeSpawnerTimer();
 
-            _timer.StopTimer();
-            _timer.OnTicked += SpawnEnemy;
-
-            if (spawnWavesContinuously)
-            {
-                _timer.TimerIsOver += WaveIsFullyReleased;
-            }
-            
             var totalAmount = _waveQueue.Count + _bossWaveQueue.Count;
             _timer.StartTimerTicker(_spawnInterval, totalAmount);
         }
 
+        private void InitializeSpawnerTimer()
+        {
+            _timer ??= new Timer(this);
+            _timer.StopTimer();
+
+            _timer.OnTicked += SpawnEnemy;
+            if (spawnWavesContinuously)
+            {
+                _timer.TimerIsOver += SpawnNextWave;
+            }
+        }
+
         public void StopSpawningEnemies()
         {
-            if (_spawnedEnemies != null)
+            if (_spawnedEnemies is { Count: > 0 })
             {
-                foreach (var e in _spawnedEnemies)
-                {
-                    e.Mover.StopAndReset();
-                    Pool.Instance?.ReturnToPool(e);
-                }
-                
-                _spawnedEnemies.Clear();
+                MoveSpawnedEnemiesToPool();
             }
-            
-            _waveQueue.Clear();
-            _bossWaveQueue.Clear();
+
+            ResetSpawnerSettings();
+            StopSpawnerTimer();
+        }
+
+        private void MoveSpawnedEnemiesToPool()
+        {
+            foreach (var e in _spawnedEnemies)
+            {
+                if (!e || !e.gameObject.activeInHierarchy) continue;
+
+                e.Movement?.DeactivateNavMeshAgent();
+                e.OnCharacterDeath -= MoveEnemyToPool;
+                Pool.Instance?.ReturnToPool(e);
+            }
+        }
+
+        private void ResetSpawnerSettings()
+        {
+            _waveQueue?.Clear();
+            _bossWaveQueue?.Clear();
+            _spawnedEnemies?.Clear();
 
             currentWaveIndex = 0;
+            multiplierIncrement = 1;
             _bossSpawnPointIndex = 0;
             _extraWaveLocalBossIndex = 0;
+        }
 
+        private void StopSpawnerTimer()
+        {
             if (_timer == null) return;
             _timer.OnTicked -= SpawnEnemy;
-            _timer.TimerIsOver -= WaveIsFullyReleased;
+            _timer.TimerIsOver -= SpawnNextWave;
             _timer.StopTimer();
         }
 
-        private void WaveIsFullyReleased()
+        private void SpawnNextWave()
         {
             print($"[Spawner] Wave #{currentWaveIndex} released.");
-            
+
+            _timer.TimerIsOver -= SpawnNextWave;
+
             _waveQueue.Clear();
             _bossWaveQueue.Clear();
-            
+
             _timer.StopTimer();
             _timer.OnTicked -= SpawnEnemy;
-            _timer.TimerIsOver -= WaveIsFullyReleased;
-            
+
             currentWaveIndex++;
             statsMultiplier += multiplierIncrement;
-            
-            StartSpawningEnemies();
+
+            StartSpawning();
         }
 
         private void SpawnEnemy(int _)
         {
             if (_bossWaveQueue.Count == 0 && _waveQueue.Count == 0) return;
 
-            var config = _bossWaveQueue.Count > 0 
-                ? _bossWaveQueue.Dequeue() 
+            var config = _bossWaveQueue.Count > 0
+                ? _bossWaveQueue.Dequeue()
                 : _waveQueue.Dequeue();
-            
+
             if (!config)
             {
-                MyAsserts.IsNotNull(config, "config is invalid");
+                UnityEngine.Assertions.Assert.IsNotNull(config, "invalid config");
             }
-            
-            Transform spawnPoint;
+
+            Vector3 spawnPoint;
             if (IsSuperBossConfig(config))
             {
-                MyAsserts.IsNotNull(superBossSpawnPoint, "super boss spawn point is not set");
-                spawnPoint = superBossSpawnPoint;
+                UnityEngine.Assertions.Assert.IsNotNull(superBossSpawnPoint, "super boss spawn point is not set");
+                spawnPoint = superBossSpawnPoint.position;
             }
             else if (IsNormalBossConfig(config))
             {
-                MyAsserts.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
-                // MyAsserts.IsTrue(_bossSpawnPointIndex < bossPoints.Length, "boss spawn point index is out of range");
-
+                UnityEngine.Assertions.Assert.IsTrue(bossPoints.Length > 0, "bossPoints array is not set");
                 if (_currentWaveConfig.willSpawnExtraWave)
                 {
-                    spawnPoint = bossPoints[_extraWaveLocalBossIndex % bossPoints.Length];
+                    spawnPoint = bossPoints[_extraWaveLocalBossIndex % bossPoints.Length].position;
                     _extraWaveLocalBossIndex++;
                 }
                 else
                 {
-                    spawnPoint = bossPoints[_bossSpawnPointIndex % bossPoints.Length];
+                    spawnPoint = bossPoints[_bossSpawnPointIndex % bossPoints.Length].position;
                     _bossSpawnPointIndex++;
                 }
             }
             else
             {
-                MyAsserts.IsTrue(nonBossPoints.Length > 0, "nonBossPoints array is not set");
-                spawnPoint = nonBossPoints[Random.Range(0, nonBossPoints.Length)];
+                if (currentWaveIndex != 0)
+                {
+                    spawnPoint = nonBossPoints[Random.Range(0, nonBossPoints.Length)].position;
+                }
+                else
+                {
+                    var length = nonBossPoints.Length;
+                    UnityEngine.Assertions.Assert.IsTrue(length > 9, 
+                        $"nonBossPoints is not valid for wave 0: need at least 9 points, but got {length}");
+                    
+                    spawnPoint = nonBossPoints[Random.Range(8, nonBossPoints.Length)].position;
+                }
             }
-            
+
             var prefab = GetEnemyTypePrefab(config);
-            MyAsserts.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
-            
-            var enemy = Pool.Instance?.TryGetObjectFromPool(prefab);
-            MyAsserts.IsNotNull(enemy, "enemy is not spawned");
-            enemy.SetEnemyConfig(config, statsMultiplier);
-            
+            UnityEngine.Assertions.Assert.IsNotNull(prefab, $"There is no prefab mapped for {config.EnemyType}");
+
+            var enemy = Pool.Instance?.TryGet(prefab);
+            UnityEngine.Assertions.Assert.IsNotNull(enemy, "enemy is not spawned");
+            enemy.InitializeEnemy(_player, config, spawnPoint, statsMultiplier);
             _spawnedEnemies.Add(enemy);
-            
-            MyAsserts.IsNotNull(spawnPoint, "point is not set properly");
-            enemy.Mover.WarpTo(spawnPoint.position);
 
             enemy.OnCharacterDeath += MoveEnemyToPool;
         }
-        
-        private EnemyModel GetEnemyTypePrefab(EnemyConfig config)
+
+        private Enemy GetEnemyTypePrefab(EnemyConfig config)
         {
             if (!config) return null;
-            MyAsserts.IsNotNull(_enemyDictionary, "enemy dictionary is not set");
+            UnityEngine.Assertions.Assert.IsNotNull(_enemyDictionary, "enemy dictionary is not set");
             return _enemyDictionary.GetValueOrDefault(config.EnemyType);
         }
-        
+
         private void MoveEnemyToPool(Character enemy)
         {
             enemy.OnCharacterDeath -= MoveEnemyToPool;
-
-            GameManager.Instance?.UIManager.ChangeKillsBarInfo(enemy);
-            Pool.Instance?.ReturnToPool(enemy as EnemyModel);
+            _spawnedEnemies.Remove(enemy as Enemy);
+            Pool.Instance?.ReturnToPool(enemy as Enemy);
         }
-        
+
         private void BuildWaveQueue(SpawnWaveConfig currentConfig)
         {
             _bossWaveQueue.Clear();
@@ -224,7 +251,7 @@ namespace Runtime
             // --- БОССЫ ---
             if (currentConfig.willSpawnExtraWave)
             {
-                // ExtraWave: всегда один супербосс (если задан) + N обычных боссов
+                // ExtraWave: всегда один супер босс (если задан) + N обычных боссов
                 if (currentConfig.willSpawnSuperBoss && currentConfig.superBoss)
                     _bossWaveQueue.Enqueue(currentConfig.superBoss);
 
@@ -236,7 +263,7 @@ namespace Runtime
             }
             else
             {
-                // Обычная волна: опционально супербосс и/или N обычных боссов
+                // Обычная волна: опционально супер босс и/или N обычных боссов
                 if (currentConfig.willSpawnSuperBoss && currentConfig.superBoss)
                     _bossWaveQueue.Enqueue(currentConfig.superBoss);
 
@@ -249,13 +276,13 @@ namespace Runtime
 
             // --- ОСТАЛЬНЫЕ ---
             EnqueueMany(currentConfig.basicEnemy, currentConfig.basicEnemiesAmount);
-            
+
             if (currentConfig.willSpawnRed)
                 EnqueueMany(currentConfig.redUnique, currentConfig.redEnemiesAmount);
-            
+
             if (currentConfig.willSpawnBlue)
                 EnqueueMany(currentConfig.blueUnique, currentConfig.blueEnemiesAmount);
-            
+
             if (currentConfig.willSpawnYellow)
                 EnqueueMany(currentConfig.yellowUnique, currentConfig.yellowEnemiesAmount);
 
@@ -274,14 +301,20 @@ namespace Runtime
         private void ReshuffleWaveQueue()
         {
             var list = new List<EnemyConfig>(_waveQueue);
-            for (var i = list.Count - 1; i > 0; i--)
+            var amount = list.Count;
+            for (var i = amount - 1; i > 0; i--)
             {
                 var j = Random.Range(0, i + 1);
                 (list[i], list[j]) = (list[j], list[i]);
             }
-            
+
+            _waveQueue ??= new Queue<EnemyConfig>();
             _waveQueue.Clear();
-            foreach (var c in list) _waveQueue.Enqueue(c);
+
+            foreach (var c in list)
+            {
+                _waveQueue.Enqueue(c);
+            }
         }
 
         private bool IsSuperBossConfig(EnemyConfig cfg)
@@ -293,11 +326,7 @@ namespace Runtime
         {
             // обычный босс в двух случаях: обычная босс-волна или extra-волна
             return _currentWaveConfig?.bossEnemy == cfg &&
-                       (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
-            
-
-            // return _currentWaveConfig?.bossEnemy &&
-            //                (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
+                   (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
         }
     }
 }

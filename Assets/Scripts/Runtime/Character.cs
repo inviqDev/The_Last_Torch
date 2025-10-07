@@ -31,9 +31,10 @@ namespace Runtime
             LaunchOnCharacterDeathLogic();
         }
 
-        public virtual void LaunchOnCharacterDeathLogic()
+        protected virtual void LaunchOnCharacterDeathLogic()
         {
             isAlive = false;
+            OnCharacterDeath?.Invoke(this);
         }
     }
 }

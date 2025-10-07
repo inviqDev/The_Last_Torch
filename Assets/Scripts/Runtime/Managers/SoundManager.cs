@@ -9,7 +9,7 @@ namespace Runtime
         
         private Dictionary<string, Sound> _soundDictionary;
 
-        public void Init()
+        public void Initialize()
         {
             _soundDictionary = new Dictionary<string, Sound>();
             foreach (var s in sounds)
@@ -27,7 +27,7 @@ namespace Runtime
                 return;
             }
 
-            var sound = Pool.Instance?.TryGetObjectFromPool(s);
+            var sound = Pool.Instance?.TryGet(s);
             sound?.PlayAudioClip(position);
         }
     }

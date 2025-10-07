@@ -11,15 +11,10 @@ namespace Runtime
         [Header("Layer masks")]
         [SerializeField] protected LayerMask playerLayerMask;
 
-        [SerializeField] private EnemyModel enemyModel;
+        [SerializeField] private Enemy enemy;
         [SerializeField] private Collider detectorCol;
 
         private Player _player;
-        
-        private void OnEnable()
-        {
-            enemyModel.OnConfigLoaded += OnConfigLoaded;
-        }
 
         private void OnConfigLoaded(EnemyConfig config)
         {
@@ -44,11 +39,26 @@ namespace Runtime
         
         private void OnTriggerExit(Collider other)
         {
-            if (!_player) return;
-            if (other.gameObject != _player.gameObject) return;
-
-            _player = null;
+            if (!_player || other.gameObject != _player.gameObject) return;
+            
             OnPlayerExit?.Invoke(_player);
+            _player = null;
+        }
+        
+        private void OnEnable()
+        {
+            enemy.OnConfigLoaded -= OnConfigLoaded;
+            enemy.OnConfigLoaded += OnConfigLoaded;
+        }
+
+        private void OnDisable()
+        {
+            enemy.OnConfigLoaded -= OnConfigLoaded;
+        }
+
+        private void OnDestroy()
+        {
+            enemy.OnConfigLoaded -= OnConfigLoaded;
         }
     }
 }

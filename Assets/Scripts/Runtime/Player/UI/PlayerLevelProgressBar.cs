@@ -12,44 +12,39 @@ namespace Runtime
         
         private Player _player;
         
-        // TO KNOW: CURRENT MIN VALUE => MAX VALUE =>
-        public void Init(Player player)
+        public void Initialize(Player player)
         {
             _player = player;
-            UnityEngine.Assertions.Assert.IsNotNull(_player, "Player is not set");
+            UnityEngine.Assertions.Assert.IsNotNull(
+                _player, "Player is not set");
+
+            UpdateLevelExpProgressBar(_player);
             
-            // _player.OnPlayerStatsChanged += OnPlayerStatsChanged;
-            _player.OnPlayerLevelChanged += OnPlayerLevelChanged;
+            _player.OnPlayerLevelChanged += UpdateLevelExpProgressBar;
             _player.OnPlayerExpChanged += OnPlayerExpChanged;
-            
             _player.OnCharacterDeath += OnPlayerDeath;
         }
 
-        private void OnPlayerStatsChanged(float arg1, float arg2)
+        private void UpdateLevelExpProgressBar(Player player)
         {
-            throw new System.NotImplementedException();
-        }
-
-        private void OnPlayerDeath(Character player)
-        {
-            _player.OnCharacterDeath -= OnPlayerDeath;
+            expSlider.minValue = 0f;
+            expSlider.maxValue = player.CurrentLevelMaxExp;
             
-            _player.OnPlayerLevelChanged -= OnPlayerLevelChanged;
-            _player.OnPlayerExpChanged -= OnPlayerExpChanged;
-        }
-
-        private void OnPlayerLevelChanged(int newLevel, float levelMinExpValue, float levelMaxExpValue)
-        {
-            expSlider.minValue = levelMinExpValue;
-            expSlider.maxValue = levelMaxExpValue;
-            
-            levelInfo.text = $"LEVEL {newLevel.ToString()}";
+            levelInfo.text = $"LEVEL {player.CurrentLevel.ToString()}";
         }
 
         private void OnPlayerExpChanged(float currentExp)
         {
             expSlider.value = currentExp;
             info.text = $"{currentExp} / {expSlider.maxValue}";
+        }
+        
+        private void OnPlayerDeath(Character player)
+        {
+            _player.OnCharacterDeath -= OnPlayerDeath;
+            
+            _player.OnPlayerLevelChanged -= UpdateLevelExpProgressBar;
+            _player.OnPlayerExpChanged -= OnPlayerExpChanged;
         }
     }
 }

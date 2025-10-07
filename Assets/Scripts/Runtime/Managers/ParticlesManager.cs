@@ -9,7 +9,7 @@ namespace Runtime
         
         private Dictionary<string, Particle> _particlesDictionary;
 
-        public void Init()
+        public void Initialize()
         {
             _particlesDictionary = new Dictionary<string, Particle>();
             foreach (var p in particles)
@@ -19,16 +19,41 @@ namespace Runtime
             }
         }
 
-        public void PlayParticle(string uniquePoolKey, Character owner)
+        public Particle PlayParticle(string uniquePoolKey, Character owner = null)
         {
-            if (!_particlesDictionary.TryGetValue(uniquePoolKey, out var p))
+            if (!_particlesDictionary.TryGetValue(uniquePoolKey, out var prefab))
             {
-                UnityEngine.Assertions.Assert.IsNotNull(p, $"particle {uniquePoolKey} is not found");
-                return;
+                UnityEngine.Assertions.Assert.IsNotNull(
+                    prefab, $"particle {uniquePoolKey} is not found");
+                
+                return null;
             }
 
-            var particle = Pool.Instance?.TryGetObjectFromPool(p);
-            particle?.PlayMovableParticleEffect(owner);
+            var particle = Pool.Instance?.TryGet(prefab);
+            particle?.PlayParticleEffect(owner);
+            
+            return particle;
+        }
+        
+        public Particle PlayParticleAt(string uniquePoolKey, Vector3 worldPos, float worldScale = 1f, Character owner = null)
+        {
+            if (!_particlesDictionary.TryGetValue(uniquePoolKey, out var prefab))
+            {
+                UnityEngine.Assertions.Assert.IsNotNull(prefab, $"particle {uniquePoolKey} is not found");
+                return null;
+            }
+
+            var particle = Pool.Instance?.TryGet(prefab);
+            if (!particle) return null;
+
+            // ВАЖНО: позиция и масштаб ДО PlayParticleEffect
+            var t = particle.transform;
+            t.SetParent(null);
+            t.position = worldPos;
+            t.localScale = Vector3.one * worldScale;
+
+            particle.PlayParticleEffect(owner); // owner=null => масштаб останется, если применил правку выше
+            return particle;
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Runtime
         [SerializeField] private float prewarmTime;
         [SerializeField] private bool waitPrewarmTime;
         
-        private readonly List<EnemyModel> affected = new();
+        private readonly List<Enemy> affected = new();
+        private EnemiesDetector _detector;
 
         protected override void OnPlay(AbilityContext ctx)
         {
@@ -34,7 +35,8 @@ namespace Runtime
 
             if (!boltPrefab)
             {
-                UnityEngine.Assertions.Assert.IsNotNull(boltPrefab, "[LightningChain] boltPrefab not set");
+                UnityEngine.Assertions.Assert.IsNotNull(boltPrefab, 
+                    "[LightningChain] boltPrefab not set");
 
                 RaiseFinished(ability);
                 yield break;
@@ -47,8 +49,9 @@ namespace Runtime
 
             while (currentEnemy && bouncesLeft > 0)
             {
-                var bolt = Pool.Instance?.TryGetObjectFromPool(boltPrefab);
-                UnityEngine.Assertions.Assert.IsNotNull(bolt, "[Lightning Bolt] is not spawned");
+                var bolt = Pool.Instance?.TryGet(boltPrefab);
+                UnityEngine.Assertions.Assert.IsNotNull(bolt, 
+                    "[Lightning Bolt] is not spawned");
 
                 float duration;
                 bool needToFollow;
@@ -65,8 +68,8 @@ namespace Runtime
 
                 bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
                 
-                GameManager.Instance?.SoundManager?.PlaySound("lightning_sound", transform.position);
-                GameManager.Instance?.ParticlesManager?.PlayParticle("lightning_particles_vfx", currentEnemy);
+                GameManager.Instance?.SoundManager?.PlaySound(ability.AbilityHitSoundPoolKey, transform.position);
+                GameManager.Instance?.ParticlesManager?.PlayParticle(ability.HitParticlePoolKey, currentEnemy);
 
                 currentEnemy.TakeDamage(ability.Damage);
                 affected.Add(currentEnemy);
@@ -76,7 +79,7 @@ namespace Runtime
                 bouncesLeft--;
                 if (bouncesLeft <= 0) break;
 
-                var nextTarget = FindClosestEnemy(currentEnemy, ctx.EnemiesCollector.AttackableEnemies);
+                var nextTarget = FindClosestEnemy(currentEnemy, player.Detector.AvailableEnemies);
                 if (!nextTarget) break;
 
                 from = currentEnemy.transform;
@@ -91,26 +94,32 @@ namespace Runtime
             affected.Clear();
             RaiseFinished(ctx.Ability);
         }
-
-        private EnemyModel FindClosestEnemy(EnemyModel from, List<EnemyModel> attackableEnemies)
+        private Enemy FindClosestEnemy(Enemy from, List<Enemy> attackableEnemies)
         {
             if (attackableEnemies == null || attackableEnemies.Count == 0) return null;
 
-            EnemyModel closestEnemy = null;
+            Enemy closestEnemy = null;
             var maxSqrMag = maxBounceDistance * maxBounceDistance;
 
-            foreach (var e in attackableEnemies)
+            for (var i = 0; i < attackableEnemies.Count; i++)
             {
+                var e = attackableEnemies[i];
                 if (!e || ReferenceEquals(e, from) || affected.Contains(e)) continue;
                 if (!e.gameObject.activeInHierarchy || e.CurrentHealth <= 0) continue;
 
                 var sqr = (e.transform.position - from.transform.position).sqrMagnitude;
                 if (sqr > maxSqrMag) continue;
-                
+
                 closestEnemy = e;
             }
 
             return closestEnemy;
+        }
+
+        public void IncreaseBouncesAmount()
+        {
+            var increment = 2;
+            bouncesAmount += increment;
         }
     }
 }

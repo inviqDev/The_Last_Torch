@@ -52,22 +52,18 @@ namespace Runtime
 
         public void ChangeKillBarInfo(Character enemy)
         {
-            totalAmount++;
-            ChangeTotalKillsInfo(totalAmount);
+            ChangeTotalKillsInfo(++totalAmount);
 
             switch (enemy)
             {
                 case BasicEnemy:
-                    commonAmount++;
-                    ChangeCommonKillsInfo(commonAmount);
+                    ChangeCommonKillsInfo(++commonAmount);
                     break;
                 case RedUniqueEnemy or BlueUniqueEnemy or YellowUniqueEnemy:
-                    uniqueAmount++;
-                    ChangeUniqueKillsInfo(uniqueAmount);
+                    ChangeUniqueKillsInfo(++uniqueAmount);
                     break;
                 case BossEnemy or SuperBoss:
-                    bossAmount++;
-                    ChangeBossKillsInfo(bossAmount);
+                    ChangeBossKillsInfo(++bossAmount);
                     break;
             }
         }

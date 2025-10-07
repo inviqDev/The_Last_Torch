@@ -12,7 +12,7 @@ namespace Runtime
         public float moveSpeed;
     }
     
-    public class BossEnemy : EnemyModel
+    public class BossEnemy : Enemy
     {
         [SerializeField] private ProjectileSettings projectileSettings;
         
@@ -98,7 +98,7 @@ namespace Runtime
 
         protected override void PerformAttack(Character target)
         {
-            var proj = Pool.Instance?.TryGetObjectFromPool(projectile);
+            var proj = Pool.Instance?.TryGet(projectile);
             UnityEngine.Assertions.Assert.IsNotNull(proj, "projectile is not spawned");
 
             proj.ChangeProjectileBasicSettings(projectileSettings);

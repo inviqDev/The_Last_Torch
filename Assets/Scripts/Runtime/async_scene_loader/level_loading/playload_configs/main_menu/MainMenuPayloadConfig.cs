@@ -1,24 +1,36 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using MyAsserts = UnityEngine.Assertions.Assert;
 
 namespace Runtime
 {
-    [CreateAssetMenu(menuName = "Loading Scene/Payloads", fileName = "main_menu_payload")]
     public class MainMenuPayloadConfig : TransitionPayload
     {
         public override void OnWillLoad()
         {
             var gameManager = GameManager.Instance;
-            MyAsserts.IsNotNull(gameManager, "game manager is not found");
+            UnityEngine.Assertions.Assert.IsNotNull(
+                gameManager, "game manager is not found");
+
+            if (gameManager.Player)
+            {
+                Destroy(gameManager.Player.gameObject);
+            }
+
+            if (gameManager.LevelEnv)
+            {
+                Destroy(gameManager.LevelEnv.gameObject);
+            }
+            
+            Pool.Instance?.RestartPool();
             
             gameManager.Spawner?.StopSpawningEnemies();
+            gameManager.UIManager?.LaunchStopGameLogic();
         }
 
         public override void OnDidLoad(Scene scene)
         {
             var gameManager = GameManager.Instance;
-            MyAsserts.IsNotNull(gameManager, "game manager is not found");
+            UnityEngine.Assertions.Assert.IsNotNull(
+                gameManager, "game manager is not found");
             
             gameManager.UIManager?.gameObject.SetActive(false);
         }

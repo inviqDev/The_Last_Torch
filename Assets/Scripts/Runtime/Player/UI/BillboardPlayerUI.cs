@@ -6,7 +6,7 @@ namespace Runtime
     {
         private Transform _cameraMainTransform;
 
-        private void Start()
+        private void OnEnable()
         {
             UnityEngine.Assertions.Assert.IsNotNull(GameManager.Instance, "GameManager is null");
             _cameraMainTransform = GameManager.Instance?.CameraMain.transform;

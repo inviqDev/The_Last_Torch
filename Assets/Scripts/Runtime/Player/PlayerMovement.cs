@@ -7,12 +7,13 @@ namespace Runtime
         private Rotation _playerRotation;
         private float _moveSpeed;
 
-        protected override void InitMovement()
+        protected override void Initialize()
         {
-            base.InitMovement();
+            base.Initialize();
             
             _playerRotation ??= GetComponent<Rotation>();
-            MyAssertions.EnsureIsNotNull(_playerRotation);
+            UnityEngine.Assertions.Assert.IsNotNull(_playerRotation,
+                "player rotation component is missing");
             
             enabled = false;
         }
@@ -40,7 +41,7 @@ namespace Runtime
 
         public void SetMoveSettingsFromConfig(PlayerConfig config)
         {
-            InitMovement();
+            Initialize();
             _moveSpeed = config.moveSpeed;
         }
 

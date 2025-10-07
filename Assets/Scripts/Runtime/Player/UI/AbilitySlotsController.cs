@@ -7,17 +7,16 @@ namespace Runtime
     {
         [SerializeField] private AbilityConfig defaultAbilityConfig;
         [SerializeField] private AbilitySlot[] abilitySlots;
-        
-        public int AbilitySlotsCount => abilitySlots.Length;
-        
+
         public void ResetAbilitySlots()
         {
-            UnityEngine.Assertions.Assert.IsNotNull(abilitySlots, "abilitySlots is not set in the inspector");
-            
+            UnityEngine.Assertions.Assert.IsNotNull(abilitySlots,
+                "abilitySlots is not set in the inspector");
+
             var defaultAbility = new Ability(defaultAbilityConfig);
             foreach (var s in abilitySlots)
             {
-                s.UpdateAbilityUI(defaultAbility);
+                s.SetAbilitySlotUI(defaultAbility);
             }
         }
 
@@ -25,11 +24,9 @@ namespace Runtime
         {
             var availableAbilityUI = abilitySlots.First(_ => _.IsActive == false);
             if (availableAbilityUI) return availableAbilityUI;
-            
+
             print("There is no slot for this ability");
             return null;
         }
-        
-        
     }
 }

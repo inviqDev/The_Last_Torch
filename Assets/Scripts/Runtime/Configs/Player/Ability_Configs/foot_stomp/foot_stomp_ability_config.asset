@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ea28685e72e70644b1790b127868b5c, type: 3}
+  m_Name: foot_stomp_ability_config
+  m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
+  abilityName: FOOT STOMP
+  abilityIcon: {fileID: 8678780475385641507, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+  HitParticlePoolKey: foot_stomp_particle
+  HitSoundPoolKey: 
+  progressTime: 0
+  cooldownTime: 2
+  abilityVFX: {fileID: 480488187156747558, guid: e3e04adb6d84e5e4b9e119d48e00a072, type: 3}
+  maxAttackDistance: 20
+  damage: 0

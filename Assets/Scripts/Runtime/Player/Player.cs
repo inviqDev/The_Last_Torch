@@ -6,117 +6,143 @@ namespace Runtime
     [RequireComponent(typeof(CharacterController))]
     public class Player : Character
     {
-        public Action OnNextAbilityIsAvailable;
-        
         public Action<float, float> OnPlayerMaxHealthChanged;
         public Action<float> OnPlayerMoveSpeedChanged;
-        
-        public Action<int, float, float> OnPlayerLevelChanged;
+        public Action<Player> OnPlayerLevelChanged;
         public Action<float> OnPlayerExpChanged;
 
-        [SerializeField] private PlayerMovement movementComponent;
-        [SerializeField] private PlayerDash playerDashComponent;
-        [SerializeField] private DashUI dashUIComponent;
-        
-        [SerializeField] private PlayerAttack playerAttack;
+        [SerializeField] private EnemiesDetector detector;
 
         [SerializeField] private int levelsAmount;
         [SerializeField] private float firstLevelExp;
-        [SerializeField] private float multiplier = 2f;
-        public float[] levelsExp;
-        private int _currentLevel = 1;
-        private float _currentLevelMaxExp;
-        
-        public PlayerAttack PlayerAttack => playerAttack;
+        [SerializeField] private float A;
+        [SerializeField] private float B;
 
-        #region Player_Stats
+        private PlayerMovement _movementComponent;
+        private PlayerDash _playerDashComponent;
+        private DashUI _dashUIComponent;
+        private PlayerAttack _playerAttack;
+        private CameraMover _cameraMover;
 
-        // total statistics?
-        // private float _totalCollectedExp;
-        
         private float _currentExp;
-        private float _dashSpeed;
-        private float _dashDuration;
 
-        #endregion
+        public EnemiesDetector Detector => detector;
+        public int CurrentLevel { get; private set; }
+        public float CurrentLevelMaxExp { get; private set; }
+
+        public float[] levelsExp;
+
+        public void InitializePlayerComponents()
+        {
+            _movementComponent = GetComponent<PlayerMovement>();
+            UnityEngine.Assertions.Assert.IsNotNull(_movementComponent,
+                "player movement component is missing");
+
+            _playerDashComponent = GetComponent<PlayerDash>();
+            UnityEngine.Assertions.Assert.IsNotNull(_playerDashComponent,
+                "player dash component is missing");
+
+            _dashUIComponent = GetComponent<DashUI>();
+            UnityEngine.Assertions.Assert.IsNotNull(_dashUIComponent,
+                "player dash component UI [slider] is missing");
+
+            _cameraMover = GetComponent<CameraMover>();
+            UnityEngine.Assertions.Assert.IsNotNull(_cameraMover,
+                "player camera mover component is missing");
+            _cameraMover?.Initialize(GameManager.Instance.CameraMain, transform);
+
+            UnityEngine.Assertions.Assert.IsNotNull(detector,
+                "enemies detector component is missing");
+            detector?.Initialize();
+
+            _playerAttack = GetComponent<PlayerAttack>();
+            UnityEngine.Assertions.Assert.IsNotNull(_playerAttack,
+                "player attack component is missing");
+            _playerAttack?.Initialize(this);
+            
+            SetUpLevelsExpArray();
+        }
 
         private int GetCurrentLevelExpIndex()
         {
-            return _currentLevel - 1;
+            return Mathf.Clamp(CurrentLevel - 1, 0, Mathf.Max(0, levelsAmount - 1));
         }
 
         private void SetUpLevelsExpArray()
         {
+            levelsAmount = Mathf.Max(1, levelsAmount);
             levelsExp = new float[levelsAmount];
-            levelsExp[GetCurrentLevelExpIndex()] = firstLevelExp;
 
-            _currentExp = 0f;
-            // _totalCollectedExp = 0f;
-            _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
-
-            var currentValue = firstLevelExp;
-            for (var i = 1; i < levelsAmount; i++)
+            levelsExp[0] = firstLevelExp;
+            for (var n = 1; n < levelsAmount; n++)
             {
-                levelsExp[i] = currentValue * multiplier;
-                currentValue = levelsExp[i];
+                var d = firstLevelExp + A * n + B * n * n;
+                levelsExp[n] = Mathf.Round(d);
             }
             
-            OnNextAbilityIsAvailable?.Invoke();
-            OnPlayerLevelChanged?.Invoke(_currentLevel, 0f, _currentLevelMaxExp);
+            CurrentLevel = 1;
+            _currentExp = 0f;
+            CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+
+            OnPlayerLevelChanged?.Invoke(this);
         }
 
         public void SetUpPlayerConfig(PlayerConfig config)
         {
-            SetUpLevelsExpArray();
-            OnPlayerExpChanged?.Invoke(_currentExp);
-            
             maxHealth = config.maxHealth;
             currentHealth = maxHealth;
 
             moveSpeed = config.moveSpeed;
-            _dashSpeed = config.dashSpeed;
-            _dashDuration = config.dashDuration;
+            _movementComponent.SetMoveSettingsFromConfig(config);
+            _playerDashComponent.SetDashSettingsFromConfig(config, _dashUIComponent);
 
-            healthBar.Init(this);
-            
-            movementComponent.SetMoveSettingsFromConfig(config);
-            playerDashComponent.SetDashSettingsFromConfig(config, dashUIComponent);
-            
+            healthBar.Initialize(this);
+
             OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
+            OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
         public void CollectExp(float pickedExpAmount)
         {
             _currentExp += pickedExpAmount;
 
-            if (_currentExp >= _currentLevelMaxExp)
+            if (CurrentLevel >= levelsAmount)
             {
-                // save "delta"
-                _currentExp -= _currentLevelMaxExp;
-                
-                // level up
-                ++_currentLevel;
-                _currentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
-                
-                ChangeStats(20f, 1f, 10f);
-                
-                OnNextAbilityIsAvailable?.Invoke();
-                OnPlayerLevelChanged?.Invoke(_currentLevel, 0f, _currentLevelMaxExp);
+                _currentExp = Mathf.Min(_currentExp, CurrentLevelMaxExp);
+                OnPlayerExpChanged?.Invoke(_currentExp);
+                return;
+            }
+
+            while (CurrentLevel < levelsAmount && _currentExp >= CurrentLevelMaxExp)
+            {
+                _currentExp -= CurrentLevelMaxExp;
+                ++CurrentLevel;
+
+                if (CurrentLevel >= levelsAmount)
+                {
+                    // add extra credits or something
+                    CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+                    _currentExp = Mathf.Min(_currentExp, CurrentLevelMaxExp);
+
+                    OnPlayerLevelChanged?.Invoke(this);
+                    OnPlayerExpChanged?.Invoke(_currentExp);
+
+                    return;
+                }
+
+                CurrentLevelMaxExp = levelsExp[GetCurrentLevelExpIndex()];
+                OnPlayerLevelChanged?.Invoke(this);
             }
 
             OnPlayerExpChanged?.Invoke(_currentExp);
         }
 
-        // public override void TakeDamage(float incomingDamage)
-        // {
-        //     base.TakeDamage(incomingDamage);
-        // }
-
-        public override void LaunchOnCharacterDeathLogic()
+        protected override void LaunchOnCharacterDeathLogic()
         {
+            // player "unique player" anim, sound, etc
+            print(gameObject.name + " IS DEAD");
             base.LaunchOnCharacterDeathLogic();
-            OnCharacterDeath?.Invoke(this);
         }
 
         public void ChangeStats(float healthBoost, float moveSpeedBoost, float damageBoost)
@@ -125,21 +151,21 @@ namespace Runtime
             {
                 maxHealth += healthBoost;
                 currentHealth += healthBoost;
-                
+
                 OnPlayerMaxHealthChanged?.Invoke(maxHealth, currentHealth);
             }
 
             if (moveSpeedBoost != 0f)
             {
                 moveSpeed += moveSpeedBoost;
-                movementComponent.SetNewMoveSpeed(moveSpeed);
-                
+                _movementComponent.SetNewMoveSpeed(moveSpeed);
+
                 OnPlayerMoveSpeedChanged?.Invoke(moveSpeed);
             }
 
             if (damageBoost != 0f)
             {
-                playerAttack.ChangeAbilitiesDamage(damageBoost);
+                _playerAttack.ChangeAbilitiesStats(damageBoost);
             }
         }
     }

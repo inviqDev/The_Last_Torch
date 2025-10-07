@@ -12,7 +12,7 @@ namespace Runtime
         SuperBoss
     }
     
-    [CreateAssetMenu(menuName = "Characters/Enemy", fileName = "enemy_config")]
+    [CreateAssetMenu(menuName = "My Scriptable Objects/Characters/Enemy/Base Config", fileName = "enemy_config")]
     public class EnemyConfig : CharacterBaseConfig
     {
         public EnemyType EnemyType;

@@ -14,7 +14,7 @@ namespace Runtime
         private float _dashCooldown;
         private float _dashDuration;
 
-        public void InitDashAbilityUI(Timer timer, float cooldown, float duration)
+        public void InitializeAbilityUI(Timer timer, float cooldown, float duration)
         {
             fillingIcon.fillAmount = 0f;
             progressBar.value = 0f;
