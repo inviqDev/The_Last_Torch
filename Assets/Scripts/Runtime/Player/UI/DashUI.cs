@@ -45,7 +45,11 @@ namespace Runtime
 
         private void OnDisable()
         {
+            if (_timer == null) return;
+            
             _timer.OnAnyValueChanged -= ShowCooldownProgress;
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }

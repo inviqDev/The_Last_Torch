@@ -21,7 +21,7 @@ namespace Runtime
         private SoundManager _soundManager;
         private ParticlesManager _particlesManager;
         private LevelEnvironment _levelEnv;
-
+        
         public PlayerManager PlayerManager => _playerManager;
         public Spawner Spawner => _spawner;
         public Pool Pool => _pool;
@@ -33,8 +33,6 @@ namespace Runtime
         public Camera CameraMain { get; private set; }
         public Player Player { get; private set; }
         
-        private SuperBoss _superBoss;
-        private Timer _timer;
 
         protected override void Awake()
         {

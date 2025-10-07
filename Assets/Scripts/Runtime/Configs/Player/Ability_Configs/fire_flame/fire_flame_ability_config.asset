@@ -18,6 +18,6 @@ MonoBehaviour:
   HitSoundPoolKey: fire_flame_hit_sound
   progressTime: 0
   cooldownTime: 1
-  abilityVFX: {fileID: 1962205281349832667, guid: 358c5cf53b6e49348bfbe3a284c60f7c, type: 3}
+  abilityVfx: {fileID: 1962205281349832667, guid: 358c5cf53b6e49348bfbe3a284c60f7c, type: 3}
   maxAttackDistance: 8
   damage: 10

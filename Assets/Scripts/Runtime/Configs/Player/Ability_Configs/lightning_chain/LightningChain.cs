@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class LightningChain : AbilityVFX
+    public class LightningChain : AbilityVfx
     {
         [Header("Chain")] 
         [SerializeField] private int bouncesAmount = 5;
@@ -68,8 +68,8 @@ namespace Runtime
 
                 bolt.Launch(from, currentEnemy.transform, duration, needToFollow);
                 
-                GameManager.Instance?.SoundManager?.PlaySound(ability.AbilityHitSoundPoolKey, transform.position);
-                GameManager.Instance?.ParticlesManager?.PlayParticle(ability.HitParticlePoolKey, currentEnemy);
+                GameManager.Instance?.SoundManager?.PlaySound(ability.HitSfxPoolKey, transform.position);
+                GameManager.Instance?.ParticlesManager?.PlayParticle(ability.HitVfxPoolKey, currentEnemy);
 
                 currentEnemy.TakeDamage(ability.Damage);
                 affected.Add(currentEnemy);

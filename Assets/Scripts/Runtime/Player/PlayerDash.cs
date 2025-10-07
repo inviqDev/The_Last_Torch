@@ -23,7 +23,7 @@ namespace Runtime
         private IEnumerator _routine;
         
         public DashState dashState { get; private set; }
-
+        
         protected override void Initialize()
         {
             base.Initialize();
@@ -36,17 +36,17 @@ namespace Runtime
             _duration = config.dashDuration;
             _cooldown = config.dashCooldown;
             
-            
             _timer = new Timer(this);
             _timer.TimerIsOver += ChangeDashState;
+            _timer.StartFromToTimer(0f, _cooldown, TimerType.Increasing);
             
-            Initialize();
             _dashUI = dashUI;
             _dashUI.InitializeAbilityUI(_timer, _cooldown, _duration);
             
             dashState = DashState.OnCooldown;
             _dashUI.UpdateDashState(dashState);
-            _timer.StartFromToTimer(0f, _cooldown, TimerType.Increasing);
+
+            Initialize();
         }
 
         private void ChangeDashState()
@@ -100,6 +100,12 @@ namespace Runtime
             _timer.StartFromToTimer(0, _cooldown, TimerType.Increasing);
             
             enabled = false;
+        }
+
+        private void OnDestroy()
+        {
+            _timer?.Dispose();
+            _timer = null;
         }
     }
 }

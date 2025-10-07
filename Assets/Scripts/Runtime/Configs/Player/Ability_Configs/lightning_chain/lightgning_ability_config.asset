@@ -18,6 +18,6 @@ MonoBehaviour:
   HitSoundPoolKey: lightning_hit_sound
   progressTime: 0.5
   cooldownTime: 4
-  abilityVFX: {fileID: 3579021516814992675, guid: 00e7507d53fdeb142b7fb5a3025ef78a, type: 3}
+  abilityVfx: {fileID: 3579021516814992675, guid: 00e7507d53fdeb142b7fb5a3025ef78a, type: 3}
   maxAttackDistance: 12
   damage: 5

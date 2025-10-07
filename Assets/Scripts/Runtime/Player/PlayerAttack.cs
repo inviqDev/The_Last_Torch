@@ -25,7 +25,6 @@ namespace Runtime
         public void Initialize(Player player)
         {
             if (_isInitialized) return;
-
             InitializeFields(player);
 
             // Create all abilities once, subscribe, and put into two lists:
@@ -52,7 +51,11 @@ namespace Runtime
             // print(peek.Name);
 #endif
             
-            if (!_detector.EnemyExists || _readyQueue.Count == 0) return;
+            if (!_detector.EnemyExists || _readyQueue.Count == 0)
+            {
+                RecomputeEnabled();
+                return;
+            }
 
             // Loop at most queue length (no infinite loop)
             var spins = _readyQueue.Count;
@@ -84,7 +87,7 @@ namespace Runtime
                     visual.Finished -= OnFinished;
                     a.SetAbilityState(AbilityState.OnCooldown);
                     Pool.Instance?.ReturnToPool(visual);
-
+                    
                     RecomputeEnabled();
                 }
             }
@@ -116,6 +119,7 @@ namespace Runtime
 
         private void AddAbilityToReadyList(Ability a)
         {
+            print("!");
             UnityEngine.Assertions.Assert.IsTrue(a.State == AbilityState.Ready,
                 $"Ability {a.Name} enqueued while not Ready");
 
@@ -140,9 +144,9 @@ namespace Runtime
             return false;
         }
         
-        private bool ValidateAbilityIsAbleToLaunch(Ability ability, out AbilityVFX vfx)
+        private bool ValidateAbilityIsAbleToLaunch(Ability ability, out AbilityVfx vfx)
         {
-            vfx = Pool.Instance?.TryGet(ability.AbilityVFX);
+            vfx = Pool.Instance?.TryGet(ability.AbilityVfx);
             UnityEngine.Assertions.Assert.IsNotNull(vfx, "ability VFX is missing");
             if (vfx) return true;
             
@@ -183,7 +187,7 @@ namespace Runtime
         {
             foreach (var a in _availableAbilities)
             {
-                if (a.AbilityVFX is LightningChain chain)
+                if (a.AbilityVfx is LightningChain chain)
                     chain.IncreaseBouncesAmount();
 
                 a.ChangeAbilityDamage(StatChangeMode.Percent, 5f);
@@ -192,7 +196,7 @@ namespace Runtime
 
             foreach (var a in _readyQueue)
             {
-                if (a.AbilityVFX is LightningChain chain)
+                if (a.AbilityVfx is LightningChain chain)
                     chain.IncreaseBouncesAmount();
 
                 a.ChangeAbilityDamage(StatChangeMode.Percent, 5f);
@@ -255,7 +259,10 @@ namespace Runtime
         private void UnsubscribeAbilities()
         {
             foreach (var a in _allCreatedAbilities)
+            {
                 a.OnAbilityReady -= AddAbilityToReadyList;
+                a.Dispose();
+            }
         }
         
         private void ClearCollections()

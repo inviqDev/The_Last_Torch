@@ -17,7 +17,7 @@ namespace Runtime
         }
     }
 
-    public abstract class AbilityVFX : MonoBehaviour, IPoolable
+    public abstract class AbilityVfx : MonoBehaviour, IPoolable
     {
         public event Action<Ability> Finished;
         

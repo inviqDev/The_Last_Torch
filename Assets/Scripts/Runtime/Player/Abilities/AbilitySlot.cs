@@ -25,7 +25,7 @@ namespace Runtime
         {
             _ability = ability;
 
-            IsActive = ability.State != AbilityState.Disable;
+            IsActive = ability.State != AbilityState.Deactivated;
             iconImage.sprite = ability.Icon;
             activationButton.interactable = false;
             cooldownProgress.gameObject.SetActive(false);

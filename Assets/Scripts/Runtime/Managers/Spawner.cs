@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Runtime
 {
-    [DefaultExecutionOrder(-998)]
     public class Spawner : MonoBehaviour
     {
         [System.Serializable]
@@ -327,6 +327,12 @@ namespace Runtime
             // обычный босс в двух случаях: обычная босс-волна или extra-волна
             return _currentWaveConfig?.bossEnemy == cfg &&
                    (_currentWaveConfig.willSpawnBoss || _currentWaveConfig.willSpawnExtraWave);
+        }
+
+        private void OnDisable()
+        {
+            _timer?.Dispose();
+            _timer = null;
         }
     }
 }
