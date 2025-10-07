@@ -1,14 +1,8 @@
-#region
-
 using System;
 using System.Collections;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MyAsserts = UnityEngine.Assertions.Assert;
-
-#endregion
 
 namespace Runtime
 {
@@ -66,20 +60,20 @@ namespace Runtime
         {
             if (!asset)
             {
-                MyAsserts.IsNotNull(asset, "TransitionAsset is null");
+                UnityEngine.Assertions.Assert.IsNotNull(asset, "TransitionAsset is null");
                 return;
             }
             
             if (!asset.TargetScene.IsAssigned)
             {
-                MyAsserts.IsTrue(asset.TargetScene.IsAssigned, "TargetScene is not assigned");
+                UnityEngine.Assertions.Assert.IsTrue(asset.TargetScene.IsAssigned, "TargetScene is not assigned");
                 return;
             }
 
             if (_isTransitionRunning)
             {
                 // Prevent starting another transition while one is already running
-                MyAsserts.IsFalse(_isTransitionRunning, "Transition already in progress");
+                UnityEngine.Assertions.Assert.IsFalse(_isTransitionRunning, "Transition already in progress");
                 return;
             }
 
@@ -91,7 +85,7 @@ namespace Runtime
         private IEnumerator LoadRoutine(TransitionAsset asset)
         {
             // Sanity check: overlay must exist after Awake
-            MyAsserts.IsNotNull(_loadingOverlay, "Loading overlay failed to initialize.");
+            UnityEngine.Assertions.Assert.IsNotNull(_loadingOverlay, "Loading overlay failed to initialize.");
             if (!_loadingOverlay)
             {
                 yield break;
@@ -164,7 +158,7 @@ namespace Runtime
 
             var old = _currentContentScene.Value;
             var unloadOp = SceneManager.UnloadSceneAsync(old);
-            MyAsserts.IsNotNull(unloadOp, "Unload AsyncOperation did not start");
+            UnityEngine.Assertions.Assert.IsNotNull(unloadOp, "Unload AsyncOperation did not start");
 
             // Visualize UNLOAD as [0 .. unloadProgressPortion]
             if (asset.ShowProgress)
@@ -206,7 +200,7 @@ namespace Runtime
         {
             var sceneId = BuildSceneId(asset);
             _pendingLoadOp = SceneManager.LoadSceneAsync(sceneId, LoadSceneMode.Additive);
-            MyAsserts.IsNotNull(_pendingLoadOp, "Load AsyncOperation did not start");
+            UnityEngine.Assertions.Assert.IsNotNull(_pendingLoadOp, "Load AsyncOperation did not start");
             if (_pendingLoadOp == null)
             {
                 yield break;
@@ -258,7 +252,7 @@ namespace Runtime
 
         private IEnumerator ActivateAndBindLoadedScene(TransitionAsset asset)
         {
-            MyAsserts.IsNotNull(_pendingLoadOp, "Pending load op is null before activation");
+            UnityEngine.Assertions.Assert.IsNotNull(_pendingLoadOp, "Pending load op is null before activation");
             if (_pendingLoadOp == null)
             {
                 yield break;
@@ -271,7 +265,7 @@ namespace Runtime
             }
 
             _loadedSceneBuffer = GetLoadedScene(asset);
-            MyAsserts.IsTrue(_loadedSceneBuffer.IsValid() && _loadedSceneBuffer.isLoaded, "Target scene failed to load");
+            UnityEngine.Assertions.Assert.IsTrue(_loadedSceneBuffer.IsValid() && _loadedSceneBuffer.isLoaded, "Target scene failed to load");
             if (!_loadedSceneBuffer.IsValid() || !_loadedSceneBuffer.isLoaded)
             {
                 yield break;
@@ -309,7 +303,7 @@ namespace Runtime
                 }
                 catch (Exception e)
                 {
-                    MyAsserts.IsTrue(false, $"OnSceneLoaded exception:\n{e}");
+                    UnityEngine.Assertions.Assert.IsTrue(false, $"OnSceneLoaded exception:\n{e}");
                 }
             }
         }
@@ -336,7 +330,7 @@ namespace Runtime
         /// </summary>
         private void CreateOverlayOrDie()
         {
-            MyAsserts.IsNotNull(loadingOverlayPrefab, "Loading overlay Prefab is not assigned.");
+            UnityEngine.Assertions.Assert.IsNotNull(loadingOverlayPrefab, "Loading overlay Prefab is not assigned.");
 
             _loadingOverlay = Instantiate(loadingOverlayPrefab, transform);
             // _loadingOverlay.gameObject.transform.SetParent(null);

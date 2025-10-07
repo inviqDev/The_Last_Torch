@@ -6,7 +6,6 @@ namespace Runtime
     {
         public override void OnWillLoad()
         {
-            
             var gameManager = GameManager.Instance;
             UnityEngine.Assertions.Assert.IsNotNull(
                 gameManager, "game manager is not found");

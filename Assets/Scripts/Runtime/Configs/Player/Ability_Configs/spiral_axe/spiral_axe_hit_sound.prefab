@@ -178,5 +178,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  audioClip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+  audioClip: {fileID: 8300000, guid: d11b80ba2821de74690f51044d2453d2, type: 3}
   playFullClip: 0

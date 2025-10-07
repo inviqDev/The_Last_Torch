@@ -81,7 +81,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  audioClip: {fileID: 8300000, guid: a652877b012108e41871f867ada9f176, type: 3}
+  audioClip: {fileID: 8300000, guid: 0c09074cbff89ba4f8d2143600401b8d, type: 3}
   playFullClip: 0
 --- !u!82 &4790814588375080067
 AudioSource:
