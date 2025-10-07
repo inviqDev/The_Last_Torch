@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Runtime_Assembly::Runtime.AbilityConfig
   abilityName: FOOT STOMP
   abilityIcon: {fileID: 8678780475385641507, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
-  HitParticlePoolKey: foot_stomp_ability_particle
+  HitParticlePoolKey: foot_stomp_particle
   HitSoundPoolKey: 
   progressTime: 0
   cooldownTime: 2
