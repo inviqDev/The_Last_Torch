@@ -53,7 +53,7 @@ namespace Runtime
     ///
     ///     void OnDisable()
     ///     {
-    ///         m_Player.Disable();                               // Disable all actions within map.
+    ///         m_Player.Deactivated();                               // Deactivated all actions within map.
     ///     }
     ///
     ///     #region Interface implementation of MyActions.IPlayerActions
@@ -363,7 +363,7 @@ namespace Runtime
 
         ~@InputActions()
         {
-            UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, InputActions.Gameplay.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, InputActions.Gameplay.Deactivated() has not been called.");
         }
 
         /// <summary>

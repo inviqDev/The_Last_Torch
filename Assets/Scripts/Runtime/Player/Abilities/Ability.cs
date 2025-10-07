@@ -5,12 +5,12 @@ namespace Runtime
 {
     public enum AbilityState
     {
-        Disable,
+        Deactivated,
         InProgress,
         OnCooldown,
         Ready,
     }
-    
+
     public enum StatChangeMode
     {
         /// <summary>Simple additive change: new = current + value.</summary>
@@ -20,93 +20,111 @@ namespace Runtime
         /// <summary>Set exact value: new = value.</summary>
         SetValue
     }
-    
-    public class Ability
+
+    public class Ability : IDisposable
     {
         public Action<Ability> OnAbilityReady;
-        
         public Action<AbilityState> OnAbilityStateChange;
         public Action<Ability> OnAbilityStatsChanged;
-        
+
         private AbilityState state;
         private readonly float _baseDamage;
         private readonly float _baseCooldown;
-        private readonly float _progressTime;
-        
+        // private readonly float _progressTime;
+
+        private bool _disposed;
+
         public AbilityState State => state;
-        
+
         public string Name { get; private set; }
         public Sprite Icon { get; private set; }
-        
-        public string AbilityHitSoundPoolKey { get; private set; }
-        public string HitParticlePoolKey { get; private set; }
-        
+
+        public string HitSfxPoolKey { get; private set; }
+        public string HitVfxPoolKey { get; private set; }
+
         public float AttackRange { get; private set; }
         public float Damage { get; private set; }
         public float Cooldown { get; private set; }
 
         public Timer Timer { get; private set; }
-        public AbilityVFX AbilityVFX { get; private set; }
-        
-        public Ability(AbilityConfig config) 
+        public AbilityVfx AbilityVfx { get; private set; }
+
+        public Ability(AbilityConfig config)
         {
-            SetAbilityState(AbilityState.Disable);
-            
+            SetAbilityState(AbilityState.Deactivated);
+
             Name = config.abilityName;
             Icon = config.abilityIcon;
-            
-            AbilityHitSoundPoolKey = config.HitSoundPoolKey;
-            HitParticlePoolKey = config.HitParticlePoolKey;
-            
+
             _baseDamage = config.damage;
             Damage = ResetDamageToDefault();
-            
+            AttackRange = config.maxAttackDistance;
+
             _baseCooldown = config.cooldownTime;
             Cooldown = ResetCooldownToDefault();
-
-            _progressTime = config.progressTime;
             
-            AbilityVFX = config.abilityVFX;
-            AttackRange = config.maxAttackDistance;
+            // _progressTime = config.progressTime;
+            
+            AbilityVfx = config.abilityVfx;
+            HitSfxPoolKey = config.HitSoundPoolKey;
+            HitVfxPoolKey = config.HitParticlePoolKey;
         }
 
         public void ActivateAbility(MonoBehaviour owner)
         {
+            ThrowIfDisposed();
+            
+            Timer?.Dispose();
             Timer = new Timer(owner);
-            Timer.TimerIsOver += () =>
-            {
-                if (state != AbilityState.OnCooldown) return;
-                SetAbilityState(AbilityState.Ready);
-            };
-
+            
+            Timer.TimerIsOver += SetReadyAbilityState;
             SetAbilityState(AbilityState.OnCooldown);
+        }
+
+        public void DeactivateAbility()
+        {
+            ThrowIfDisposed();
+            
+            if (Timer == null) return;
+            Timer.TimerIsOver -= SetReadyAbilityState;
+            Timer.Dispose();
+            Timer = null;
+        }
+
+        private void SetReadyAbilityState()
+        {
+            SetAbilityState(AbilityState.Ready);
         }
 
         public void SetAbilityState(AbilityState newState)
         {
+            ThrowIfDisposed();
             state = newState;
 
             switch (state)
             {
-                case AbilityState.Disable:
+                case AbilityState.Deactivated:
+                    DeactivateAbility();
                     break;
-                
+
                 case AbilityState.InProgress:
                     OnAbilityStateChange?.Invoke(AbilityState.InProgress);
+                    // set this state very time an ability is launched =>
+                    // set on cooldown state after progress time is passed
                     break;
-                
+
                 case AbilityState.OnCooldown:
                     OnAbilityStateChange?.Invoke(AbilityState.OnCooldown);
                     Timer?.StartFromToTimer(0f, Cooldown, TimerType.Increasing);
                     break;
-                
+
                 case AbilityState.Ready:
                     OnAbilityStateChange?.Invoke(AbilityState.Ready);
                     OnAbilityReady?.Invoke(this);
                     break;
             }
         }
-        
+
         /// <summary>
         /// Changes cooldown using one of three modes:
         /// <list type="bullet">
@@ -130,10 +148,10 @@ namespace Runtime
 
             if (float.IsNaN(newValue) || newValue < 0f) newValue = 0f;
             if (Mathf.Approximately(newValue, Cooldown)) return Cooldown;
-            
+
             Cooldown = newValue;
             OnAbilityStatsChanged?.Invoke(this);
-            
+
             return Cooldown;
         }
 
@@ -160,10 +178,10 @@ namespace Runtime
 
             if (float.IsNaN(newValue) || newValue < 0f) newValue = 0f;
             if (Mathf.Approximately(newValue, Damage)) return Damage;
-            
+
             Damage = newValue;
             OnAbilityStatsChanged?.Invoke(this);
-            
+
             return Damage;
         }
 
@@ -178,5 +196,24 @@ namespace Runtime
         /// Returns the new damage.
         /// </summary>
         public float ResetDamageToDefault() => ChangeAbilityDamage(StatChangeMode.SetValue, _baseDamage);
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed) 
+                throw new ObjectDisposedException(nameof(Ability));
+        }
+        public void Dispose()
+        {
+            if (!_disposed) return;
+            
+            Timer?.Dispose();
+            Timer = null;
+            
+            OnAbilityReady = null;
+            OnAbilityStateChange = null;
+            OnAbilityStatsChanged = null;
+            
+            _disposed = true;
+        }
     }
 }

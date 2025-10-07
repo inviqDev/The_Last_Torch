@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class SpiralAxe : AbilityVFX
+    public class SpiralAxe : AbilityVfx
     {
         [SerializeField] private DamageCollider _hitCollider;
 
@@ -27,11 +27,11 @@ namespace Runtime
         {
             if (!enemy) return;
             
-            UnityEngine.Assertions.Assert.IsNotNull(_ability.HitParticlePoolKey, $"{_ability.HitParticlePoolKey} is missing");
-            GameManager.Instance?.ParticlesManager?.PlayParticle(_ability.HitParticlePoolKey, enemy);
+            UnityEngine.Assertions.Assert.IsNotNull(_ability.HitVfxPoolKey, $"{_ability.HitVfxPoolKey} is missing");
+            GameManager.Instance?.ParticlesManager?.PlayParticle(_ability.HitVfxPoolKey, enemy);
             
-            UnityEngine.Assertions.Assert.IsNotNull(_ability.AbilityHitSoundPoolKey, $"{_ability.AbilityHitSoundPoolKey} is missing");
-            GameManager.Instance?.SoundManager.PlaySound(_ability.AbilityHitSoundPoolKey, transform.position);
+            UnityEngine.Assertions.Assert.IsNotNull(_ability.HitSfxPoolKey, $"{_ability.HitSfxPoolKey} is missing");
+            GameManager.Instance?.SoundManager.PlaySound(_ability.HitSfxPoolKey, transform.position);
             
             enemy.TakeDamage(_ability.Damage);
         }

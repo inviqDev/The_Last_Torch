@@ -18,6 +18,6 @@ MonoBehaviour:
   HitSoundPoolKey: spiral_axe_hit_sound
   progressTime: 0
   cooldownTime: 1
-  abilityVFX: {fileID: 7376221340239735651, guid: 86c04c603fa322f48ac93bfb34de57d3, type: 3}
+  abilityVfx: {fileID: 7376221340239735651, guid: 86c04c603fa322f48ac93bfb34de57d3, type: 3}
   maxAttackDistance: 8
   damage: 0.5

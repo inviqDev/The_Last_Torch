@@ -13,11 +13,10 @@ namespace Runtime._my_tests
         [SerializeField, Range(1, 10)] private int totalActivationTime;
         
         private Timer _timer;
-        private float _currentActivationTime;
+        private float _currentTime;
         private FireplaceStatus _status;
 
-        private IEnumerator _backToZeroRoutine;
-
+        private Coroutine _timerRoutine;
 
         protected override void Start()
         {
@@ -26,22 +25,24 @@ namespace Runtime._my_tests
             _status = FireplaceStatus.Deactivated;
         
             _timer ??= new Timer(this);
-            _currentActivationTime = 0.0f;
+            _currentTime = 0.0f;
         
-            _timer.OnAnyValueChanged += OnAnyTimerValueChanged;
-            _timer.TimerIsOver += OnActivationIsComplete;
+            _timer.OnAnyValueChanged += UpdateProgressBar;
+            _timer.TimerIsOver += FinishActivation;
         }
 
         private void OnEnable()
         {
-            if (_timer != null)
-            {
-                _timer ??= new Timer(this);
-                _currentActivationTime = 0.0f;
+            _currentTime = 0.0f;
             
-                _timer.OnAnyValueChanged += OnAnyTimerValueChanged;
-                _timer.TimerIsOver += OnActivationIsComplete;
-            }
+            _timer ??= new Timer(this);
+            _timer.StopTimer();
+            
+            _timer.OnAnyValueChanged -= UpdateProgressBar;
+            _timer.OnAnyValueChanged += UpdateProgressBar;
+                
+            _timer.TimerIsOver -= FinishActivation;
+            _timer.TimerIsOver += FinishActivation;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -50,66 +51,68 @@ namespace Runtime._my_tests
             var alreadyActive = _status == FireplaceStatus.Activated;
             if (!isPlayer && alreadyActive) return;
         
-            if (_backToZeroRoutine != null)
+            if (_timerRoutine != null)
             {
-                StopCoroutine(_backToZeroRoutine);
+                StopCoroutine(_timerRoutine);
             }
 
-            if (_timer != null)
-            {
-                _timer.StartFromToTimer(_currentActivationTime, totalActivationTime, TimerType.Increasing);
-                ShowProgressBar(_currentActivationTime);
-            }
+            UnityEngine.Assertions.Assert.IsNotNull(_timer, "Timer is missing");
+            if (_timer == null) return;
+            
+            _timer.StartFromToTimer(_currentTime, totalActivationTime, TimerType.Increasing);
+            ShowProgressBar(_currentTime);
         }
 
-        private void OnAnyTimerValueChanged(float currentTimerValue)
+        private void UpdateProgressBar(float newValue)
         {
-            _currentActivationTime = currentTimerValue;
-            FillProgressBar(_currentActivationTime / totalActivationTime);
+            _currentTime = newValue;
+            FillProgressBar(_currentTime / totalActivationTime);
         }
 
-        private void OnActivationIsComplete()
+        private void FinishActivation()
         {
+            // launch specific fireplace logic => able to upgrade player ??
             _status = FireplaceStatus.Activated;
             HideProgressBar();
         }
 
         private void OnTriggerExit(Collider other)
         {
-            var isPlayer = other.CompareTag(GameManager.Instance.Player.tag);
-            // var alreadyActive = _status == FireplaceStatus.Activated;
-            if (!isPlayer) return; //&& alreadyActive) return;
+            UnityEngine.Assertions.Assert.IsNotNull(
+                GameManager.Instance?.Player, "Player is missing");
+            if (!other.CompareTag(GameManager.Instance?.Player?.tag)) return;
 
-            if (_timer != null)
-            {
-                _timer.StopTimer();
-
-                _backToZeroRoutine = DecreaseProgressBarRoutine();
-                StartCoroutine(_backToZeroRoutine);
-                print($"Current status : {_status} ^^ _backToZeroRoutine is active : {_backToZeroRoutine != null}");
-            }
+            UnityEngine.Assertions.Assert.IsNotNull(_timer, "Timer is missing");
+            if (_timer == null) return;
+            
+            _timer.StopTimer();
+            _timerRoutine = StartCoroutine(DecreaseProgressBarRoutine());
         }
 
         private IEnumerator DecreaseProgressBarRoutine()
         {
-            while (_currentActivationTime > 0.0f)
+            var current = _currentTime;
+            while (current > 0.0f)
             {
-                _currentActivationTime -= Time.deltaTime;
-                OnAnyTimerValueChanged(_currentActivationTime);
+                current -= Time.deltaTime;
+                UpdateProgressBar(_currentTime);
                 yield return null;
             }
 
-            _currentActivationTime = 0.0f;
+            _currentTime = 0.0f;
+            _timerRoutine = null;
             HideProgressBar();
         }
 
         private void OnDisable()
         {
-            if (_timer != null)
-            {
-                _timer.OnAnyValueChanged -= OnAnyTimerValueChanged;
-                _timer.TimerIsOver -= OnActivationIsComplete;
-            }
+            if (_timer == null) return;
+            
+            _timer.OnAnyValueChanged -= UpdateProgressBar;
+            _timer.TimerIsOver -= FinishActivation;
+            
+            _timer.Dispose();
+            _timer = null;
         }
     }
 }

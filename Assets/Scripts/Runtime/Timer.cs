@@ -9,33 +9,38 @@ namespace Runtime
         Increasing,
         Decreasing
     }
-    public class Timer
+    public class Timer : IDisposable
     {
-        private IEnumerator _timerRoutine;
-        private readonly MonoBehaviour _timerActivator;
-
-        private float _totalTime;
-        private float _currentTime;
-
         public event Action<float> OnAnyValueChanged;
         public event Action<int> OnTicked;
         public event Action TimerIsOver;
 
-        public Timer(MonoBehaviour timerActivator) => _timerActivator = timerActivator;
+        private readonly MonoBehaviour _timerHandler;
+        private Coroutine _timerCoroutine;
+        private bool _disposed;
 
+        private float _totalTime;
+        private float _currentTime;
+
+        public Timer(MonoBehaviour timerHandler) => _timerHandler = timerHandler;
+        public bool IsActive => _timerCoroutine != null;
+        
         public void StartFromToTimer(float from, float to, TimerType timerType, bool showProgress = true)
         {
-            _timerRoutine = timerType switch
+            ThrowIfDisposed();
+            StopTimer();
+            
+            var routine = timerType switch
             {
-                TimerType.Increasing => IncreasingTimerRoutine(from, to, showProgress),
+                TimerType.Increasing =>  IncreasingTimerRoutine(from, to, showProgress),
                 TimerType.Decreasing => DecreasingTimerRoutine(from, to, showProgress),
                 _ => null
             };
 
-            Debug.Assert(_timerRoutine != null, "Timer has not been started");
-            _timerActivator.StartCoroutine(_timerRoutine);
+            UnityEngine.Assertions.Assert.IsNotNull(routine, "Timer has not been started");
+            _timerCoroutine = _timerHandler.StartCoroutine(routine);
         }
-
+        
         private IEnumerator IncreasingTimerRoutine(float from, float to, bool showProgress)
         {
             var timerValue = from;
@@ -51,15 +56,16 @@ namespace Runtime
             }
         
             TimerIsOver?.Invoke();
+            _timerCoroutine = null;
         }
         
-        private IEnumerator DecreasingTimerRoutine(float from, float to, bool showProgress)
+        private IEnumerator DecreasingTimerRoutine(float from, float to, bool show)
         {
             var timerValue = from;
             while (timerValue >= to)
             {
                 timerValue -= Time.deltaTime;
-                if (showProgress)
+                if (show)
                 {
                     OnAnyValueChanged?.Invoke(timerValue);
                 }
@@ -68,13 +74,16 @@ namespace Runtime
             }
         
             TimerIsOver?.Invoke();
+            _timerCoroutine = null;
         }
 
         public void StartTimerTicker(float intervalInSeconds, int repeatsAmount)
         {
+            ThrowIfDisposed();
             StopTimer();
-            _timerRoutine = TimerTickerRoutine(intervalInSeconds, repeatsAmount);
-            _timerActivator.StartCoroutine(_timerRoutine);
+            
+            var routine = TimerTickerRoutine(intervalInSeconds, repeatsAmount);
+            _timerCoroutine = _timerHandler.StartCoroutine(routine);
         }
     
         private IEnumerator TimerTickerRoutine(float interval, int repeats)
@@ -90,12 +99,33 @@ namespace Runtime
             }
         
             TimerIsOver?.Invoke();
+            _timerCoroutine = null;
         }
     
         public void StopTimer()
         {
-            if (_timerRoutine == null) return;
-            _timerActivator.StopCoroutine(_timerRoutine);
+            if (!IsActive || !_timerHandler) return;
+            _timerHandler.StopCoroutine(_timerCoroutine);
+            _timerCoroutine = null;
+        }
+        
+        private void ThrowIfDisposed()
+        {
+            if (_disposed) 
+                throw new ObjectDisposedException(nameof(Timer));
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            
+            StopTimer();
+
+            OnAnyValueChanged = null;
+            OnTicked = null;
+            TimerIsOver = null;
+            
+            _disposed = true;
         }
     }
 }

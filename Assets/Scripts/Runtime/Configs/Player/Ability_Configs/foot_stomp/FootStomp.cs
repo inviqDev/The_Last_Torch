@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Runtime
 {
-    public class FootStomp : AbilityVFX
+    public class FootStomp : AbilityVfx
     {
         [SerializeField] private float pushSpeed;
         
@@ -37,7 +37,7 @@ namespace Runtime
             if (_affectedEnemies.Count == 0) return;
 
             var particle = GameManager.Instance?.ParticlesManager.PlayParticleAt(
-                    _ability.HitParticlePoolKey, _startPoint, 2f * _radius);
+                    _ability.HitVfxPoolKey, _startPoint, 2f * _radius);
             
             _pushingRoutine = PushAway();
             StartCoroutine(_pushingRoutine);
